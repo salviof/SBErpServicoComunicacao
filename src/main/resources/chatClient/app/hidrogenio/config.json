@@ -1,0 +1,10 @@
+{
+  "defaultHomeServer": "matrix.casanovadigital.com.br",
+  "bugReportEndpointUrl": "https://element.io/bugreports/submit",
+  "themeManifests": [
+    "/hidrogenio/assets/theme-element.json"
+  ],
+  "defaultTheme": {
+    "light": "element-light"
+  }
+}
