@@ -49,7 +49,7 @@ public class AtendimentoByCNPJ extends RotaSparkPadrao {
             System.out.println(sistemaClinete.getHashChavePublica());
 
             ParametroListaRestful parametroEquipe = new ParametroListaRestful();
-            parametroEquipe.setId(0);
+            parametroEquipe.setId(0l);
             parametroEquipe.setPagina(0);
             parametroEquipe.setFiltros(new HashMap<>());
             //parametroEquipe.getParametros().put("id", 1);

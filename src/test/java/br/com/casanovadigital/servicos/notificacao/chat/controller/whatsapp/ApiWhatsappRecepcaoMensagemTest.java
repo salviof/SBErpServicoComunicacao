@@ -75,7 +75,7 @@ public class ApiWhatsappRecepcaoMensagemTest {
             //   ItfResposta respostaListaClientes = ERPIntegracaoSistemasApi.RESTFUL.getImplementacaoDoContexto().getResposta(sistemaFatura, "FabAcaoMktFaturamentoAdmin.CLIENTE_FRM_LISTAR", parametro);
             //  System.out.println(respostaListaClientes.getRetorno());
             ParametroListaRestful parametroEquipe = new ParametroListaRestful();
-            parametroEquipe.setId(1);
+            parametroEquipe.setId(1l);
             parametroEquipe.setPagina(0);
             parametroEquipe.setFiltros(new HashMap<>());
             parametroEquipe.getFiltros().put("id", 1);

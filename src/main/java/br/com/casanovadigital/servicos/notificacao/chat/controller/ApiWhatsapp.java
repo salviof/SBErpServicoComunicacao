@@ -76,7 +76,7 @@ public class ApiWhatsapp {
                     }
                 }
                 ParametroListaRestful parametroEquipe = new ParametroListaRestful();
-                parametroEquipe.setId(1);
+                parametroEquipe.setId(1l);
                 parametroEquipe.setPagina(0);
                 parametroEquipe.setFiltros(new HashMap<>());
                 parametroEquipe.getFiltros().put("id", 1);
