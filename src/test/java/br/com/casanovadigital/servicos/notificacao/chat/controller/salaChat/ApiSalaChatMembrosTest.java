@@ -12,7 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import testesFW.ConfigCoreJunitPadraoDesenvolvedor;
+import testesFW.ConfigCoreJunitPadraoDevAcaoPermissao;
 
 /**
  *
@@ -28,7 +28,7 @@ public class ApiSalaChatMembrosTest {
      */
     @Test
     public void testValidarParamentros() throws Exception {
-        SBCore.configurar(new ConfigCoreJunitPadraoDesenvolvedor(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+        SBCore.configurar(new ConfigCoreJunitPadraoDevAcaoPermissao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
         System.out.println("validarParamentros");
         ApiSalaChatMembros instance = new ApiSalaChatMembros();
         instance.setCodigoSala("!dzWzluEMaVaVMuMwXi:casanovadigital.com.br");

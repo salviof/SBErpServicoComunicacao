@@ -8,7 +8,7 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import jakarta.json.JsonObject;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import testesFW.ConfigCoreJunitPadraoDesenvolvedor;
+import testesFW.ConfigCoreJunitPadraoDevAcaoPermissao;
 
 /**
  *
@@ -28,7 +28,7 @@ public class FabTipoStatusMensagemTest {
     @Test
     public void testGerarStatusMensgem() {
 
-        SBCore.configurar(new ConfigCoreJunitPadraoDesenvolvedor(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+        SBCore.configurar(new ConfigCoreJunitPadraoDevAcaoPermissao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
 
         JsonObject pJson = null;
         StatusMensagemWtzap expResult = null;

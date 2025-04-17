@@ -17,7 +17,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.ItensGenericos
 import com.super_bits.modulosSB.SBCore.modulos.objetos.MapaObjetosProjetoAtual;
 import java.util.List;
 import org.junit.Test;
-import testesFW.ConfigCoreJunitPadraoDesenvolvedor;
+import testesFW.ConfigCoreJunitPadraoDevAcaoPermissao;
 
 /**
  *
@@ -33,7 +33,7 @@ public class DadosEquipeFaturaMktClientTest {
      */
     @Test
     public void testValidarParamentros() throws Exception {
-        SBCore.configurar(new ConfigCoreJunitPadraoDesenvolvedor(), SBCore.ESTADO_APP.HOMOLOGACAO);
+        SBCore.configurar(new ConfigCoreJunitPadraoDevAcaoPermissao(), SBCore.ESTADO_APP.HOMOLOGACAO);
         MapaObjetosProjetoAtual.adcionarObjeto(GrupoUsuarioSB.class);
         MapaObjetosProjetoAtual.adcionarObjeto(GrupoUsuariosDoSistema.class);
         MapaObjetosProjetoAtual.adcionarObjeto(UsuarioSB.class);
