@@ -1,0 +1,10 @@
+VERSAO=${pom.version}
+NOME_PROJETO=SBErpServicoComunicacao/${pom.artifactId}
+NOME_SOCIAL=${pom.name}
+TIPO_PROJETO=${pom.packaging}
+NOME_CLIENTE=${projetoSB.cliente}
+GRUPO_PROJETO=${projetoSB.grupoProjeto}
+NOME_BANCO=${projetoSB.nomeBanco}
+DIRETORIO_BASE=
+ENDERECO_WEB=intranet.casanovadigital.com.br
+ENDERECO_WEB_REQUISITO=requisito.intranet.casanovadigital.com.br

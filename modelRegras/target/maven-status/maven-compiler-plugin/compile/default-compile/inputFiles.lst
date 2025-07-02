@@ -1,0 +1,15 @@
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/Atendente.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/Contato.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/Pessoa.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/configModel/ConfigPercistenciaServicoComunicacao.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/FabTipoOrigem.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTrOrigemMatrix.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTrOrigemWhatsapp.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTransito.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/regras/ModuloAplicacaoMessageriaManutencoes.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/atendente/CPAtendente.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contato/CPContato.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtransito/CPMensagemTransito.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemwhatsapp/CPMensagemTrOrigemWhatsapp.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/pessoa/CPPessoa.java

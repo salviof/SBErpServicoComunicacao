@@ -1,0 +1,10 @@
+VERSAO=1.0-SNAPSHOT
+NOME_PROJETO=SBErpServicoComunicacao/modelRegras
+NOME_SOCIAL=SBErp Model JPA Servico comunicação
+TIPO_PROJETO=jar
+NOME_CLIENTE=coletivoJava
+GRUPO_PROJETO=erpColetivoJava
+NOME_BANCO=SBErpServicoComunicacaoModel
+DIRETORIO_BASE=
+ENDERECO_WEB=intranet.casanovadigital.com.br
+ENDERECO_WEB_REQUISITO=requisito.intranet.casanovadigital.com.br

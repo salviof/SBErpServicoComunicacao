@@ -1,0 +1,15 @@
+com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTrOrigemMatrix.class
+com/super_bits/casanovadigital/servicos/messagens/model/agente/Pessoa.class
+com/super_bits/casanovadigital/servicos/messagens/model/agente/Atendente.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/pessoa/CPPessoa.class
+com/super_bits/casanovadigital/servicos/messagens/model/agente/Contato.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtransito/CPMensagemTransito.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemwhatsapp/CPMensagemTrOrigemWhatsapp.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contato/CPContato.class
+com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTrOrigemWhatsapp.class
+com/super_bits/casanovadigital/servicos/messagens/regras/ModuloAplicacaoMessageriaManutencoes.class
+com/super_bits/casanovadigital/servicos/messagens/model/mensagem/FabTipoOrigem.class
+com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTransito.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/atendente/CPAtendente.class
+com/super_bits/casanovadigital/servicos/messagens/model/configModel/ConfigPercistenciaServicoComunicacao.class
