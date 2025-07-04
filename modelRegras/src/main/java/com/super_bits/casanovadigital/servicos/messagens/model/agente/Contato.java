@@ -18,4 +18,14 @@ import javax.persistence.EntityListeners;
 @EntityListeners(ListenerEntidadePadrao.class)
 public class Contato extends Pessoa {
 
+    private String waid;
+
+    public String getWaid() {
+        return waid;
+    }
+
+    public void setWaid(String waid) {
+        this.waid = waid;
+    }
+
 }

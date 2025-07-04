@@ -8,6 +8,6 @@ package br.com.casanovadigital.servicos.notificacao.interpretadormsg.padrao.matr
  *
  * @author salvio
  */
-public class ProcessadorMsgMatrix {
+public class ProcessadorMatrixPadrao {
 
 }

@@ -4,6 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.config;
 
+import br.com.casanovadigital.servicos.notificacao.AplicacaoWsChat;
 import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.FabSistemasErp;
 import br.com.casanovadigital.servicos.notificacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ContatoWhatsapp;
@@ -20,7 +21,12 @@ import br.com.casanovadigital.servicos.notificacao.interpretadormsg.interfaces.I
 import br.com.casanovadigital.servicos.notificacao.interpretadormsg.interfaces.ItfProcessadorEventoWhatsapp;
 import br.com.casanovadigital.servicos.notificacao.interpretadormsg.interfaces.ItfProcessadorMensagemWhatsapp;
 import br.com.casanovadigital.servicos.notificacao.interpretadormsg.padrao.whatsapp.ProcessadorEventoWhatsappPadrao;
-import br.com.casanovadigital.servicos.notificacao.interpretadormsg.padrao.whatsapp.ProcessadorMsgemWhatsappPadrao;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.padrao.whatsapp.ProcessadorMsgWhatsappPadrao;
+import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -30,7 +36,7 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
 
     @Override
     public Class<? extends ItfProcessadorMensagemWhatsapp> getClasseProcessadorMensagemContatoViaWhataspp(MensagemWhatsapp pMensagemWhatsapp) {
-        return ProcessadorMsgemWhatsappPadrao.class;
+        return ProcessadorMsgWhatsappPadrao.class;
     }
 
     @Override
@@ -40,7 +46,13 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
 
     @Override
     public ItfUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pContato) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
+        String email = FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema();
+        try {
+            return AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByEmail(email);
+        } catch (ErroConexaoServicoChat ex) {
+            return null;
+        }
     }
 
     public DefinicaoLogicaProcessamentoChat() {

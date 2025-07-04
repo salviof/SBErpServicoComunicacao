@@ -42,6 +42,9 @@ public class MensagemTransito {
     @Column(nullable = false, updatable = false, insertable = false)
     private String tipoMensagem;
 
+    private String entradaIdentificadorWhatsapp;
+    private String salaCodigoMatrix;
+
     @Enumerated(EnumType.STRING)
     private FabTipoOrigem tipoOrigem;
 
@@ -128,6 +131,22 @@ public class MensagemTransito {
 
     public void setDaHoraExpirar(Date daHoraExpirar) {
         this.daHoraExpirar = daHoraExpirar;
+    }
+
+    public String getEntradaIdentificadorWhatsapp() {
+        return entradaIdentificadorWhatsapp;
+    }
+
+    public void setEntradaIdentificadorWhatsapp(String entradaIdentificadorWhatsapp) {
+        this.entradaIdentificadorWhatsapp = entradaIdentificadorWhatsapp;
+    }
+
+    public String getSalaCodigoMatrix() {
+        return salaCodigoMatrix;
+    }
+
+    public void setSalaCodigoMatrix(String salaCodigoMatrix) {
+        this.salaCodigoMatrix = salaCodigoMatrix;
     }
 
 }

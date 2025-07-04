@@ -6,16 +6,10 @@ package br.com.casanovadigital.servicos.notificacao.contato;
 
 import br.com.casanovadigital.servicos.notificacao.legado.contato.ServicoNotificacaoContato;
 import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
-import com.amazonaws.services.sns.AmazonSNS;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *

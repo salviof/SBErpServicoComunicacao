@@ -21,6 +21,8 @@ public interface ItfProcessadorMensagemWhatsapp extends ItfProcessadorPayloadWha
 
     public String getLink();
 
+    public String getCodigoSalaMatrixEncaminhamento();
+
     public FabTipoRetornoEncaminhamentoWhatsapp getTipoEncaminhamento();
 
     public MensagemWhatsapp getMensagemWhatsapp();
