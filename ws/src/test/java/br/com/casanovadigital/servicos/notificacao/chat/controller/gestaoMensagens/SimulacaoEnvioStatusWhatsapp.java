@@ -4,11 +4,12 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.gestaoMensagens;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.recepcaoMensagens.ItfExecucaoLogicaRecepcaoWtzap;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.gestaoMensagens.MotorControleDeMensagens;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.recepcaoMensagens.ItfExecucaoLogicaRecepcaoWtzap;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

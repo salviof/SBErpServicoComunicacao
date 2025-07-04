@@ -4,6 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.contatos;
 
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.contatos.ApiContatosReceberContato;
 import jakarta.json.JsonValue;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -44,7 +45,7 @@ public class ApiContatosReceberContatoTest {
     public void testValidarParamentros() throws Exception {
         System.out.println("validarParamentros");
         ApiContatosReceberContato instance = new ApiContatosReceberContato();
-        instance.salvarContato(JsonValue.EMPTY_JSON_OBJECT);
+        // instance.salvarContato(JsonValue.EMPTY_JSON_OBJECT);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

@@ -4,10 +4,10 @@
  */
 package br.org.coletivoJava.fw.ws.restFull;
 
-import br.com.casanovadigital.servicos.notificacao.chat.ServicoNotificacaoChat;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.gestaoMensagens.MotorControleDeMensagens;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.ServicoNotificacaoChat;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.gestaoMensagens.MotorControleDeMensagens;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;

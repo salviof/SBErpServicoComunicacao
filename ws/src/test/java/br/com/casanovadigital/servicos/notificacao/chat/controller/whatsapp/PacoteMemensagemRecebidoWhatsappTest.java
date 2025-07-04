@@ -4,10 +4,11 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.statusMensagem.StatusMensagemWtzap;
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMedia;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
@@ -66,7 +67,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemEntregue);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());
-        for (StatusMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
+        for (EventoMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
 
             System.out.println(statusMensagem.getDescricaoErro());
         }
@@ -130,7 +131,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemNAOLida);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());
-        for (StatusMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
+        for (EventoMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
             System.out.println(statusMensagem.getDescricaoErro());
         }
         System.out.println(pacoteSimples.getStatusMensagem().get(0).getDescricaoErro());
@@ -140,7 +141,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemLida);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());
-        for (StatusMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
+        for (EventoMensagemWtzap statusMensagem : pacoteSimples.getStatusMensagem()) {
             System.out.println(statusMensagem.getDescricaoErro());
         }
         System.out.println(pacoteSimples.getStatusMensagem().get(0).getDescricaoErro());

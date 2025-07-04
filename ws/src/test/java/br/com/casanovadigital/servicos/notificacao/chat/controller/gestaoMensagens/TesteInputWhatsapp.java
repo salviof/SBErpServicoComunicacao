@@ -4,12 +4,13 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.gestaoMensagens;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.statusMensagem.StatusMensagemWtzap;
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.gestaoMensagens.MotorControleDeMensagens;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreNumeros;
 import java.util.logging.Level;
@@ -72,7 +73,7 @@ public class TesteInputWhatsapp extends TesteJunit {
                 }
                 if (!msg.getStatusMensagem().isEmpty()) {
 
-                    for (StatusMensagemWtzap status : msg.getStatusMensagem()) {
+                    for (EventoMensagemWtzap status : msg.getStatusMensagem()) {
 
                         MotorControleDeMensagens.executarMensagemStatusWhatsapp(status.getEntrada(), status);
                     }

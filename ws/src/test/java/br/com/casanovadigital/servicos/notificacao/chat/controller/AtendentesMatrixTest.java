@@ -4,6 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller;
 
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.MapAtendentesMatrixCAsanovadigital;
 import br.org.coletivoJava.fw.api.erp.chat.ERPChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;

@@ -4,7 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao;
 
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -20,7 +20,7 @@ public class InicioAplicacaoWScontatosTest {
     }
 
     /**
-     * Test of main method, of class InicioAplicacaoWScontatos.
+     * Test of main method, of class InicioAplicacaoWsChat.
      */
     @Test
     public void testMain() {
@@ -30,13 +30,13 @@ public class InicioAplicacaoWScontatosTest {
 
         SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
 
-        InicioAplicacaoWScontatos.main(args);
+        InicioAplicacaoWsChat.main(args);
         while (!SBCore.isEmModoProducao()) {
             try {
                 Thread.sleep(10000);
             } catch (InterruptedException ex) {
                 System.out.println("Thread de execução interrompida");
-                Logger.getLogger(InicioAplicacaoWScontatos.class.getName()).log(Level.FINE, null, ex);
+                Logger.getLogger(InicioAplicacaoWsChat.class.getName()).log(Level.FINE, null, ex);
             }
         }
         // TODO review the generated test code and remove the default call to fail.

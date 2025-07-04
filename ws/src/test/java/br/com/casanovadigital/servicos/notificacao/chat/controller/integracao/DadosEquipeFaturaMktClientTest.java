@@ -4,7 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.integracao;
 
-import br.com.casanovadigital.servicos.notificacao.InicioAplicacaoWScontatos;
+import br.com.casanovadigital.servicos.notificacao.InicioAplicacaoWsChat;
 import br.org.coletivoJava.fw.api.erp.erpintegracao.contextos.ERPIntegracaoSistemasApi;
 import br.org.coletivoJava.fw.api.erp.erpintegracao.servico.ItfIntegracaoERP;
 import br.org.coletivoJava.fw.erp.implementacao.erpintegracao.model.SistemaERPAtual;
@@ -62,7 +62,7 @@ public class DadosEquipeFaturaMktClientTest {
 
         @Override
         public void run() {
-            InicioAplicacaoWScontatos.main(null);
+            InicioAplicacaoWsChat.main(null);
         }
 
     }

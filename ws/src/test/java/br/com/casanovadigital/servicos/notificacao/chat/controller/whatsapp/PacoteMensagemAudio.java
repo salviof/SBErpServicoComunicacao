@@ -4,8 +4,9 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;

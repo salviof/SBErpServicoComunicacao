@@ -4,9 +4,9 @@
  */
 package br.com.casanovadigital.servicos.notificacao;
 
-import br.com.casanovadigital.servicos.notificacao.chat.ServicoNotificacaoChat;
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
-import br.com.casanovadigital.servicos.notificacao.contextoChat.matrix.ContextoMatrix;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.ServicoNotificacaoChat;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.contextoChat.matrix.ContextoMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;

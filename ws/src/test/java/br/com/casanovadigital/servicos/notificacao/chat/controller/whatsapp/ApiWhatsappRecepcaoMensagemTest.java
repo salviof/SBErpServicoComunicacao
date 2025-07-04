@@ -4,8 +4,9 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.FabSistemasErp;
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.ApiWhatsappRecepcaoMensagem;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.FabSistemasErp;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import br.org.coletivoJava.fw.api.erp.erpintegracao.contextos.ERPIntegracaoSistemasApi;
 import br.org.coletivoJava.fw.api.erp.erpintegracao.model.ItfSistemaERPLocal;
 

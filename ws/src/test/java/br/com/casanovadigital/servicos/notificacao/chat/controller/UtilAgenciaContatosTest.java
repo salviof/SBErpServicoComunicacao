@@ -4,7 +4,9 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller;
 
-import br.com.casanovadigital.servicos.notificacao.config.ConfigCoreCNDNotificacaoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.UtilAgenciaContatos;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.FabSistemasErp;
+import br.com.casanovadigital.servicos.notificacao.legado.config.ConfigCoreCNDNotificacaoContato;
 import br.org.coletivoJava.fw.api.erp.erpintegracao.contextos.ERPIntegracaoSistemasApi;
 import br.org.coletivoJava.fw.erp.implementacao.erpintegracao.model.parametros.ParametroListaRestful;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;

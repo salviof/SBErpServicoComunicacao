@@ -18,8 +18,27 @@ import javax.persistence.Entity;
 public class MensagemTrOrigemWhatsapp extends MensagemTransito {
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    private String codigoReciboEntregaWhatsapp;
+    private String codigoRegistroMensagemWhatsapp;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String codigoEncaminhamentoMatrix;
+
+    private String corpoJsonRecebido;
+
+    public String getCodigoRegistroMensagemWhatsapp() {
+        return codigoRegistroMensagemWhatsapp;
+    }
+
+    public void setCodigoRegistroMensagemWhatsapp(String codigoRegistroMensagemWhatsapp) {
+        this.codigoRegistroMensagemWhatsapp = codigoRegistroMensagemWhatsapp;
+    }
+
+    public String getCodigoEncaminhamentoMatrix() {
+        return codigoEncaminhamentoMatrix;
+    }
+
+    public void setCodigoEncaminhamentoMatrix(String codigoEncaminhamentoMatrix) {
+        this.codigoEncaminhamentoMatrix = codigoEncaminhamentoMatrix;
+    }
+
 }

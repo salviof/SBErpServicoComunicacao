@@ -4,6 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.statusMensagem;
 
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import jakarta.json.JsonObject;
 import org.junit.Test;
@@ -31,8 +32,8 @@ public class FabTipoStatusMensagemTest {
         SBCore.configurar(new ConfigCoreJunitPadraoDevAcaoPermissao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
 
         JsonObject pJson = null;
-        StatusMensagemWtzap expResult = null;
-//        StatusMensagemWtzap result = FabTipoStatusMensagemWhtzap.gerarStatusMensgem(pJson);
+        EventoMensagemWtzap expResult = null;
+//        EventoMensagemWtzap result = FabTipoStatusMensagemWhtzap.gerarStatusMensgem(pJson);
         //      assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

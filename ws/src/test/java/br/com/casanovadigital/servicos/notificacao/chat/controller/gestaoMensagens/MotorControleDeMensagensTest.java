@@ -4,11 +4,12 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.gestaoMensagens;
 
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ContatoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.notificacao.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.contextoChat.whatsapp.ContextoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.gestaoMensagens.MotorControleDeMensagens;
+import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ContatoWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
+import br.com.casanovadigital.servicos.notificacao.legado.contextoChat.whatsapp.ContextoWhatsapp;
 import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
 import java.util.logging.Level;
 import java.util.logging.Logger;

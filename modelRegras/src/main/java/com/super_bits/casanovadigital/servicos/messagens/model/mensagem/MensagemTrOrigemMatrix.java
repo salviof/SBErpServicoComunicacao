@@ -23,4 +23,20 @@ public class MensagemTrOrigemMatrix extends MensagemTransito {
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String codigoEncaminhamentoWhatsapp;
 
+    public String getCodigoReciboEntregaMatrix() {
+        return codigoReciboEntregaMatrix;
+    }
+
+    public void setCodigoReciboEntregaMatrix(String codigoReciboEntregaMatrix) {
+        this.codigoReciboEntregaMatrix = codigoReciboEntregaMatrix;
+    }
+
+    public String getCodigoEncaminhamentoWhatsapp() {
+        return codigoEncaminhamentoWhatsapp;
+    }
+
+    public void setCodigoEncaminhamentoWhatsapp(String codigoEncaminhamentoWhatsapp) {
+        this.codigoEncaminhamentoWhatsapp = codigoEncaminhamentoWhatsapp;
+    }
+
 }

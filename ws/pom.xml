@@ -19,10 +19,9 @@
 
     <dependencies>
 
-
         <dependency>
             <groupId>br.org.coletivoJava.fw.api.erp.SBErpServicoComunicacao</groupId>
-            <artifactId>modelRegrass</artifactId>
+            <artifactId>modelRegras</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
 

@@ -4,6 +4,7 @@
  */
 package br.com.casanovadigital.servicos.notificacao.chat.controller.salaChat;
 
+import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.salaChat.ApiSalaChatMembros;
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
