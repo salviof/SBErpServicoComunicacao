@@ -30,7 +30,7 @@ public class FabProcessadorMensagensEstatus {
             processador = (ItfProcessadorMensagemWhatsapp) classe.getConstructor(MensagemWhatsapp.class).newInstance(pPacote);
 
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
-            throw new UnsupportedOperationException("impossível processar pacote vindo do whatsapp;");
+            throw new UnsupportedOperationException("impossível processar pacote vindo do whatsapp;" + ex.getClass().getSimpleName() + "" + ex.getMessage());
         }
 
         return processador;

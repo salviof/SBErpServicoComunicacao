@@ -5,13 +5,11 @@
 package br.com.casanovadigital.servicos.chat.interpretadormsg.padrao.whatsapp;
 
 import br.com.casanovadigital.servicos.chat.AplicacaoWsChat;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.interfaces.ItfProcessadorEventoWhatsapp;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ContatoWhatsapp;
 import br.com.casanovadigital.servicos.chat.logdeMensagens.RepositorioComunicacaoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
@@ -20,19 +18,16 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author salvio
  */
-public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzp implements ItfProcessadorEventoWhatsapp {
+public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAbstrato {
 
-    private EventoMensagemWtzap eventoWhatsapp;
+    public ProcessadorEventoWhatsappPadrao(EventoMensagemWtzap pEvento) throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
+        super(pEvento);
 
-    public ProcessadorEventoWhatsappPadrao(EventoMensagemWtzap eventoWhatsapp) throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
-        super();
     }
 
     @Override
@@ -100,12 +95,6 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzp implements 
             throw new ErroFalhaEncaminhando("Serviço Matrix indisponível");
         }
         return true;
-    }
-
-    @Override
-    public boolean isSucesso() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
-
-        return sucesso;
     }
 
 }

@@ -16,20 +16,14 @@ import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
-import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappPerfil;
-import com.amazonaws.monitoring.ApiCallMonitoringEvent;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author salvio
  */
-public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzp implements ItfProcessadorMensagemWhatsapp {
-
-    private final MensagemWhatsapp mensagem;
+public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzpMsgBaseAbstrato implements ItfProcessadorMensagemWhatsapp {
 
     private String reciboEncaminhamentoMatrix;
     private String link;
@@ -40,8 +34,7 @@ public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzp implements Itf
     private Contato contatoPrincipal;
 
     public ProcessadorMsgWhatsappPadrao(MensagemWhatsapp pMensagem) throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
-        super();
-        mensagem = pMensagem;
+        super(pMensagem);
 
     }
 
@@ -99,12 +92,6 @@ public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzp implements Itf
 
         return tipoRetorno;
 
-    }
-
-    @Override
-    public boolean isSucesso() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
-
-        return sucesso;
     }
 
     @Override

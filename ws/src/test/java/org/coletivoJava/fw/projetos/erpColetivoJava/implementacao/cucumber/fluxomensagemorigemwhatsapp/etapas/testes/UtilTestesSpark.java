@@ -30,7 +30,7 @@ import spark.Response;
  */
 public class UtilTestesSpark {
 
-    public static void CriarRequisicao(Class<? extends RotaSparkPadrao> pResposnsavelTratamentoRequisicao, String corpo) {
+    public static Response criarRequisicao(Class<? extends RotaSparkPadrao> pResposnsavelTratamentoRequisicao, String corpo) {
         ApiWhatsappRecepMensagem apiREcepcao = new ApiWhatsappRecepMensagem();
 
         HttpServletRequest req = mock(HttpServletRequest.class);
@@ -39,6 +39,8 @@ public class UtilTestesSpark {
         when(req.getMethod()).thenReturn("POST");
         when(req.getHeader("payload")).thenReturn("{\"ok\":true}");
         when(req.getParameter("id")).thenReturn("42");
+        Response resposta = new Response() {
+        };
         try {
             when(req.getInputStream())
                     .thenReturn(new SimpleServletInputStreamTestes(FluxoMensagemOrigemWhatsapp.MENSAGEM_whatsapp_SIMPLES_payload));
@@ -50,10 +52,10 @@ public class UtilTestesSpark {
         try {
             ctor = Request.class.getDeclaredConstructor(HttpServletRequest.class);
             ctor.setAccessible(true);
+
             Request requisicao = ctor.newInstance(req);
             try {
-                apiREcepcao.handle(requisicao, new Response() {
-                });
+                apiREcepcao.handle(requisicao, resposta);
 
             } catch (Exception ex) {
                 Logger.getLogger(C_Quando_o_usuario_Contato_envia_a_mensagem_Ola_tudo_bem_pelo_WhatsApp_para_Atendimento.class.getName()).log(Level.SEVERE, null, ex);
@@ -61,6 +63,7 @@ public class UtilTestesSpark {
         } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
             Logger.getLogger(C_Quando_o_usuario_Contato_envia_a_mensagem_Ola_tudo_bem_pelo_WhatsApp_para_Atendimento.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return resposta;
     }
 
 }

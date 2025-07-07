@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.com.casanovadigital.servicos.notificacao.testes.TesteConformidade" time="3.275" tests="1" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="br.com.casanovadigital.servicos.notificacao.testes.TesteConformidade" time="3.084" tests="1" errors="0" skipped="0" failures="0">
   <properties>
     <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
     <property name="file.encoding.pkg" value="sun.io"/>
@@ -16,7 +16,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="BR"/>
     <property name="sun.boot.library.path" value="/usr/java/jdk1.8.0_202-amd64/jre/lib/amd64"/>
-    <property name="sun.java.command" value="/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire/surefirebooter-20250707132853877_3.jar /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire 2025-07-07T13-28-53_762-jvmRun1 surefire-20250707132853877_1tmp surefire_0-20250707132853877_2tmp"/>
+    <property name="sun.java.command" value="/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire/surefirebooter-20250707165650752_3.jar /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire 2025-07-07T16-56-50_680-jvmRun1 surefire-20250707165650752_1tmp surefire_0-20250707165650752_2tmp"/>
     <property name="surefire.test.class.path" value="/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/test-classes:/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/classes:/home/salvio/.m2/repository/br/org/coletivoJava/fw/SBTeste/1.0.0-RC-SNAPSHOT/SBTeste-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/org/jboss/forge/roaster/roaster-api/2.19.4.Final/roaster-api-2.19.4.Final.jar:/home/salvio/.m2/repository/org/jboss/forge/roaster/roaster-jdt/2.19.4.Final/roaster-jdt-2.19.4.Final.jar:/home/salvio/.m2/repository/junit/junit/4.12/junit-4.12.jar:/home/salvio/.m2/repository/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar:/home/salvio/.m2/repository/info/cukes/cucumber-junit/1.2.5/cucumber-junit-1.2.5.jar:/home/salvio/.m2/repository/info/cukes/cucumber-core/1.2.5/cucumber-core-1.2.5.jar:/home/salvio/.m2/repository/info/cukes/cucumber-html/0.2.3/cucumber-html-0.2.3.jar:/home/salvio/.m2/repository/info/cukes/cucumber-jvm-deps/1.0.5/cucumber-jvm-deps-1.0.5.jar:/home/salvio/.m2/repository/info/cukes/gherkin/2.12.2/gherkin-2.12.2.jar:/home/salvio/.m2/repository/info/cukes/cucumber-java8/1.2.5/cucumber-java8-1.2.5.jar:/home/salvio/.m2/repository/info/cukes/cucumber-java/1.2.5/cucumber-java-1.2.5.jar:/home/salvio/.m2/repository/br/org/coletivoJava/fw/SBPersistencia/1.0.0-RC-SNAPSHOT/SBPersistencia-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/br/org/coletivoJava/utilitarios/editorImagem/1.0.0-RC-SNAPSHOT/editorImagem-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/net/imagej/ij/1.53u/ij-1.53u.jar:/usr/java/jdk1.8.0_202-amd64/jre/../lib/tools.jar:/home/salvio/.m2/repository/nu/pattern/opencv/2.4.9-7/opencv-2.4.9-7.jar:/home/salvio/.m2/repository/br/org/coletivoJava/fw/SBCore/1.0.0-RC-SNAPSHOT/SBCore-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/br/org/coletivoJava/fw/SBApiCore/1.0.0-RC-SNAPSHOT/SBApiCore-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-jakarta-jsonp/2.13.0/jackson-datatype-jakarta-jsonp-2.13.0.jar:/home/salvio/.m2/repository/jakarta/json/jakarta.json-api/2.0.0/jakarta.json-api-2.0.0.jar:/home/salvio/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.13.0/jackson-core-2.13.0.jar:/home/salvio/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.13.0/jackson-databind-2.13.0.jar:/home/salvio/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.13.0/jackson-annotations-2.13.0.jar:/home/salvio/.m2/repository/com/fasterxml/jackson/datatype/jackson-datatype-json-org/2.13.0/jackson-datatype-json-org-2.13.0.jar:/home/salvio/.m2/repository/org/json/json/20190722/json-20190722.jar:/home/salvio/.m2/repository/org/apache/logging/log4j/log4j-core/2.16.0/log4j-core-2.16.0.jar:/home/salvio/.m2/repository/org/apache/logging/log4j/log4j-api/2.16.0/log4j-api-2.16.0.jar:/home/salvio/.m2/repository/org/reflections/reflections/0.9.12-SNAPSHOT/reflections-0.9.12-SNAPSHOT.jar:/home/salvio/.m2/repository/com/google/guava/guava/23.0/guava-23.0.jar:/home/salvio/.m2/repository/com/google/code/findbugs/jsr305/1.3.9/jsr305-1.3.9.jar:/home/salvio/.m2/repository/com/google/errorprone/error_prone_annotations/2.0.18/error_prone_annotations-2.0.18.jar:/home/salvio/.m2/repository/com/google/j2objc/j2objc-annotations/1.1/j2objc-annotations-1.1.jar:/home/salvio/.m2/repository/org/codehaus/mojo/animal-sniffer-annotations/1.14/animal-sniffer-annotations-1.14.jar:/home/salvio/.m2/repository/org/javassist/javassist/3.21.0-GA/javassist-3.21.0-GA.jar:/home/salvio/.m2/repository/br/org/coletivoJava/fw/api/erp/comunicacao/apiComunicacao/1.0.0-RC-SNAPSHOT/apiComunicacao-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/br/org/coletivoJava/fw/api/erp/cepBR/SbErpCodigoPostalBR/1.0.0-RC-SNAPSHOT/SbErpCodigoPostalBR-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/dnsjava/dnsjava/3.3.1/dnsjava-3.3.1.jar:/home/salvio/.m2/repository/mtfn/mtfn/0.0.2/mtfn-0.0.2.jar:/home/salvio/.m2/repository/org/apache/commons/commons-text/1.3/commons-text-1.3.jar:/home/salvio/.m2/repository/org/apache/commons/commons-lang3/3.7/commons-lang3-3.7.jar:/home/salvio/.m2/repository/org/apache/commons/commons-math3/3.6.1/commons-math3-3.6.1.jar:/home/salvio/.m2/repository/org/jsoup/jsoup/1.15.4/jsoup-1.15.4.jar:/home/salvio/.m2/repository/commons-io/commons-io/2.5/commons-io-2.5.jar:/home/salvio/.m2/repository/com/google/code/gson/gson/2.8.5/gson-2.8.5.jar:/home/salvio/.m2/repository/javax/ws/rs/jsr311-api/1.1.1/jsr311-api-1.1.1.jar:/home/salvio/.m2/repository/commons-collections/commons-collections/3.2.2/commons-collections-3.2.2.jar:/home/salvio/.m2/repository/commons-codec/commons-codec/1.9/commons-codec-1.9.jar:/home/salvio/.m2/repository/com/googlecode/json-simple/json-simple/1.1.1/json-simple-1.1.1.jar:/home/salvio/.m2/repository/com/jayway/restassured/json-path/2.9.0/json-path-2.9.0.jar:/home/salvio/.m2/repository/org/codehaus/groovy/groovy-json/2.4.4/groovy-json-2.4.4.jar:/home/salvio/.m2/repository/org/codehaus/groovy/groovy/2.4.4/groovy-2.4.4.jar:/home/salvio/.m2/repository/com/jayway/restassured/rest-assured-common/2.9.0/rest-assured-common-2.9.0.jar:/home/salvio/.m2/repository/org/apache/commons/commons-email/1.6.0/commons-email-1.6.0.jar:/home/salvio/.m2/repository/com/sun/mail/jakarta.mail/1.6.7/jakarta.mail-1.6.7.jar:/home/salvio/.m2/repository/com/sun/activation/jakarta.activation/1.2.1/jakarta.activation-1.2.1.jar:/home/salvio/.m2/repository/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar:/home/salvio/.m2/repository/de/sven-jacobs/loremipsum/1.0/loremipsum-1.0.jar:/home/salvio/.m2/repository/javax/validation/validation-api/1.1.0.Final/validation-api-1.1.0.Final.jar:/home/salvio/.m2/repository/javax/inject/javax.inject/1/javax.inject-1.jar:/home/salvio/.m2/repository/com/mysql/mysql-connector-j/8.0.33/mysql-connector-j-8.0.33.jar:/home/salvio/.m2/repository/com/google/protobuf/protobuf-java/3.21.9/protobuf-java-3.21.9.jar:/home/salvio/.m2/repository/org/hibernate/hibernate-core/5.6.15.Final/hibernate-core-5.6.15.Final.jar:/home/salvio/.m2/repository/org/jboss/logging/jboss-logging/3.4.3.Final/jboss-logging-3.4.3.Final.jar:/home/salvio/.m2/repository/javax/persistence/javax.persistence-api/2.2/javax.persistence-api-2.2.jar:/home/salvio/.m2/repository/net/bytebuddy/byte-buddy/1.12.18/byte-buddy-1.12.18.jar:/home/salvio/.m2/repository/antlr/antlr/2.7.7/antlr-2.7.7.jar:/home/salvio/.m2/repository/org/jboss/spec/javax/transaction/jboss-transaction-api_1.2_spec/1.1.1.Final/jboss-transaction-api_1.2_spec-1.1.1.Final.jar:/home/salvio/.m2/repository/org/jboss/jandex/2.4.2.Final/jandex-2.4.2.Final.jar:/home/salvio/.m2/repository/com/fasterxml/classmate/1.5.1/classmate-1.5.1.jar:/home/salvio/.m2/repository/javax/activation/javax.activation-api/1.2.0/javax.activation-api-1.2.0.jar:/home/salvio/.m2/repository/org/hibernate/common/hibernate-commons-annotations/5.1.2.Final/hibernate-commons-annotations-5.1.2.Final.jar:/home/salvio/.m2/repository/javax/xml/bind/jaxb-api/2.3.1/jaxb-api-2.3.1.jar:/home/salvio/.m2/repository/org/glassfish/jaxb/jaxb-runtime/2.3.1/jaxb-runtime-2.3.1.jar:/home/salvio/.m2/repository/org/glassfish/jaxb/txw2/2.3.1/txw2-2.3.1.jar:/home/salvio/.m2/repository/com/sun/istack/istack-commons-runtime/3.0.7/istack-commons-runtime-3.0.7.jar:/home/salvio/.m2/repository/org/jvnet/staxex/stax-ex/1.8/stax-ex-1.8.jar:/home/salvio/.m2/repository/com/sun/xml/fastinfoset/FastInfoset/1.2.15/FastInfoset-1.2.15.jar:/home/salvio/.m2/repository/org/hibernate/hibernate-ehcache/5.6.15.Final/hibernate-ehcache-5.6.15.Final.jar:/home/salvio/.m2/repository/net/sf/ehcache/ehcache/2.10.6/ehcache-2.10.6.jar:/home/salvio/.m2/repository/net/sf/ehcache/ehcache-core/2.6.11/ehcache-core-2.6.11.jar:/home/salvio/.m2/repository/org/slf4j/slf4j-api/1.6.1/slf4j-api-1.6.1.jar:/home/salvio/.m2/repository/org/hibernate/hibernate-entitymanager/5.6.15.Final/hibernate-entitymanager-5.6.15.Final.jar:/home/salvio/.m2/repository/com/zaxxer/HikariCP/3.4.5/HikariCP-3.4.5.jar:/home/salvio/.m2/repository/org/hibernate/hibernate-hikaricp/5.6.15.Final/hibernate-hikaricp-5.6.15.Final.jar:/home/salvio/.m2/repository/br/org/coletivoJava/utilitarios/SBTarefaAgendada/1.0.0-RC-SNAPSHOT/SBTarefaAgendada-1.0.0-RC-SNAPSHOT.jar:/home/salvio/.m2/repository/org/quartz-scheduler/quartz/2.2.1/quartz-2.2.1.jar:/home/salvio/.m2/repository/c3p0/c3p0/0.9.1.1/c3p0-0.9.1.1.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
     <property name="user.home" value="/home/salvio"/>
@@ -29,7 +29,7 @@
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
-    <property name="surefire.real.class.path" value="/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire/surefirebooter-20250707132853877_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/target/surefire/surefirebooter-20250707165650752_3.jar"/>
     <property name="sun.boot.class.path" value="/usr/java/jdk1.8.0_202-amd64/jre/lib/resources.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/rt.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/sunrsasign.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/jsse.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/jce.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/charsets.jar:/usr/java/jdk1.8.0_202-amd64/jre/lib/jfr.jar:/usr/java/jdk1.8.0_202-amd64/jre/classes"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="1.8.0_202-b08"/>
@@ -58,7 +58,7 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="52.0"/>
   </properties>
-  <testcase name="teste" classname="br.com.casanovadigital.servicos.notificacao.testes.TesteConformidade" time="3.221">
+  <testcase name="teste" classname="br.com.casanovadigital.servicos.notificacao.testes.TesteConformidade" time="3.035">
     <system-out><![CDATA[nome clientecoletivoJava
 com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ArquivoConfiguracaoDistribuicao@59f99ea
 COnfigurando Mapa de Ações do sistema
@@ -114,7 +114,7 @@ Cliente: coletivoJava
 ************************************************************* 
 
 -Caminho do projeto:/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras
-2025-07-07 13:28:54,553 main WARN No Root logger was configured, creating default ERROR-level Root logger with Console appender
+2025-07-07 16:56:51,409 main WARN No Root logger was configured, creating default ERROR-level Root logger with Console appender
 iniciando EntityManagerFactory com:
 hibernate.connection.driver_class->com.mysql.cj.jdbc.Driver
 hibernate.format_sql->true
@@ -136,98 +136,35 @@ javax.persistence.jdbc.password->senhaDev#123
 hibernate.hikari.maximumPoolSize->10
 hibernate.hikari.connectionTimeout->20000
 org.hibernate.cacheable->true
+class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito
+org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
 class com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente
 org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
-class com.super_bits.casanovadigital.servicos.messagens.model.agente.Pessoa
+class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp
 org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
 class com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato
 org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
 class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix
 org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
-class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp
-org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
-class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito
+class com.super_bits.casanovadigital.servicos.messagens.model.agente.Pessoa
 org.hibernate.metamodel.model.domain.internal.EntityTypeImpl
 Executando comando[/home/superBits/projetos/coletivoJava/source/erpColetivoJava/apagaBanco.sh]
 Database "SBErpServicoComunicacaoModel" dropped
 Retorno Apaga banco=Database "SBErpServicoComunicacaoModel" dropped
 
-Hibernate: 
-    
-    drop table if exists hibernate_sequence
-Hibernate: 
-    
-    drop table if exists MensagemTransito
-Hibernate: 
-    
-    drop table if exists Pessoa
-Hibernate: 
-    
-    create table hibernate_sequence (
-       next_val bigint
-    ) engine=InnoDB
-Hibernate: 
-    
-    insert into hibernate_sequence values ( 1 )
-Hibernate: 
-    
-    create table MensagemTransito (
-       tipoMensagem varchar(31) not null,
-        id bigint not null auto_increment,
-        daHoraExpirar datetime(6),
-        dataHoraCriacao datetime(6),
-        encaminhado bit not null,
-        entradaIdentificadorWhatsapp varchar(255),
-        lido bit not null,
-        nome varchar(255),
-        registrado bit not null,
-        salaCodigoMatrix varchar(255),
-        tipoOrigem varchar(255),
-        codigoEncaminhamentoWhatsapp varchar(255),
-        codigoReciboEntregaMatrix varchar(255),
-        codigoEncaminhamentoMatrix varchar(255),
-        codigoRegistroMensagemWhatsapp varchar(255),
-        corpoJsonRecebido varchar(255),
-        dataHoraRespostaDoAtendimento datetime(6),
-        primary key (id)
-    ) engine=InnoDB
-Hibernate: 
-    
-    create table Pessoa (
-       tipoPessoa varchar(31) not null,
-        id bigint not null,
-        avatarWatsap varchar(255),
-        dataHoraCriacao datetime(6),
-        email varchar(255),
-        matrixID varchar(255),
-        nome varchar(255),
-        telefone varchar(255),
-        waid varchar(255),
-        primary key (id)
-    ) engine=InnoDB
-Hibernate: 
-    /* dynamic native SQL query */ CREATE TABLE IF NOT EXISTS controle_id_especial (     nome_classe VARCHAR(100) NOT NULL PRIMARY KEY,     proximo_id BIGINT NOT NULL ) ENGINE=InnoDB;
-Executando comando[/home/superBits/projetos/coletivoJava/source/erpColetivoJava/compilaBanco.sh]
+Executando comando[/home/superBits/projetos/coletivoJava/source/erpColetivoJava/carregaBanco.sh]
 Retorno Carrega Banco
+Este projeto não tem script Final para ser executado
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/carregaBanco.sh -> não foi executado
 Configurando Campos de entidades
-Configurando campos de:Pessoa
-Configurando campos de:MensagemTransito
 Configurando campos de:Atendente
 Configurando campos de:MensagemTrOrigemWhatsapp
-Configurando campos de:Contato
 Configurando campos de:MensagemTrOrigemMatrix
-Campos de entidade configurados com sucesso[class com.super_bits.casanovadigital.servicos.messagens.model.agente.Pessoa, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito, class com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp, class com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix]
+Configurando campos de:Pessoa
+Configurando campos de:Contato
+Configurando campos de:MensagemTransito
+Campos de entidade configurados com sucesso[class com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix, class com.super_bits.casanovadigital.servicos.messagens.model.agente.Pessoa, class com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato, class com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito]
 INIT PADRAO
-O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/atendente/CPAtendente.java
--------------
-package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.atendente;
-
-import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
-
-@InfoReferenciaEntidade(tipoObjeto = Atendente.class)
-public enum CPAtendente {
-}
 O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemwhatsapp/CPMensagemTrOrigemWhatsapp.java
 -------------
 package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemwhatsapp;
@@ -243,33 +180,6 @@ public enum CPMensagemTrOrigemWhatsapp {
 	public static final String codigoencaminhamentomatrix = "codigoEncaminhamentoMatrix";
 	public static final String corpojsonrecebido = "corpoJsonRecebido";
 	public static final String datahorarespostadoatendimento = "dataHoraRespostaDoAtendimento";
-}
-O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contato/CPContato.java
--------------
-package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.contato;
-
-import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
-
-@InfoReferenciaEntidade(tipoObjeto = Contato.class)
-public enum CPContato {
-	_WAID;
-
-	public static final String waid = "waid";
-}
-O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.java
--------------
-package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemmatrix;
-
-import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
-
-@InfoReferenciaEntidade(tipoObjeto = MensagemTrOrigemMatrix.class)
-public enum CPMensagemTrOrigemMatrix {
-	_CODIGORECIBOENTREGAMATRIX, _CODIGOENCAMINHAMENTOWHATSAPP;
-
-	public static final String codigoreciboentregamatrix = "codigoReciboEntregaMatrix";
-	public static final String codigoencaminhamentowhatsapp = "codigoEncaminhamentoWhatsapp";
 }
 O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtransito/CPMensagemTransito.java
 -------------
@@ -313,6 +223,43 @@ public enum CPPessoa {
 	public static final String datahoracriacao = "dataHoraCriacao";
 	public static final String email = "email";
 	public static final String telefone = "telefone";
+}
+O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/atendente/CPAtendente.java
+-------------
+package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.atendente;
+
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
+
+@InfoReferenciaEntidade(tipoObjeto = Atendente.class)
+public enum CPAtendente {
+}
+O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.java
+-------------
+package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemmatrix;
+
+import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
+
+@InfoReferenciaEntidade(tipoObjeto = MensagemTrOrigemMatrix.class)
+public enum CPMensagemTrOrigemMatrix {
+	_CODIGORECIBOENTREGAMATRIX, _CODIGOENCAMINHAMENTOWHATSAPP;
+
+	public static final String codigoreciboentregamatrix = "codigoReciboEntregaMatrix";
+	public static final String codigoencaminhamentowhatsapp = "codigoEncaminhamentoWhatsapp";
+}
+O código abaixo será Salvo em :/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contato/CPContato.java
+-------------
+package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.contato;
+
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
+
+@InfoReferenciaEntidade(tipoObjeto = Contato.class)
+public enum CPContato {
+	_WAID;
+
+	public static final String waid = "waid";
 }
 ]]></system-out>
     <system-err><![CDATA[SLF4J: Failed to load class "org.slf4j.impl.StaticLoggerBinder".

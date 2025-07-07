@@ -23,10 +23,7 @@ import br.com.casanovadigital.servicos.chat.interpretadormsg.interfaces.ItfProce
 import br.com.casanovadigital.servicos.chat.interpretadormsg.padrao.whatsapp.ProcessadorEventoWhatsappPadrao;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.padrao.whatsapp.ProcessadorMsgWhatsappPadrao;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *

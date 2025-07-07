@@ -29,15 +29,15 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
  *
  * @author salvio
  */
-public abstract class ProcessadorWtzp {
+public abstract class ProcessadorWtzpMsgBaseAbstrato extends ProcessadorSocketWhatsapp {
 
-    protected boolean sucesso = false;
+    protected final MensagemWhatsapp mensagem;
 
-    public ProcessadorWtzp() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
-        sucesso = processar();
+    public ProcessadorWtzpMsgBaseAbstrato(MensagemWhatsapp pMensagem) throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
+        super();
+        mensagem = pMensagem;
+
     }
-
-    protected abstract boolean processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento;
 
     protected String encaminharMensagemParaMatrix(MensagemWhatsapp msg, ItfChatSalaBean pSala, ItfUsuarioChat pContato) throws ErroConexaoServicoChat {
 
