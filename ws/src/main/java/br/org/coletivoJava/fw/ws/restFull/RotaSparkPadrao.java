@@ -4,17 +4,12 @@
  */
 package br.org.coletivoJava.fw.ws.restFull;
 
-import br.com.casanovadigital.servicos.notificacao.legado.chat.ServicoNotificacaoChat;
-import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.gestaoMensagens.MotorControleDeMensagens;
-import br.com.casanovadigital.servicos.notificacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.notificacao.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
+import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import spark.Request;
 import spark.Response;
@@ -28,7 +23,6 @@ public abstract class RotaSparkPadrao implements Route {
 
     protected Request requisicao;
     protected Response resposta;
-    protected PacoteMemensagemRecebidoWhatsapp pacoteMensagem;
 
     @Override
     public Object handle(Request pRequest, Response pResposta) throws Exception {
@@ -37,14 +31,19 @@ public abstract class RotaSparkPadrao implements Route {
         return processar();
 
     }
+    private PacoteMemensagemRecebidoWhatsapp pacoteMensagem = null;
 
-    private void buildMensagem() {
+    private PacoteMemensagemRecebidoWhatsapp buildMensagem() {
 
         try {
-            pacoteMensagem = new PacoteMemensagemRecebidoWhatsapp(requisicao.body());
+            if (pacoteMensagem == null) {
+                pacoteMensagem = new PacoteMemensagemRecebidoWhatsapp(requisicao.body());
+            }
+
         } catch (ErroCriandoContato ex) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha lendo pacote ", ex);
         }
+        return pacoteMensagem;
     }
 
     private String processar() {
@@ -84,6 +83,9 @@ public abstract class RotaSparkPadrao implements Route {
     public abstract String executarRegraDeNegocio() throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro;
 
     public PacoteMemensagemRecebidoWhatsapp getPacoteMensagem() {
+        if (pacoteMensagem == null) {
+            buildMensagem();
+        }
         return pacoteMensagem;
     }
 

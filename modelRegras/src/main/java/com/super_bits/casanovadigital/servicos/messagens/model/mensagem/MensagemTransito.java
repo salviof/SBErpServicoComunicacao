@@ -4,8 +4,10 @@
  */
 package com.super_bits.casanovadigital.servicos.messagens.model.mensagem;
 
+import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeSimples;
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.ListenerEntidadePadrao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampoVerdadeiroOuFalso;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import java.util.Date;
@@ -32,33 +34,42 @@ import javax.persistence.TemporalType;
 @DiscriminatorColumn(name = "tipoMensagem")
 @EntityListeners(ListenerEntidadePadrao.class)
 @InfoObjetoSB(tags = "Mensagem em Transito", plural = "Mensagens em transito")
-public class MensagemTransito {
+public class MensagemTransito extends EntidadeSimples {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @InfoCampo(tipo = FabTipoAtributoObjeto.NOME)
     private String nome;
 
     @Column(nullable = false, updatable = false, insertable = false)
     private String tipoMensagem;
 
+    @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String entradaIdentificadorWhatsapp;
+    @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String salaCodigoMatrix;
 
     @Enumerated(EnumType.STRING)
     private FabTipoOrigem tipoOrigem;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    @InfoCampoVerdadeiroOuFalso()
+
     private boolean registrado = true;
     @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    @InfoCampoVerdadeiroOuFalso()
     private boolean encaminhado = false;
     @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    @InfoCampoVerdadeiroOuFalso()
     private boolean lido = false;
 
     @Temporal(TemporalType.TIMESTAMP)
     @InfoCampo(tipo = FabTipoAtributoObjeto.REG_DATAINSERCAO)
     private Date dataHoraCriacao;
     @Temporal(TemporalType.TIMESTAMP)
+    @InfoCampo(tipo = FabTipoAtributoObjeto.DATAHORA)
     private Date daHoraExpirar;
 
     public Long getId() {

@@ -5,11 +5,13 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = MensagemTransito.class)
 public enum CPMensagemTransito {
-	_ID, _NOME, _TIPOMENSAGEM, _TIPOORIGEM, _REGISTRADO, _ENCAMINHADO, _LIDO, _DATAHORACRIACAO, _DAHORAEXPIRAR;
+	_ID, _NOME, _TIPOMENSAGEM, _ENTRADAIDENTIFICADORWHATSAPP, _SALACODIGOMATRIX, _TIPOORIGEM, _REGISTRADO, _ENCAMINHADO, _LIDO, _DATAHORACRIACAO, _DAHORAEXPIRAR;
 
 	public static final String id = "id";
 	public static final String nome = "nome";
 	public static final String tipomensagem = "tipoMensagem";
+	public static final String entradaidentificadorwhatsapp = "entradaIdentificadorWhatsapp";
+	public static final String salacodigomatrix = "salaCodigoMatrix";
 	public static final String tipoorigem = "tipoOrigem";
 	public static final String registrado = "registrado";
 	public static final String encaminhado = "encaminhado";

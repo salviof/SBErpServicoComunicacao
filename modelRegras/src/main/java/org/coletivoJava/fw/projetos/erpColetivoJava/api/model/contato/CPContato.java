@@ -5,4 +5,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = Contato.class)
 public enum CPContato {
+	_WAID;
+
+	public static final String waid = "waid";
 }

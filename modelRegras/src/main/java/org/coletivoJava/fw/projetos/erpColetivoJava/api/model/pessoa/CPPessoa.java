@@ -5,12 +5,11 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = Pessoa.class)
 public enum CPPessoa {
-	_ID, _NOME, _AVATARWATSAP, _WTZPID, _MATRIXID, _TIPOPESSOA, _DATAHORACRIACAO, _EMAIL, _TELEFONE;
+	_ID, _NOME, _AVATARWATSAP, _MATRIXID, _TIPOPESSOA, _DATAHORACRIACAO, _EMAIL, _TELEFONE;
 
 	public static final String id = "id";
 	public static final String nome = "nome";
 	public static final String avatarwatsap = "avatarWatsap";
-	public static final String wtzpid = "wtzpID";
 	public static final String matrixid = "matrixID";
 	public static final String tipopessoa = "tipoPessoa";
 	public static final String datahoracriacao = "dataHoraCriacao";
