@@ -50,12 +50,12 @@ public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzp implements Itf
 
         tipoRetorno = FabTipoRetornoEncaminhamentoWhatsapp.ENCAMINHAMENTO;
 
-        ItfUsuarioChat usuarioChatContato;
+        ItfUsuarioChat usuarioMAtrixContato;
         try {
             //String jsonUrlAvatar = FabApiRestIntWhatsappPerfil.PERFIL_DADOS_BASICOS.getAcao(mensagem.getContatoOrigem().getWa_id()).getResposta().getRespostaTexto();
             //AplicacaoWsChat.SERVICO_MATRIX.us
             //AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorMatrixByRegistroWhatsapp();
-            usuarioChatContato = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(mensagem.getNome(), mensagem.getTelefone());
+            usuarioMAtrixContato = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(mensagem.getNome(), mensagem.getTelefone());
         } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat ex) {
             throw new ErroFalhaEncaminhando("Falha obtendo usuário correspentente ao contato no sistema Matrix" + ex.getMessage());
         }
@@ -65,7 +65,7 @@ public class ProcessadorMsgWhatsappPadrao extends ProcessadorWtzp implements Itf
             codigoSalaMatrixEncaminhamento = sala.getCodigoChat();
             try {
 
-                reciboEncaminhamentoMatrix = encaminharMensagemParaMatrix(mensagem, sala, usuarioChatContato);
+                reciboEncaminhamentoMatrix = encaminharMensagemParaMatrix(mensagem, sala, usuarioMAtrixContato);
 
             } catch (ErroConexaoServicoChat ex) {
                 throw new ErroFalhaEncaminhando("Houve falha de conxeão com o serviço Matrix");

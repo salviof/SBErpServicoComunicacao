@@ -37,48 +37,67 @@ public class RepositorioComunicacaoChat {
                 .addcondicaoCampoIgualA(CPMensagemTrOrigemMatrix.codigoencaminhamentowhatsapp, pCodigoMensagemMAtrix).getPrimeiroRegistro();
     }
 
-    public Contato getContatoByWhatsapID(String waID) {
-        Contato contatos = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + waID + "'", Contato.class);
-        //        new ConsultaDinamicaDeEntidade(Contato.class)
-        //      .addcondicaoCampoIgualA(CPContato.waid, waID).gerarResultados();
-
-        if (contatos == null) {
-            String jsonUrlAvatar = FabApiRestIntWhatsappPerfil.PERFIL_DADOS_BASICOS.getAcao(waID).getResposta().getRespostaTexto();
-            Contato novoContato = new Contato();
-            //O Whatsapp NÃO FORNECE AINDA os dados do contato 
-            //        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappPerfil.PERFIL_DADOS_BASICOS.getAcao(waID).getResposta();
-            //      if (!resposta.isSucesso()) {
-            //            throw new UnsupportedOperationException("Falha obtendo dados do contato acessando a api do facebook" + resposta.getRespostaTexto());
-            //        }
-            //        JsonObject dadosJson = resposta.getRespostaComoObjetoJson();
-
-            return UtilSBPersistencia.mergeRegistro(novoContato);
-        }
-        return contatos;
+    public enum TIPO_ACESSO_REPOSITORIO {
+        LEITURA, ATUALIZACAO
     }
 
-    public Contato registrarDadosDoContato(ContatoWhatsapp pContato) {
+    /**
+     *
+     * Retorna os dados do contato atualizados. Contato
+     *
+     * @param pTipoAcessos (tipo de acesso q pode ser LEITURA OU ATUALIZAÇÃO
+     * @param pContatoRegistro (Obrigatório para atualização)
+     * @param wapId (Obrigatŕio para leitura)
+     * @return
+     */
+    public synchronized Contato operacoesDeRepositorio(TIPO_ACESSO_REPOSITORIO pTipoAcessos, ContatoWhatsapp pContatoRegistro, String wapId) {
+        switch (pTipoAcessos) {
+
+            case LEITURA:
+                if (pContatoRegistro != null || wapId == null) {
+                    throw new UnsupportedOperationException("Parametros inválidos para leitura");
+                }
+                Optional<Contato> pesquisaContato = ULTIMOS_CONTATOS.stream().filter(ct -> ct.getWaid().equals(wapId)).findFirst();
+                if (pesquisaContato.isPresent()) {
+                    return pesquisaContato.get();
+                }
+                Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + wapId + "'", Contato.class);
+                if (contato != null) {
+                    return contato;
+                }
+                return null;
+
+            case ATUALIZACAO:
+                if (pContatoRegistro == null || wapId != null) {
+                    throw new UnsupportedOperationException("Parametros inválidos para atualização");
+                }
+                return registrarDadosDoContato(pContatoRegistro);
+
+            default:
+                throw new AssertionError();
+        }
+    }
+
+    private synchronized Contato registrarDadosDoContato(ContatoWhatsapp pContato) {
         Optional<Contato> pesquisaContato = ULTIMOS_CONTATOS.stream().filter(ct -> ct.getWaid().equals(pContato.getWa_id())).findFirst();
-        Contato contatos = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "'", Contato.class);
-        if (contatos == null) {
-            Contato contato = new Contato();
+        if (pesquisaContato.isPresent()) {
+            return registraUltimoContato(pesquisaContato.get());
+        }
+        Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "'", Contato.class);
+        if (contato == null) {
+            contato = new Contato();
             contato.setNome(pContato.getNome());
             contato.setWaid(pContato.getWa_id());
             contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
-            return UtilSBPersistencia.mergeRegistro(contato);
+            return registraUltimoContato(UtilSBPersistencia.mergeRegistro(contato));
+        } else {
+            return registraUltimoContato(contato);
         }
-        return contatos;
     }
 
-    private Contato getUltimosContatos(String pWaID) {
-        Optional<Contato> pesquisaContato = ULTIMOS_CONTATOS.stream().filter(ct -> ct.getWaid().equals(pWaID)).findFirst();
-        if (pesquisaContato.isPresent()) {
-            return pesquisaContato.get();
-        }
-        return null;
-    }
-
-    public static void registraUltimoContato(Contato novoContato) {
+    //ATENÇÃO NUNCA CHAMAR ESSE METODO FORA DO registrarDadosDoContato, POIS PODE COMPROMETER A INCOMPATIBLIDIDADE DE CHAMADAS ASSINCRONAS DO ArrayList
+    //Bloquear o chamado via stacktrace é CARO, e unificar o código deixa muito complexo.
+    private synchronized static Contato registraUltimoContato(Contato novoContato) {
         // Verifica se o contato já existe na lista (comparando por id ou outro campo identificador)
         int indexExistente = -1;
         for (int i = 0; i < ULTIMOS_CONTATOS.size(); i++) {
@@ -100,6 +119,7 @@ public class RepositorioComunicacaoChat {
         if (ULTIMOS_CONTATOS.size() > 10) {
             ULTIMOS_CONTATOS.remove(ULTIMOS_CONTATOS.size() - 1);
         }
+        return novoContato;
     }
 
 }

@@ -3,11 +3,9 @@ package org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.flux
 import br.com.casanovadigital.servicos.chat.AplicacaoWsChat;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
 import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
+import br.com.casanovadigital.servicos.chat.logdeMensagens.RepositorioComunicacaoChat;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.cucumber.fluxomensagemorigemwhatsapp.EtapasFluxoMensagemOrigemWhatsapp;
 import cucumber.api.java.pt.Dado;
-import java.lang.UnsupportedOperationException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp.FluxoMensagemOrigemWhatsapp;
 import org.junit.Assert;
 
@@ -20,7 +18,7 @@ public class A_Dado_que_o_usuario_Contato_esta_conectado_no_WhatsApp {
             System.out.println("Contato");
             System.out.println("Nome" + pacote.getMensagens().get(0).getContatoOrigem().getNome());
             System.out.println("WaID" + pacote.getMensagens().get(0).getContatoOrigem().getWa_id());
-            AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContatoByWhatsapID(pacote.getMensagens().get(0).getContatoOrigem().getWa_id());
+
         } catch (ErroCriandoContato ex) {
             Assert.fail("Pacote inde wahtsapp incompativel");
         }

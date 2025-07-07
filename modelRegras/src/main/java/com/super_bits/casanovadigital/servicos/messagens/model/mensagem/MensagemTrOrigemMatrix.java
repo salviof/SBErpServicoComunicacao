@@ -17,6 +17,10 @@ import javax.persistence.Entity;
 @InfoObjetoSB(tags = "Mensagem pelo Matrix", plural = "Mensagens disparadas pelo Matrix")
 public class MensagemTrOrigemMatrix extends MensagemTransito {
 
+    public MensagemTrOrigemMatrix() {
+        setTipoOrigem(FabTipoOrigem.MATRIX);
+    }
+
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String codigoReciboEntregaMatrix;
 

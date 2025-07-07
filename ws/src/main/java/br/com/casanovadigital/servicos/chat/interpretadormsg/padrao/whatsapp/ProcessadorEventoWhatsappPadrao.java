@@ -12,6 +12,7 @@ import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.Erro
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ContatoWhatsapp;
+import br.com.casanovadigital.servicos.chat.logdeMensagens.RepositorioComunicacaoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -38,7 +39,7 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzp implements 
     protected boolean processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
         try {
             final String CONTATO_WP_ID = eventoWhatsapp.getWaIdContatoOrigem();
-            Contato contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContatoByWhatsapID(CONTATO_WP_ID);
+            Contato contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.operacoesDeRepositorio(RepositorioComunicacaoChat.TIPO_ACESSO_REPOSITORIO.LEITURA, null, CONTATO_WP_ID);
             ItfUsuarioChat usuarioChatContato;
             try {
                 usuarioChatContato = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(contato.getNome(), contato.getTelefone());

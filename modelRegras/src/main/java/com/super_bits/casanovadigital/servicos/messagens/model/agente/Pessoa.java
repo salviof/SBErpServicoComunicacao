@@ -31,7 +31,7 @@ import javax.persistence.TemporalType;
 @Entity
 @InfoObjetoSB(tags = {"Pessoa"}, plural = "Usuários", icone = "fa fa-user")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tipoUsuario")
+@DiscriminatorColumn(name = "tipoPessoa")
 @EntityListeners(ListenerEntidadePadrao.class)
 public class Pessoa extends EntidadeNormal implements ItfBeanContatoSimples, Serializable {
 
