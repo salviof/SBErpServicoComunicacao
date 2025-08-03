@@ -4,8 +4,8 @@
  */
 package br.com.casanovadigital.servicos.chat;
 
-import br.com.casanovadigital.servicos.chat.InicioAplicacaoWsChat;
-import br.com.casanovadigital.servicos.chat.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.InicioAplicacaoWsChat;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.util.logging.Level;
 import java.util.logging.Logger;

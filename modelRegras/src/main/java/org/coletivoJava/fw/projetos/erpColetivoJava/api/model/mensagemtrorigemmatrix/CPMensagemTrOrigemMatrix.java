@@ -5,8 +5,9 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = MensagemTrOrigemMatrix.class)
 public enum CPMensagemTrOrigemMatrix {
-	_CODIGORECIBOENTREGAMATRIX, _CODIGOENCAMINHAMENTOWHATSAPP;
+	_JSONMENSAGEMORIGINAL, _ENCAMINHAMENTOS, _CODIGORECIBOMENSAGEMMATRIX;
 
-	public static final String codigoreciboentregamatrix = "codigoReciboEntregaMatrix";
-	public static final String codigoencaminhamentowhatsapp = "codigoEncaminhamentoWhatsapp";
+	public static final String jsonmensagemoriginal = "jsonMensagemOriginal";
+	public static final String encaminhamentos = "encaminhamentos";
+	public static final String codigorecibomensagemmatrix = "codigoReciboMensagemMatrix";
 }

@@ -160,4 +160,12 @@ public class MensagemTransito extends EntidadeSimples {
         this.salaCodigoMatrix = salaCodigoMatrix;
     }
 
+    public MensagemTrOrigemMatrix getComoMensagemEmTransitoOrigemMtx() {
+        return (MensagemTrOrigemMatrix) this;
+    }
+
+    public MensagemTrOrigemWhatsapp getComoMensagemEmTransitoOrigemWtzp() {
+        return (MensagemTrOrigemWhatsapp) this;
+    }
+
 }

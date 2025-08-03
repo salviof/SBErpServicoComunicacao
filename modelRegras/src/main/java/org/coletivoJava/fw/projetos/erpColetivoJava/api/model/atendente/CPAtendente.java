@@ -5,4 +5,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = Atendente.class)
 public enum CPAtendente {
+	_EMAIL;
+
+	public static final String email = "email";
 }

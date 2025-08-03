@@ -4,8 +4,8 @@
  */
 package br.com.casanovadigital.servicos.chat.contato;
 
-import br.com.casanovadigital.servicos.chat.config.ConfigCoreCNDNotificacaoContato;
-import br.com.casanovadigital.servicos.chat.legado.contato.ServicoNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,7 +26,7 @@ public class ServicoNotificacaoContatoTest {
     @Test
     public void testIniciarServico() {
         SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
-        ServicoNotificacaoContato.iniciarServico();
+
         // TODO review the generated test code and remove the default call to fail.
         while (true) {
             try {

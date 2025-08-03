@@ -5,7 +5,10 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = Contato.class)
 public enum CPContato {
-	_WAID;
+	_WAID, _JSONDADOSDOCONTEXTO, _DATAHORAULTIMAINTERACAO, _CONTEXTOS;
 
 	public static final String waid = "waid";
+	public static final String jsondadosdocontexto = "jsonDadosDoContexto";
+	public static final String datahoraultimainteracao = "dataHoraUltimaInteracao";
+	public static final String contextos = "contextos";
 }

@@ -4,26 +4,26 @@
  */
 package br.com.casanovadigital.servicos.chat.config;
 
-import br.com.casanovadigital.servicos.chat.AplicacaoWsChat;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.FabSistemasErp;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ContatoWhatsapp;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.entrada.EntradaNumeroWhatsapp;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
-import br.com.casanovadigital.servicos.chat.legado.contextoChat.whatsapp.ContextoWhatsapp;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
+
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import java.util.ArrayList;
 import java.util.List;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.interfaces.ItfCentralLogicasProcessamentoMsg;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.interfaces.ItfProcessadorEventoWhatsapp;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.interfaces.ItfProcessadorMensagemWhatsapp;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.padrao.whatsapp.ProcessadorEventoWhatsappPadrao;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.padrao.whatsapp.ProcessadorMsgWhatsappPadrao;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfCentralLogicasProcessamentoMsg;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.implmentacaopadrao.servicoNavegacao.trilhas.vindasDoWhatsapp.vendas.ServicoNavegacaoPadraoVendas;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO_GRUPO_CLIENTE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
+import br.org.coletivoJava.integracoes.whatsapp.config.FabConfigApiWhatsapp;
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 
 /**
  *
@@ -31,18 +31,11 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
  */
 public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProcessamentoMsg {
 
-    @Override
-    public Class<? extends ItfProcessadorMensagemWhatsapp> getClasseProcessadorMensagemContatoViaWhataspp(MensagemWhatsapp pMensagemWhatsapp) {
-        return ProcessadorMsgWhatsappPadrao.class;
-    }
+    public static final String CODIGO_ENTRADA_EXEMPLO_VENDAS = FabConfigApiWhatsapp.CODIGO_USUARIO.getValorParametroSistema();
+    public static final String CODIGO_ENTRADA_EXEMPLO_ATENDIMENTO = "SEMREGISTRO";
 
     @Override
-    public Class<? extends ItfProcessadorEventoWhatsapp> getClasseProcessadorEventoRecebidoPeloWhatsapp(EventoMensagemWtzap pPacote) {
-        return ProcessadorEventoWhatsappPadrao.class;
-    }
-
-    @Override
-    public ItfUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pContato) {
+    public ItfUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
         String caminhoArquivo = SBCore.getConfigModulo(FabConfigServicoComunicacao.class).getPropriedade(FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO);
 
         String email = FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema();
@@ -56,50 +49,47 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
 
     public DefinicaoLogicaProcessamentoChat() {
         System.out.println("up");
-    }
 
-    @Override
-    public ContextoWhatsapp gerarNovoCotextoByMensagem(EntradaNumeroWhatsapp pEntrada, MensagemWhatsapp pMensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ContextoWhatsapp gerarNovoCotexto(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pMensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ContextoWhatsapp gerarNovoContextoByStatusMensagemWtsp(EntradaNumeroWhatsapp pEntrada, EventoMensagemWtzap pMensagem) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public EntradaNumeroWhatsapp getEntradaWhatappBySala(ItfChatSalaBean psala) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Class getClasseRecepcaoByContatoWhatsapp(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pContato) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Class getClasseDadosContextoWhatsapp(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pContato) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public ItfChatSalaBean getSalaPadrao(EntradaNumeroWhatsapp pEntrada, ContatoWhatsapp pContato) throws ErroFalhaGerandoSalaAtendimento {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public List<ItfSistemaERP> getSistemas() {
         List<ItfSistemaERP> sistemas = new ArrayList<>();
-        for (FabSistemasErp sistema : FabSistemasErp.values()) {
-            sistemas.add(sistema.getRegistro());
-        }
+        //for (FabSistemasErp sistema : FabSistemasErp.values()) {
+        //    sistemas.add(sistema.getRegistro());
+        //}
         return sistemas;
+    }
+
+    @Override
+    public Class<? extends ItfServicoNavegacao> getClasseServicoNavegacao(EntradaNumeroWhatsapp pEntrada) {
+        if (pEntrada.getCodigo().equals("103007756220088")) {
+            return ServicoNavegacaoPadraoVendas.class;
+        } else {
+            return ServicoNavegacaoPadraoVendas.class;
+        }
+    }
+
+    @Override
+    public EntradaNumeroWhatsapp getEntradaBySala(ItfChatSalaBean pSala) throws ErroRegraDeNegocio {
+
+        FabTipoSalaMatrix tipoSala = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
+        switch (tipoSala) {
+
+            case WTZAP_ATENDIMENTO:
+                return AplicacaoWsChat.getEntradaByCodigoEntrada(CODIGO_ENTRADA_EXEMPLO_ATENDIMENTO);
+            case WTZAP_VENDAS:
+                return AplicacaoWsChat.getEntradaByCodigoEntrada(CODIGO_ENTRADA_EXEMPLO_VENDAS);
+
+            case WTZAP_ATENDIMENTO_GRUPO_CLIENTE:
+                return AplicacaoWsChat.getEntradaByCodigoEntrada(CODIGO_ENTRADA_EXEMPLO_VENDAS);
+
+            default:
+                System.out.println("SLUG NÃO ENCONTRADO PARA NOME DA SALA " + pSala.getApelido());
+                return null;
+        }
+
+        //return AplicacaoWsChat.getEntradaByCodigoEntrada("114354588403482");
     }
 
 }

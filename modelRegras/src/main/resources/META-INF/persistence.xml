@@ -8,7 +8,10 @@
         <class>com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito</class>
         <class>com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix</class>
         <class>com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp</class>
-
+        <class>com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato</class>
+        <class>com.super_bits.casanovadigital.servicos.messagens.model.agente.canais.CanalOminieChannel</class>
+        <class>com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp</class>
+        <class>br.org.coletivoJava.fw.erp.implementacao.erpintegracao.model.SistemaERPConfiavel</class>
 
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQL57Dialect"/>

@@ -4,7 +4,7 @@
  */
 package br.com.casanovadigital.servicos.chat.chat.controller.whatsapp.statusMensagem;
 
-import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import jakarta.json.JsonObject;
 import org.junit.Test;

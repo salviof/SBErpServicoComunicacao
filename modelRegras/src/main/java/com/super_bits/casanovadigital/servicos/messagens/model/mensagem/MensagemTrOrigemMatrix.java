@@ -1,13 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package com.super_bits.casanovadigital.servicos.messagens.model.mensagem;
 
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
+import java.util.List;
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -21,26 +20,39 @@ public class MensagemTrOrigemMatrix extends MensagemTransito {
         setTipoOrigem(FabTipoOrigem.MATRIX);
     }
 
+    @Column(length = 5000)
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    private String codigoReciboEntregaMatrix;
+    private String jsonMensagemOriginal;
+
+    @InfoCampo(tipo = FabTipoAtributoObjeto.OBJETO_DE_UMA_LISTA)
+    @OneToMany(mappedBy = "mensagem")
+    private List<EncaminhamentoMatrixParaWtzp> encaminhamentos;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    private String codigoEncaminhamentoWhatsapp;
+    private String codigoReciboMensagemMatrix;
 
-    public String getCodigoReciboEntregaMatrix() {
-        return codigoReciboEntregaMatrix;
+    public String getCodigoReciboMensagemMatrix() {
+        return codigoReciboMensagemMatrix;
     }
 
-    public void setCodigoReciboEntregaMatrix(String codigoReciboEntregaMatrix) {
-        this.codigoReciboEntregaMatrix = codigoReciboEntregaMatrix;
+    public void setCodigoReciboMensagemMatrix(String codigoReciboMensagemMatrix) {
+        this.codigoReciboMensagemMatrix = codigoReciboMensagemMatrix;
     }
 
-    public String getCodigoEncaminhamentoWhatsapp() {
-        return codigoEncaminhamentoWhatsapp;
+    public String getJsonMensagemOriginal() {
+        return jsonMensagemOriginal;
     }
 
-    public void setCodigoEncaminhamentoWhatsapp(String codigoEncaminhamentoWhatsapp) {
-        this.codigoEncaminhamentoWhatsapp = codigoEncaminhamentoWhatsapp;
+    public void setJsonMensagemOriginal(String jsonMensagemOriginal) {
+        this.jsonMensagemOriginal = jsonMensagemOriginal;
+    }
+
+    public List<EncaminhamentoMatrixParaWtzp> getEncaminhamentos() {
+        return encaminhamentos;
+    }
+
+    public void setEncaminhamentos(List<EncaminhamentoMatrixParaWtzp> encaminhamentos) {
+        this.encaminhamentos = encaminhamentos;
     }
 
 }

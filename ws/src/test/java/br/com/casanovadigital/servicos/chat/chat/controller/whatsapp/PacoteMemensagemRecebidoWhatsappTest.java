@@ -4,13 +4,13 @@
  */
 package br.com.casanovadigital.servicos.chat.chat.controller.whatsapp;
 
-import br.com.casanovadigital.servicos.chat.config.ConfigCoreCNDNotificacaoContato;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.contato.ErroCriandoContato;
-import br.com.casanovadigital.servicos.chat.legado.chat.controller.whatsapp.mensagem.MensagemWhatsapp;
-import br.com.casanovadigital.servicos.chat.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMedia;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -34,7 +34,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
     private final String recebmentoPDF = " {\"object\":\"whatsapp_business_account\",\"entry\":[{\"id\":\"114354588403482\",\"changes\":[{\"value\":{\"messaging_product\":\"whatsapp\",\"metadata\":{\"display_phone_number\":\"553121159755\",\"phone_number_id\":\"103007756220088\"},\"contacts\":[{\"profile\":{\"name\":\"PARALELA\"},\"wa_id\":\"5511942383774\"}],\"messages\":[{\"from\":\"5511942383774\",\"id\":\"wamid.HBgNNTUxMTk0MjM4Mzc3NBUCABIYFjNFQjAwNUM3NEFBMjFEMzhGQzI1NjIA\",\"timestamp\":\"1703172884\",\"type\":\"document\",\"document\":{\"filename\":\"Cota\\u00e7\\u00e3o-10.pdf\",\"mime_type\":\"application\\/pdf\",\"sha256\":\"G09MDSNpk6Rf7DMSwe6kbTZoJpXFn1OvbrsJrAnugT0=\",\"id\":\"1065743027903085\"}}]},\"field\":\"messages\"}]}]}";
 
     @Test
-    public void testeMensagemPDF() throws ErroCriandoContato {
+    public void testeMensagemPDF() throws ErroProcessandoJson {
         SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(recebmentoPDF);
         System.out.println(pacoteSimples);
@@ -49,7 +49,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
     }
 
     @Test
-    public void testeMensagemFoto3() throws ErroCriandoContato {
+    public void testeMensagemFoto3() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(recebimentoMesagemFoto3);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getMensagens().size());
@@ -63,7 +63,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
     }
 
     @Test
-    public void testeMensagemEntregue() throws ErroCriandoContato {
+    public void testeMensagemEntregue() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemEntregue);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());
@@ -74,7 +74,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         System.out.println(pacoteSimples.getStatusMensagem().get(0).getDescricaoErro());
     }
 
-    public void testeMensagemAudio() throws ErroCriandoContato {
+    public void testeMensagemAudio() throws ErroProcessandoJson {
         System.out.println(msgAudio);
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(msgAudio);
         System.out.println(pacoteSimples);
@@ -88,7 +88,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         }
     }
 
-    public void testeMensagemMedia2() throws ErroCriandoContato {
+    public void testeMensagemMedia2() throws ErroProcessandoJson {
 
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(msgFoto2);
         System.out.println(pacoteSimples);
@@ -96,7 +96,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         System.out.println(pacoteSimples.getMensagens().get(0).getMensagem());
     }
 
-    public void testeMensagemMediaFoto() throws ErroCriandoContato {
+    public void testeMensagemMediaFoto() throws ErroProcessandoJson {
 
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(mensagemMediaFoto);
         System.out.println(pacoteSimples);
@@ -104,14 +104,14 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         System.out.println(pacoteSimples.getMensagens().get(0).getMensagem());
     }
 
-    public void testeMensagemSimples() throws ErroCriandoContato {
+    public void testeMensagemSimples() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(mensagemSimples);
         System.out.println(pacoteSimples);
         assertEquals("nenhuma mensagem encontrada", 1, pacoteSimples.getMensagens().size());
         System.out.println(pacoteSimples.getMensagens().get(0).getMensagem());
     }
 
-    public void testeImagem() throws ErroCriandoContato {
+    public void testeImagem() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(msgFoto3);
         System.out.println(pacoteSimples);
         assertEquals("nenhuma mensagem encontrada", 1, pacoteSimples.getMensagens().size());
@@ -127,7 +127,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         System.out.println(pacoteSimples.getMensagens().get(0).getMensagem());
     }
 
-    public void testeMensagemFalha24HorasSemContato() throws ErroCriandoContato {
+    public void testeMensagemFalha24HorasSemContato() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemNAOLida);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());
@@ -137,7 +137,7 @@ public class PacoteMemensagemRecebidoWhatsappTest {
         System.out.println(pacoteSimples.getStatusMensagem().get(0).getDescricaoErro());
     }
 
-    public void testeMensagemLida() throws ErroCriandoContato {
+    public void testeMensagemLida() throws ErroProcessandoJson {
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(retornoMensagemLida);
         System.out.println(pacoteSimples);
         assertEquals("nenhum status encontrada", 1, pacoteSimples.getStatusMensagem().size());

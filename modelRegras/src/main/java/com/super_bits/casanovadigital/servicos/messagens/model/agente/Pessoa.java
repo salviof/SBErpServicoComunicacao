@@ -44,6 +44,7 @@ public class Pessoa extends EntidadeNormal implements ItfBeanContatoSimples, Ser
     private String avatarWatsap;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
+    @Column(nullable = false)
     private String matrixID;
 
     @Column(nullable = false, updatable = false, insertable = false)
@@ -123,6 +124,22 @@ public class Pessoa extends EntidadeNormal implements ItfBeanContatoSimples, Ser
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public boolean isAtendimento() {
+        return (this instanceof Atendente);
+    }
+
+    public boolean isContato() {
+        return (this instanceof Contato);
+    }
+
+    public Contato getComoContato() {
+        return (Contato) this;
+    }
+
+    public Atendente getComoAtendente() {
+        return (Atendente) this;
     }
 
 }
