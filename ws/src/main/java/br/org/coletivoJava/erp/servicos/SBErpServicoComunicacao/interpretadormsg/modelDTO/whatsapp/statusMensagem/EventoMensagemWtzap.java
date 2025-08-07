@@ -23,7 +23,7 @@ public class EventoMensagemWtzap {
     private Date dataHora;
     private int codigoErro;
     private EntradaNumeroWhatsapp entrada;
-    private String waIdContatoOrigem;
+    private String waIdContatoDestinatario;
 
     public FabTipoStatusMensagemWhtzap getTipoStatus() {
         return tipoStatus;
@@ -51,7 +51,7 @@ public class EventoMensagemWtzap {
 
             case FALHA_ENTREGA:
                 if (codigoErro == 131047) {
-                    descricaoErro = "A mensagem não foi enviada porque já se passaram mais de 24 horas desde a última resposta do cliente a este número.";
+                    descricaoErro = "A mensagem não foi enviada porque já se passaram mais de 24 horas desde a última resposta do cliente a este número, envie uma mensagem de marketing";
                 }
                 break;
             default:
@@ -92,12 +92,12 @@ public class EventoMensagemWtzap {
         this.entrada = entrada;
     }
 
-    public String getWaIdContatoOrigem() {
-        return waIdContatoOrigem;
+    public String getWaIdContatoDestinatario() {
+        return waIdContatoDestinatario;
     }
 
-    public void setWaIdContatoOrigem(String waIdContatoOrigem) {
-        this.waIdContatoOrigem = waIdContatoOrigem;
+    public void setWaIdContatoDestinatario(String waIdContatoDestinatario) {
+        this.waIdContatoDestinatario = waIdContatoDestinatario;
     }
 
 }

@@ -12,11 +12,6 @@ import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpret
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.FabTipoMensagemWhatsapp.TEXTO_SIMPLES;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.FabTipoMensagemWhatsapp.VIDEO;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
-import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.FabTipoStatusMensagemWhtzap.DESCONHECIDO;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -32,7 +27,7 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
  */
 public abstract class ProcessadorSocketWhatsapp {
 
-    public ProcessadorSocketWhatsapp() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
+    public ProcessadorSocketWhatsapp() {
 
     }
 
@@ -66,8 +61,12 @@ public abstract class ProcessadorSocketWhatsapp {
                 case TEXTO_SIMPLES:
                     ItfUsuarioChat usuario = pContato;
                     codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, usuario, msg.getId(), conteudomsg);
-                    System.out.println("CodEvento envioMensagem:");
+                    System.out.println("CodEvento envioMensagem: " + msg.getId() + "[" + msg.getMensagem() + "] foi enviada na sala" + pSala.getApelido() + "  " + pSala.getNome());
                     System.out.println(codigoeventoMatrix);
+                    System.out.println("Membros");
+                    for (ItfUsuarioChat pUsuario : pSala.getUsuarios()) {
+                        System.out.println(pUsuario.getNome() + "->" + pUsuario.getCodigoUsuario());
+                    }
                     break;
 
                 case REACAO:

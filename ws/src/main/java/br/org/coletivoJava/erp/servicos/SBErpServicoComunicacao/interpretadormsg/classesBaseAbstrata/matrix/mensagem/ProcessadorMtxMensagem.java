@@ -15,12 +15,12 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
 
 /**
  *
@@ -29,12 +29,12 @@ import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
 public class ProcessadorMtxMensagem implements
         ItfProcessadorPacoteMatrixWhatsap {
 
-    private final RoomEvent evento;
+    private final ItfEventoMatix evento;
     private final MensagemTrOrigemMatrix mensagemTransito;
     private final ItfChatSalaBean sala;
     private final Contato contato;
 
-    public ProcessadorMtxMensagem(RoomEvent pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxMensagem(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
         evento = pEvento;
         mensagemTransito = pMensagem;
         sala = pSala;
@@ -55,27 +55,29 @@ public class ProcessadorMtxMensagem implements
             throw new ErroComDevolucaoMensagemUsuario("Evento " + evento.getEvent_id() + " não foi emitido por um usuário de atendimento", "Seu usuário não é um usuário de atendimento");
         }
 
-        MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
-        novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
-
         try {
 
             EntradaNumeroWhatsapp entrada;
             try {
-                entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala);
+                entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala.getApelido());
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
             }
+            MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
+            novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
+            String textomensagem = evento.getContent().getString("body");
+            novaMensagem.setCorpo(textomensagem);
+            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(evento, entrada, contato, novaMensagem);
 
-            String codigoEncaminhamento = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(evento, entrada, contato, novaMensagem);
-
-            if (codigoEncaminhamento != null) {
+            if (codReciboWhatsapp != null) {
 
                 EncaminhamentoMatrixParaWtzp encaminhamento = new EncaminhamentoMatrixParaWtzp();
                 encaminhamento.setMensagem(mensagemTransito);
                 encaminhamento.setReciboRegistrooWtzp(codReciboWhatsapp);
-                mensagemTransito.setCodigoReciboMensagemMatrix(evento.getEvent_id());
+                encaminhamento.setContato(contato);
 
+                mensagemTransito.setCodigoReciboMensagemMatrix(evento.getEvent_id());
+                mensagemTransito.getEncaminhamentos().add(encaminhamento);
             } else {
                 throw new ErroComDevolucaoMensagemUsuario("", "Falha registrando pedido de entrega de mensagem no servidor do Whatsapp");
             }

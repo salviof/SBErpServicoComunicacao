@@ -112,7 +112,7 @@
                 <executions>
                     <execution>
                         <configuration>
-                            <mainClass>br.com.casanovadigital.servicos.notificacao.InicioAplicacaoWScontatos</mainClass>
+                            <mainClass>br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.InicioAplicacaoWsChat</mainClass>
                             <onejarVersion>0.97</onejarVersion>
                             <attachToBuild>true</attachToBuild>
                         </configuration>

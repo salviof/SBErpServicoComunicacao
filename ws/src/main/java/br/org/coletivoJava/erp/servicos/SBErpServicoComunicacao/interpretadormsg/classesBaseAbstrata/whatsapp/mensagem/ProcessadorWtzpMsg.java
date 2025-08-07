@@ -49,7 +49,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
     public void processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento, ErroConexaoServicoChat {
         try {
             contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(mensagem.getContatoOrigem());
-            usuarioMAtrixContato = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(mensagem.getNome(), mensagem.getTelefone());
+            usuarioMAtrixContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(contato.getMatrixID());
             if (AplicacaoWsChat.SERVICO_MATRIX.isUmUsuarioAtendimento(usuarioMAtrixContato)) {
                 throw new ErroComDevolucaoMensagemUsuario("Usuário de atendimento, entrou em contato para obter atendimento", "Seu número está cadastrado como número de atendimento, entre em contato ");
             }

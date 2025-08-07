@@ -39,7 +39,7 @@ public class UtilTestesSpark {
 
         try {
             when(req.getInputStream())
-                    .thenReturn(new SimpleServletInputStreamTestes(FluxoMensagemOrigemWhatsapp.MENSAGEM_whatsapp_SIMPLES_payload));
+                    .thenReturn(new SimpleServletInputStreamTestes(corpo));
         } catch (IOException ex) {
             throw new UnsupportedOperationException("corpo não enviado");
         }

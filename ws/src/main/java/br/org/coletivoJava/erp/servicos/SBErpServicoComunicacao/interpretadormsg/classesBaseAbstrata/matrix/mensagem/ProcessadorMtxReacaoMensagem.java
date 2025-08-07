@@ -14,14 +14,12 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
-import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
-import org.json.JSONObject;
 
 /**
  *
@@ -30,12 +28,12 @@ import org.json.JSONObject;
 public class ProcessadorMtxReacaoMensagem implements
         ItfProcessadorPacoteMatrixWhatsap {
 
-    private final RoomEvent evento;
+    private final ItfEventoMatix evento;
     private final MensagemTrOrigemWhatsapp mensagemTransito;
     private final ItfChatSalaBean sala;
     private final Contato contato;
 
-    public ProcessadorMtxReacaoMensagem(RoomEvent pEvento, ItfChatSalaBean pSala, MensagemTrOrigemWhatsapp pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxReacaoMensagem(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemWhatsapp pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
         evento = pEvento;
         mensagemTransito = pMensagem;
         sala = pSala;
@@ -47,7 +45,7 @@ public class ProcessadorMtxReacaoMensagem implements
 
         EntradaNumeroWhatsapp entrada;
         try {
-            entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala);
+            entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala.getApelido());
         } catch (ErroRegraDeNegocio ex) {
             throw new ErroComDevolucaoMensagemUsuario("Falha enviando reação para whatasapp " + ex.getMessage(), "Falha enviando reação, canal de whatsapp não iedentificado pela sala " + sala.getNome());
         }

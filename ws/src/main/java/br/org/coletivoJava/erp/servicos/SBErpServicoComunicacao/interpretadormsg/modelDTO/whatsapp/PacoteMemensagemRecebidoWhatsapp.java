@@ -41,6 +41,10 @@ public class PacoteMemensagemRecebidoWhatsapp {
 
     }
 
+    public JsonObject getDadosJson() {
+        return dados;
+    }
+
     public List<MensagemWhatsapp> getMensagens() {
         return mensagens;
     }

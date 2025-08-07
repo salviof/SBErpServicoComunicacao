@@ -33,11 +33,14 @@ public class EncaminhamentoMatrixParaWtzp extends EntidadeSimples {
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String reciboRegistrooWtzp;
 
-    @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    private String reciboEntregaWtzp;
+    @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    private boolean foiEnviadoPeloWhatsapp;
 
-    @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    private String reciboLeituraWtzp;
+    @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    private boolean foiEntregueNoCelularDoContato;
+
+    @InfoCampo(tipo = FabTipoAtributoObjeto.VERDADEIRO_FALSO)
+    private boolean foiLidoPeloConatoWtzp;
 
     @ManyToOne(targetEntity = Contato.class)
     private Contato contato;
@@ -69,28 +72,36 @@ public class EncaminhamentoMatrixParaWtzp extends EntidadeSimples {
         this.reciboRegistrooWtzp = reciboRegistrooWtzp;
     }
 
-    public String getReciboEntregaWtzp() {
-        return reciboEntregaWtzp;
-    }
-
-    public void setReciboEntregaWtzp(String reciboEntregaWtzp) {
-        this.reciboEntregaWtzp = reciboEntregaWtzp;
-    }
-
-    public String getReciboLeituraWtzp() {
-        return reciboLeituraWtzp;
-    }
-
-    public void setReciboLeituraWtzp(String reciboLeituraWtzp) {
-        this.reciboLeituraWtzp = reciboLeituraWtzp;
-    }
-
     public Contato getContato() {
         return contato;
     }
 
     public void setContato(Contato contato) {
         this.contato = contato;
+    }
+
+    public boolean isFoiEnviadoPeloWhatsapp() {
+        return foiEnviadoPeloWhatsapp;
+    }
+
+    public void setFoiEnviadoPeloWhatsapp(boolean foiEnviadoPeloWhatsapp) {
+        this.foiEnviadoPeloWhatsapp = foiEnviadoPeloWhatsapp;
+    }
+
+    public boolean isFoiEntregueNoCelularDoContato() {
+        return foiEntregueNoCelularDoContato;
+    }
+
+    public void setFoiEntregueNoCelularDoContato(boolean foiEntregueNoCelularDoContato) {
+        this.foiEntregueNoCelularDoContato = foiEntregueNoCelularDoContato;
+    }
+
+    public boolean isFoiLidoPeloConatoWtzp() {
+        return foiLidoPeloConatoWtzp;
+    }
+
+    public void setFoiLidoPeloConatoWtzp(boolean foiLidoPeloConatoWtzp) {
+        this.foiLidoPeloConatoWtzp = foiLidoPeloConatoWtzp;
     }
 
     public MensagemTrOrigemMatrix getMensagem() {

@@ -3,6 +3,8 @@ package org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.flux
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import com.super_bits.casanovadigital.servicos.messagens.model.configModel.ConfigPercistenciaServicoComunicacao;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.SBPersistencia;
@@ -11,9 +13,12 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import cucumber.api.CucumberOptions;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.junit.runner.RunWith;
 import testesFW.cucumber.CucumberSBTestes;
 import testesFW.cucumber.TesteIntegracaoFuncionalidadeCucumber;
+import testesFW.devOps.DevOpsCucumberPersistenciaMysql;
 
 /**
  *
@@ -46,9 +51,24 @@ public class FluxoMensagemOrigemWhatsapp extends TesteIntegracaoFuncionalidadeCu
     protected void configAmbienteDesevolvimento() {
         SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
         SBPersistencia.configuraJPA(new ConfigPercistenciaServicoComunicacao());
+        DevOpsCucumberPersistenciaMysql.commpilarResultadoRequisito(FluxoMensagemOrigemWhatsapp.class);
         List<MensagemTrOrigemWhatsapp> mensagens = UtilSBPersistencia.getListaTodos(MensagemTrOrigemWhatsapp.class);
         AplicacaoWsChat.iniciarAplicacao();
-        AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(pSala);
+
+        String nomeSala = "Casanova digital";
+        // System.out.println(salaRegistrada.getCodigoChat());
+        //  System.out.println(salaRegistrada.getNome());
+        //  System.out.println(salaRegistrada.getApelido());
+
+        ItfChatSalaBean salaCasanovaTEstes;
+        try {
+
+            salaCasanovaTEstes = AplicacaoWsChat.SERVICO_MATRIX.getSalaByNome(nomeSala);
+            AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaCasanovaTEstes);
+        } catch (ErroConexaoServicoChat ex) {
+            Logger.getLogger(FluxoMensagemOrigemWhatsapp.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
         System.out.println(mensagens);
     }
 

@@ -9,6 +9,7 @@ import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroParamentosInvalidos;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
+import spark.Request;
 import spark.Route;
 
 /**
@@ -17,11 +18,11 @@ import spark.Route;
  */
 public interface ItfRecepcaoPacoteServidor extends Route {
 
-    public String executarRegraDeNegocio() throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro;
+    public String executarRegraDeNegocio(String pCorpo) throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro;
 
     public RespostaHttpResumo getRepostaHttpResumo();
 
-    public void validarParamentros() throws ErroParamentosInvalidos;
+    public void validarParamentros(Request pRequisicao) throws ErroParamentosInvalidos;
 
     public void validarPermissao() throws ErroAcessoNegado;
 

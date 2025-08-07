@@ -1,8 +1,6 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces;
+
+import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
 
 /**
  *
@@ -10,4 +8,5 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
  */
 public interface ItfProcessadorEventoWhatsapp extends ItfProcessadorPacoteMatrixWhatsap {
 
+    public EncaminhamentoMatrixParaWtzp getMensagemRelacionada();
 }

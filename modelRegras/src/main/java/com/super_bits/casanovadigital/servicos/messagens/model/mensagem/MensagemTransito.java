@@ -6,6 +6,7 @@ package com.super_bits.casanovadigital.servicos.messagens.model.mensagem;
 
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeSimples;
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.ListenerEntidadePadrao;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampoVerdadeiroOuFalso;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
@@ -67,10 +68,10 @@ public class MensagemTransito extends EntidadeSimples {
 
     @Temporal(TemporalType.TIMESTAMP)
     @InfoCampo(tipo = FabTipoAtributoObjeto.REG_DATAINSERCAO)
-    private Date dataHoraCriacao;
+    private Date dataHoraCriacao = new Date();
     @Temporal(TemporalType.TIMESTAMP)
     @InfoCampo(tipo = FabTipoAtributoObjeto.DATAHORA)
-    private Date daHoraExpirar;
+    private Date daHoraExpirar = UtilSBCoreDataHora.incrementaDias(new Date(), 5);
 
     public Long getId() {
         return id;

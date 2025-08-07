@@ -5,11 +5,13 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaEncaminhamentoSala;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -31,7 +33,10 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
 
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(getEntrada(), getContextoDeSessao().getContato());
         try {
-            ItfChatSalaBean sala = gerarSalaAtendimento(getEntrada(), FabTipoSalaMatrix.WTZAP_VENDAS, getContextoDeSessao().getContato());
+
+            AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(getEntrada(), getContextoDeSessao().getContato());
+            ItfChatSalaBean sala = gerarSalaAtendimento(getEntrada(), FabTipoSalaMatrix.WTZAP_VENDAS,
+                    getContextoDeSessao().getContato(), usuarioAtendimento);
             RotaEncaminhamentoSala rota = new RotaEncaminhamentoSala(getContextoDeSessao().getContato(), sala,
                     Lists.newArrayList(),
                     AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getAtendente(usuarioAtendimento),
@@ -50,6 +55,11 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
     @Override
     public void AcaoTimeoutResposta(Contato pContato) {
 
+    }
+
+    @Override
+    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
+        return null;
     }
 
 }

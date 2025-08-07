@@ -4,6 +4,7 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem;
 
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import jakarta.json.JsonArray;
@@ -40,8 +41,7 @@ public enum FabTipoStatusMensagemWhtzap {
 
             EventoMensagemWtzap novoStatus = new EventoMensagemWtzap(tipo);
             novoStatus.setDataHora(dataHora);
-            novoStatus.setWaIdContatoOrigem(pMetadata.getString("display_phone_number"));
-
+            novoStatus.setWaIdContatoDestinatario(pJson.getString("recipient_id"));
             novoStatus.setCodigoMensagem(pJson.getString("id"));
             novoStatus.setEntrada(pEntrada);
             if (pJson.containsKey("errors")) {

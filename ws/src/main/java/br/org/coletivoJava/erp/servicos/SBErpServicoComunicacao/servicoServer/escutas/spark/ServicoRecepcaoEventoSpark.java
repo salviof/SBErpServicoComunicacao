@@ -46,7 +46,7 @@ public class ServicoRecepcaoEventoSpark {
             }
             );
 
-            post("/recepcao/evento", new ApiWhatsappRecepMensagem());
+            post("/recepcao/notificacao", new ApiWhatsappRecepMensagem());
 
         });
 
@@ -64,10 +64,6 @@ public class ServicoRecepcaoEventoSpark {
 
         }
         );
-
-    }
-
-    public static void registrarNovoSerivico(String pPatch) {
 
     }
 

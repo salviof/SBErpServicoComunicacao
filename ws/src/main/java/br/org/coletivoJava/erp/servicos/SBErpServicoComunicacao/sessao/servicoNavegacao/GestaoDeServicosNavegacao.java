@@ -109,8 +109,14 @@ public class GestaoDeServicosNavegacao {
             trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, trilhaAtual.getContextoDeSessao(), trilhaAtual, pEntrada, pMensagem.getPayloadRespostaProgramada());
             try {
                 trilhaAtual.iniciarTrilha();
+                if (trilhaAtual.getRotaAtual() == null) {
+                    throw new ErroComDevolucaoMensagemUsuario("A rota precisa ser definida ao iniciar uma trilha, isso não aconteceu na trilha" + trilhaAtual.getClass().getSimpleName(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                }
+
             } catch (ErroConexaoServicoChat ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+            } catch (Throwable t) {
+                throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + t.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
             }
 
         }

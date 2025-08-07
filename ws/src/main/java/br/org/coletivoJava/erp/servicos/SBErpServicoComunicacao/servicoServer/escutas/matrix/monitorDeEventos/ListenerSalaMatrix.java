@@ -7,19 +7,24 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.matrix.mensagem.ProcessadorMtxReacaoMensagem;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.ErroMtxParalizacaoDeProcessamento;
+import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.EscutaSalaMatrixAbst;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix.ATUALIZACAO_MEMBROS;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix.DIGITANDO;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix.LEITURA;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix.MENSAGEM;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoPacoteDeAcaoMatrix.REACAO;
+import br.org.coletivoJava.fw.erp.implementacao.chat.sessaoMatrix.listeners.EscutaSalaMatrixAbst;
+import br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix;
+import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.ATUALIZACAO_MEMBROS;
+import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.DIGITANDO;
+import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.LEITURA;
+import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.MENSAGEM;
+import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.REACAO;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito;
@@ -51,18 +56,20 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     private MensagemTransito mensagemReferencia;
     private ItfUsuarioChat usuarioAtendimento;
     private String codigoAtendimento;
-    private FabTipoPacoteDeAcaoMatrix tipoEvento;
 
     @Override
-    public synchronized boolean isElegivel(RoomEvent pEvento, FabTipoPacoteDeAcaoMatrix pTipoEvento) {
+    public synchronized boolean isElegivel(ItfEventoMatix pEvento) {
+        if (!super.isElegivel(pEvento)) {
+            return false;
+        }
 
-        tipoEvento = pTipoEvento;
         try {
             codigoAtendimento = pEvento.getSender();
 
             if (codigoAtendimento == null) {
                 return false;
             }
+
             if (AplicacaoWsChat.SERVICO_MATRIX.isUmUsuarioContato(codigoAtendimento)) {
                 return false;
             }
@@ -70,16 +77,20 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
             if (codigoAtendimento.equals(AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin().getCodigoUsuario())) {
                 return false;
             }
-            switch (pTipoEvento) {
+            usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(codigoAtendimento);
+            switch (pEvento.getTipoEvento()) {
 
                 case MENSAGEM:
 
+                    break;
                 case REACAO:
                     usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
-                    String idMensagem = pEvento.getContent().getJSONObject("m.relates_to").getString("event_id");
-                    mensagemReferencia = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorWhatsappByRegistroMatrix(idMensagem);
-                    if (mensagemReferencia == null) {
-                        return false;
+                    if (pEvento.getContent().has("m.relates_to")) {
+                        String idMensagem = pEvento.getContent().getJSONObject("m.relates_to").getString("event_id");
+                        mensagemReferencia = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorWhatsappByRegistroMatrix(idMensagem);
+                        if (mensagemReferencia == null) {
+                            return false;
+                        }
                     }
                     break;
                 case DIGITANDO:
@@ -94,7 +105,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                     }
                     break;
                 case LEITURA:
-                    System.out.println("oi");
+                    System.out.println("LeituraMatrix, whatsapp não suporta aviso de leitura" + pEvento.getEvent_id());
                     break;
                 case ATUALIZACAO_MEMBROS:
                     atualizarDtoSala();
@@ -121,16 +132,28 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public void inicioProcessamento(RoomEvent pEvento, FabTipoPacoteDeAcaoMatrix pTipoEvento) {
-        em = UtilSBPersistencia.getEntyManagerPadraoNovo();
+    public void inicioProcessamento(ItfEventoMatix pEvento) throws ErroMtxParalizacaoDeProcessamento {
+        em = null;
+        try {
+            em = UtilSBPersistencia.getEntyManagerPadraoNovo();
+
+        } catch (Throwable t) {
+            throw new ErroMtxParalizacaoDeProcessamento("Banco de dados está fora do ar" + t.getMessage());
+        }
+        if (em == null) {
+            throw new ErroMtxParalizacaoDeProcessamento("Banco de dados está fora do ar");
+        }
         getContatos();
-        switch (tipoEvento) {
+        switch (pEvento.getTipoEvento()) {
 
             case MENSAGEM:
                 mensagemReferencia = (MensagemTrOrigemMatrix) UtilSBPersistencia.gerarConsultaDeEntidade(MensagemTrOrigemMatrix.class, em)
                         .addcondicaoCampoIgualA(CPMensagemTrOrigemMatrix.codigorecibomensagemmatrix, pEvento.getEvent_id()).getPrimeiroRegistro();
-                if (tipoEvento.equals(FabTipoPacoteDeAcaoMatrix.MENSAGEM)) {
+                if (mensagemReferencia == null) {
+
                     mensagemReferencia = new MensagemTrOrigemMatrix();
+                    mensagemReferencia.setSalaCodigoMatrix(getSala().getCodigoChat());
+                    ((MensagemTrOrigemMatrix) mensagemReferencia).setJsonMensagemOriginal(pEvento.getRaw().toString(4));
                 }
 
                 break;
@@ -150,18 +173,20 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public void finalProcessamento(RoomEvent pEvento, FabTipoPacoteDeAcaoMatrix pTipoEvento) {
+    public void finalProcessamento(ItfEventoMatix pEvento) {
+
+        if (em.getTransaction().isActive()) {
+            UtilSBPersistencia.finzalizaTransacaoEFechaEM(em);
+        } else {
+            UtilSBPersistencia.fecharEM(em);
+        }
         codigoAtendimento = null;
         usuarioAtendimento = null;
         mensagemReferencia = null;
-        if (em.isJoinedToTransaction()) {
-            UtilSBPersistencia.finalizarTransacao(em);
-        }
-        UtilSBPersistencia.fecharEM(em);
     }
 
     @Override
-    public void eventoReacao(RoomEvent pEvento) {
+    public void eventoReacao(ItfEventoMatix pEvento) {
 
         for (Contato contato : getContatos()) {
             ProcessadorMtxReacaoMensagem processador = (ProcessadorMtxReacaoMensagem) FabTipoProcessamentoMatrix
@@ -191,11 +216,19 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public void eventoMensagem(RoomEvent pEvento) {
-        if (mensagemReferencia.getId() > 0) {
-            if (!mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos().stream().filter(ec -> ec.getReciboEntregaWtzp() == null).findFirst().isPresent()) {
-                throw new UnsupportedOperationException("Mensagem já foi encaminhada");
+    public void eventoMensagem(ItfEventoMatix pEvento) {
+        if (mensagemReferencia.getId() != null && mensagemReferencia.getId() > 0) {
+            if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos() != null) {
+                //Tem encamimnhamentos?
+                if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos().stream().filter(ec -> ec.isFoiEnviadoPeloWhatsapp()).findFirst().isPresent()) {
+                    System.out.println("mensagem já foi encamiinhada");
+                    return;
+                }
             }
+        }
+
+        if (contatos.isEmpty()) {
+
         }
 
         for (Contato contato : contatos) {
@@ -204,11 +237,11 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
             {
                 try {
                     processador.processar();
-                    UtilSBPersistencia.mergeRegistro(mensagemReferencia);
+                    mensagemReferencia = UtilSBPersistencia.mergeRegistro(mensagemReferencia, em);
                 } catch (ErroComDevolucaoMensagemUsuario devolucao) {
                     try {
                         // Devolve mensagem e ignora
-                        AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), devolucao.getMensagemRetorno());
+                        String codigoEnvioWhatsapp = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), devolucao.getMensagemRetorno());
                     } catch (ErroConexaoServicoChat ex) {
                         try {
                             AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(codigoAtendimento, "Falha enviando mensagem na sala " + getSala().getCodigoChat() + " ");
@@ -216,7 +249,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                             Logger.getLogger(ListenerSalaMatrix.class.getName()).log(Level.SEVERE, null, ex1);
                         }
                     }
-                    UtilSBPersistencia.mergeRegistro(mensagemReferencia);
+                    mensagemReferencia = UtilSBPersistencia.mergeRegistro(mensagemReferencia, em);
                 } catch (ErroFalhaEncaminhando
                         | ErroConexaoServicoChat
                         | ErroFalhaGerandoSalaAtendimento
@@ -233,7 +266,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public void eventoLeitura(RoomEvent pEvento) {
+    public void eventoLeitura(ItfEventoMatix pEvento) {
         ProcessadorMtxEventoLeituraMatrix processador = (ProcessadorMtxEventoLeituraMatrix) FabTipoProcessamentoMatrix.getProcessadorMatrix(FabTipoPacoteDeAcaoMatrix.LEITURA, pEvento, getSala(), null, null, usuarioAtendimento);
         try {
             processador.processar();
@@ -244,7 +277,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public void eventoDigitando(RoomEvent pEvento) {
+    public void eventoDigitando(ItfEventoMatix pEvento) {
         ItfProcessadorPacoteMatrixWhatsap processador = FabTipoProcessamentoMatrix.getProcessadorMatrix(FabTipoPacoteDeAcaoMatrix.DIGITANDO, pEvento, getSala(), null, null, usuarioAtendimento);
         try {
             processador.processar();
@@ -269,6 +302,16 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                     .filter(Objects::nonNull) // remove os nulls
                     .forEach(contatos::add);
         }
+        if (contatos.isEmpty()) {
+            ItfUsuarioChat contatoPrincipal = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getUsuarioWhatsappPricipalLeadBySala(getSala());
+            if (contatoPrincipal != null) {
+                try {
+                    contatos.add(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(contatoPrincipal));
+                } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                    Logger.getLogger(ListenerSalaMatrix.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        }
         return contatos;
     }
 
@@ -279,6 +322,15 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
         } catch (ErroConexaoServicoChat ex) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha atualizando dta de sala ", ex);
             return null;
+        }
+    }
+
+    @Override
+    public boolean isSalaComAutoMonitoramento(String pNomeSAla) {
+        try {
+            return AplicacaoWsChat.getCentralLogicaProcesasmento().isSalaAutomonitoravel(pNomeSAla);
+        } catch (ErroConexaoServicoChat ex) {
+            return false;
         }
     }
 

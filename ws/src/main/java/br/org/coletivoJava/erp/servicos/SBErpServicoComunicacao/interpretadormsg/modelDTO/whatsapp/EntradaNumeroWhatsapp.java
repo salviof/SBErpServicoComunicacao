@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Enum.java to edit this template
- */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp;
 
 /**
@@ -46,4 +42,10 @@ public class EntradaNumeroWhatsapp {
     public void setTelefoneDivulgacao(String telefoneDivulgacao) {
         this.telefoneDivulgacao = telefoneDivulgacao;
     }
+
+    @Override
+    public String toString() {
+        return getCodigo();
+    }
+
 }

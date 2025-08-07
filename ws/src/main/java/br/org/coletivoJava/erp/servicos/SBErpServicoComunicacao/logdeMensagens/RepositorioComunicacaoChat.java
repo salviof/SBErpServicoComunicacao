@@ -27,6 +27,24 @@ import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemwh
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.ContatoWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_VENDAS;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO_GRUPO_CLIENTE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
+import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
+import jakarta.json.JsonArray;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.EntityManager;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -56,13 +74,37 @@ public class RepositorioComunicacaoChat {
     }
 
     public MensagemTrOrigemWhatsapp getMensagemEnviadaPorWhatsappByRegistroMatrix(String pCodigoMensagemMatrix) {
-        return (MensagemTrOrigemWhatsapp) new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class)
-                .addcondicaoCampoIgualA(CPMensagemTrOrigemWhatsapp.codigoencaminhamentomatrix, pCodigoMensagemMatrix).getPrimeiroRegistro();
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            return (MensagemTrOrigemWhatsapp) new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class, em)
+                    .addcondicaoCampoIgualA(CPMensagemTrOrigemWhatsapp.codigoencaminhamentomatrix, pCodigoMensagemMatrix).getPrimeiroRegistro();
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+        }
     }
 
-    public MensagemTrOrigemMatrix getMensagemEnviadaPorMatrixByRegistroWhatsapp(String pCodigoRegistroWhatsapp) {
-        return (MensagemTrOrigemMatrix) new ConsultaDinamicaDeEntidade(EncaminhamentoMatrixParaWtzp.class)
-                .addcondicaoCampoIgualA(CPEncaminhamentoMatrixParaWtzp.reciboentregawtzp, pCodigoRegistroWhatsapp).getPrimeiroRegistro();
+    public MensagemTrOrigemWhatsapp getMensagemEnviadaPorWhatsappByRegistrWhatsapp(String pCodigoMensagemMatrix) {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            return (MensagemTrOrigemWhatsapp) new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class, em)
+                    .addcondicaoCampoIgualA(CPMensagemTrOrigemWhatsapp.codigoregistromensagemwhatsapp, pCodigoMensagemMatrix).getPrimeiroRegistro();
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+        }
+    }
+
+    public EncaminhamentoMatrixParaWtzp getMensagemEnviadaPorMatrixByRegistroWhatsapp(String pCodigoRegistroWhatsapp) {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            return (EncaminhamentoMatrixParaWtzp) new ConsultaDinamicaDeEntidade(EncaminhamentoMatrixParaWtzp.class, em)
+                    .addcondicaoCampoIgualA(CPEncaminhamentoMatrixParaWtzp.reciboregistroowtzp, pCodigoRegistroWhatsapp).getPrimeiroRegistro();
+
+        } catch (Throwable t) {
+            return null;
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+        }
+
     }
 
     public enum TIPO_ACESSO_REPOSITORIO {
@@ -174,6 +216,100 @@ public class RepositorioComunicacaoChat {
 
         UtilSBCoreListasObjeto.listaLimitadaDeObjetos(ULTIMOS_CONTATOS, novoContato, 20);
         return novoContato;
+    }
+
+    public ItfUsuarioChat getUsuarioWhatsappPricipalLeadBySala(ItfChatSalaBean pSala) {
+        try {
+            if (pSala == null) {
+                return null;
+            }
+            ItfRespostaWebServiceSimples resp = FabApiRestIntMatrixChatSalas.SALA_ALIASES.getAcao(pSala.getCodigoChat()).getResposta();
+            String telefone = null;
+            JsonArray apelidos = resp.getRespostaComoObjetoJson().getJsonArray("aliases");
+            Optional<String> apelidoOficial = apelidos.stream().map(ap -> ap.toString().replace("\"", ""))
+                    .filter(apelido -> FabTipoSalaMatrix.getTipoByAlias(apelido) != null).findFirst();
+
+            if (!apelidoOficial.isPresent()) {
+                return null;
+            }
+            FabTipoSalaMatrix tipoSala = FabTipoSalaMatrix.getTipoByAlias(apelidoOficial.get());
+
+            switch (tipoSala) {
+
+                case WTZAP_ATENDIMENTO:
+                    telefone = UtilSBCoreStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
+                    break;
+                case WTZAP_VENDAS:
+                    telefone = UtilSBCoreStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
+                    break;
+                case WTZAP_ATENDIMENTO_GRUPO_CLIENTE:
+                    break;
+                case MATRIX_CHAT_VENDAS:
+                    break;
+                case MATRIX_CHAT_ATENDIMENTO:
+                    break;
+                case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
+                    break;
+                case MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE:
+                    break;
+                default:
+                    throw new AssertionError();
+            }
+
+            ItfUsuarioChat usr;
+            try {
+                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(telefone)) {
+                    usr = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByTelefone(telefone);
+                    if (usr != null) {
+                        getContato(usr);
+                        return usr;
+                    }
+                }
+
+            } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo usuario de whatsapp do lead", ex);
+            }
+            for (ItfUsuarioChat usuario : pSala.getUsuarios()) {
+
+                if (usuario.getTelefone() != null) {
+                    if (usuario.getTelefone().length() >= 8) {
+                        String finalTelefone = usuario.getTelefone().substring(usuario.getTelefone().length() - 8, usuario.getTelefone().length());
+                        if (pSala.getApelido().contains(finalTelefone)) {
+                            try {
+                                getContato(usuario);
+                            } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                                Logger.getLogger(RepositorioComunicacaoChat.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            return usuario;
+                        }
+                    }
+                }
+
+                if (usuario.getEmail() != null) {
+                    if (!usuario.getEmail().contains("casanovadigital")) {
+                        try {
+                            getContato(usuario);
+                        } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                            Logger.getLogger(RepositorioComunicacaoChat.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        return usuario;
+                    }
+                }
+                if (usuario.getEmail() == null) {
+                    try {
+                        getContato(usuario);
+                    } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                        Logger.getLogger(RepositorioComunicacaoChat.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    return usuario;
+                }
+
+            }
+        } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha identificando usuario padrao da asala " + pSala.getApelido(), t);
+            return null;
+        }
+        return null;
     }
 
 }

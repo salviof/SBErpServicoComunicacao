@@ -52,9 +52,14 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
         usuarioAdmin.setApelido(UtilSBCoreStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
         // usuarioAdmin.setNomeLongo(UtilSBCoreStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
         usuarioAdmin.setGrupo(grupoUsuarioPadrao);
-        usuarioAdmin.setId(pSistema.getEmailusuarioAdmin().hashCode() + pSistema.getId());
+        usuarioAdmin.setId((long) pSistema.getEmailusuarioAdmin().hashCode());
         return usuarioAdmin;
 
+    }
+
+    @Override
+    public ItfUsuario getUsuarioByEmail(String pEmail) {
+        return super.getUsuarioByEmail(pEmail); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 
     @Override

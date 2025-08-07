@@ -8,6 +8,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -25,6 +26,7 @@ public class MensagemTrOrigemWhatsapp extends MensagemTransito {
     private String codigoEncaminhamentoMatrix;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
+    @Column(length = 8000)
     private String corpoJsonRecebido;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.DATAHORA)

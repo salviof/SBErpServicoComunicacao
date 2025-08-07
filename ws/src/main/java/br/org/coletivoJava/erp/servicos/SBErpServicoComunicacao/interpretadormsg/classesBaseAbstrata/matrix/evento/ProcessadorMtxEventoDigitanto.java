@@ -13,6 +13,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
@@ -26,10 +27,10 @@ public class ProcessadorMtxEventoDigitanto implements
         ItfProcessadorPacoteMatrixWhatsap {
 
     private ItfUsuarioChat atendente;
-    private RoomEvent evento;
+    private ItfEventoMatix evento;
     private ItfChatSalaBean sala;
 
-    public ProcessadorMtxEventoDigitanto(RoomEvent pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxEventoDigitanto(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
         atendente = pAtendente;
         sala = pSala;
         evento = pEvento;

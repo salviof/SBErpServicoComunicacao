@@ -5,13 +5,14 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = EncaminhamentoMatrixParaWtzp.class)
 public enum CPEncaminhamentoMatrixParaWtzp {
-	_ID, _NOME, _RECIBOREGISTROOWTZP, _RECIBOENTREGAWTZP, _RECIBOLEITURAWTZP, _CONTATO, _MENSAGEM;
+	_ID, _NOME, _RECIBOREGISTROOWTZP, _FOIENVIADOPELOWHATSAPP, _FOIENTREGUENOCELULARDOCONTATO, _FOILIDOPELOCONATOWTZP, _CONTATO, _MENSAGEM;
 
 	public static final String id = "id";
 	public static final String nome = "nome";
 	public static final String reciboregistroowtzp = "reciboRegistrooWtzp";
-	public static final String reciboentregawtzp = "reciboEntregaWtzp";
-	public static final String reciboleiturawtzp = "reciboLeituraWtzp";
+	public static final String foienviadopelowhatsapp = "foiEnviadoPeloWhatsapp";
+	public static final String foientreguenocelulardocontato = "foiEntregueNoCelularDoContato";
+	public static final String foilidopeloconatowtzp = "foiLidoPeloConatoWtzp";
 	public static final String contato = "contato";
 	public static final String mensagem = "mensagem";
 }

@@ -10,7 +10,6 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient.Ut
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroParamentosInvalidos;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.RotaSparkPadrao;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
@@ -21,44 +20,58 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.RotaPadraoWtzp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
+import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
-import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.Path;
+import spark.Request;
 
 /**
  *
  * @author salvio
  */
 @Path("/api/v1/whatsapp/recepcao/evento")
-public class ApiWhatsappRecepMensagem extends RotaSparkPadrao {
+public class ApiWhatsappRecepMensagem extends RotaPadraoWtzp {
 
     @Override
-    public void validarParamentros() throws ErroParamentosInvalidos {
+    public void validarParamentros(Request requisicao) throws ErroParamentosInvalidos {
         System.out.println(requisicao.body());
-        String telefone = requisicao.attribute("telefone");
+        //     String telefone = requisicao.attribute("telefone");
     }
 
     @Override
-    public String executarRegraDeNegocio() throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
+    public String executarRegraDeNegocio(String pCorpo) throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
+        try {
+            return processar(new PacoteMemensagemRecebidoWhatsapp(pCorpo));
+        } catch (ErroProcessandoJson ex) {
+            throw new ErroRegraDeNegocio("Json enviado inválido");
+        }
+    }
 
-        //   UtilAgenciaContatos.getContatoByTelefone(telefone);
+    public String processar(PacoteMemensagemRecebidoWhatsapp pPacote) throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro, ErroProcessandoJson {
+//   UtilAgenciaContatos.getContatoByTelefone(telefone);
         //resp.add("retorno", json);
-        PacoteMemensagemRecebidoWhatsapp pacoteMensagemWtzp = getPacoteMensagem();
+        PacoteMemensagemRecebidoWhatsapp pacoteMensagemWtzp = pPacote;
         /// ATENÇÃO COM leituras incoerentes, conflitos ou deadlocks dos registros de banco de dados
             /// POIS VÁRIAS THREADS PODEM ESTAR RODANDO AO MESMO TEMPO,
         /// A GESTÃO DE CONCORRENCIA DAS TRANSAÇÕES do JPA NÃO LIDARÁ BEM COM A MANIPULÇÃO
 
 
-        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
-        UtilSBPersistencia.iniciarTransacao(em);
+
 
         for (MensagemWhatsapp msgWtsap : pacoteMensagemWtzp.getMensagens()) {
-            MensagemTrOrigemWhatsapp logTransidoDeMensagem = new MensagemTrOrigemWhatsapp();
+            EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+            UtilSBPersistencia.iniciarTransacao(em);
+
+            MensagemTrOrigemWhatsapp logTransidoDeMensagem = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorWhatsappByRegistrWhatsapp(msgWtsap.getId());
+            if (logTransidoDeMensagem == null) {
+                logTransidoDeMensagem = new MensagemTrOrigemWhatsapp();
+            }
+            logTransidoDeMensagem.setCorpoJsonRecebido(UtilSBCoreJson.getTextoByJsonObjeect(pPacote.getDadosJson()));
             logTransidoDeMensagem.setRegistrado(true);
             logTransidoDeMensagem.setEncaminhado(false);
             logTransidoDeMensagem.setCodigoRegistroMensagemWhatsapp(msgWtsap.getId());
@@ -78,7 +91,7 @@ public class ApiWhatsappRecepMensagem extends RotaSparkPadrao {
             } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | AssertionError t) {
                 // TODO IMPLEMENTAR NOTIFICAÇÃO DE ERRO
 
-                UtilServicoAdministrativo.notificarAdmiministrador("ATENÇÃO! FALHA PROCESSANDO PACOTE " + t.getClass().getSimpleName() + ":" + t.getMessage() + "PAYLOAD:" + requisicao.body());
+                UtilServicoAdministrativo.notificarAdmiministrador("ATENÇÃO! FALHA PROCESSANDO PACOTE " + t.getClass().getSimpleName() + ":" + t.getMessage() + "PAYLOAD:" + pPacote.getDadosJson());
                 throw new ErroConexaoSistemaTerceiro("falha processando mensagem vinda do whatsapp " + t.getMessage());
             } finally {
                 logTransidoDeMensagem = UtilSBPersistencia.mergeRegistro(logTransidoDeMensagem);
@@ -90,11 +103,17 @@ public class ApiWhatsappRecepMensagem extends RotaSparkPadrao {
         }
 
         for (EventoMensagemWtzap evento : pacoteMensagemWtzp.getStatusMensagem()) {
+            ItfProcessadorEventoWhatsapp processadorEvento = new ProcessadorEventoWhatsappPadrao(evento);
             try {
-                ItfProcessadorEventoWhatsapp processadorEvento = new ProcessadorEventoWhatsappPadrao(evento);
+
                 processadorEvento.processar();
                 //processadorEvento.isSucesso();
-            } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | ErroConexaoServicoChat | ErroComDevolucaoMensagemUsuario ex) {
+            } catch (ErroComDevolucaoMensagemUsuario pErro) {
+                ItfRespostaWebServiceSimples resp = FabApiRestIntMatrixChatSalas.SALA_ENVIAR_MENSAGEM_TEXTO_SIMPLES
+                        .getAcao(processadorEvento.getMensagemRelacionada().getMensagem().getSalaCodigoMatrix(),
+                                processadorEvento.getMensagemRelacionada().getId().toString() + "fail", "O Sistema falhou ao entregar a mensagem com o erro: "
+                                + evento.getDescricaoErro()).getResposta();
+            } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | ErroConexaoServicoChat ex) {
                 UtilServicoAdministrativo.notificarAdmiministrador("Falha processando evento, o evento foi ignorado" + ex.getMessage());
                 continue;
             }

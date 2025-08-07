@@ -23,6 +23,8 @@ import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNego
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
 import jakarta.json.JsonObjectBuilder;
 import javax.ws.rs.Path;
+import spark.Request;
+import spark.Response;
 
 /**
  *
@@ -38,7 +40,7 @@ public class RecepcaoCodigoSolicitacao extends RotaSparkPadrao {
     }
 
     @Override
-    public void validarParamentros() throws ErroParamentosInvalidos {
+    public void validarParamentros(Request pREquisicao) throws ErroParamentosInvalidos {
         System.out.println("Recebendo token");
         if (usuarioPadraoAgencia == null) {
             try {
@@ -50,19 +52,24 @@ public class RecepcaoCodigoSolicitacao extends RotaSparkPadrao {
     }
 
     @Override
-    public String executarRegraDeNegocio() throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
-        System.out.println("Conexão endpoint teste contato " + requisicao.ip());
-        System.out.println(requisicao.queryString());
-        System.out.println(requisicao.pathInfo());
-        System.out.println(requisicao.requestMethod());
+    public String executarRegraDeNegocio(Request pRequest, Response pResposta) throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
+        System.out.println("Conexão endpoint teste contato " + pRequest.ip());
+        System.out.println(pRequest.queryString());
+        System.out.println(pRequest.pathInfo());
+        System.out.println(pRequest.requestMethod());
         SBCore.getServicoSessao().getSessaoAtual().setUsuario(usuarioPadraoAgencia);
         try {
-            UtilSBApiRestClient.servletReceberCodigoConcessao(requisicao.raw(), resposta.raw(), SBCore.getServicoSessao().getSessaoAtual());
+            UtilSBApiRestClient.servletReceberCodigoConcessao(pRequest.raw(), pResposta.raw(), SBCore.getServicoSessao().getSessaoAtual());
             JsonObjectBuilder respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
             return UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
         } catch (ErroRecebendoCodigoDeAcesso ex) {
             return UtilSBCoreJson.getTextoByJsonObjeect(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha(ex.getMessage()).build());
         }
+    }
+
+    @Override
+    public String executarRegraDeNegocio(String pCorpo) throws ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
+        throw new ErroRegraDeNegocio("A tratativa de execucao da regra de negocio por conteúdo do body não faz sentido nesta situação");
     }
 
 }

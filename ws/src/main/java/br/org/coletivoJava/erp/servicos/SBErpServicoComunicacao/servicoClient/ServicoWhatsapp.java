@@ -3,6 +3,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -16,11 +17,11 @@ import jakarta.json.JsonValue;
  */
 public class ServicoWhatsapp {
 
-    public String encaminharMensagem(RoomEvent pEvento, EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemSimplesEnvioWhatsapp pMensagem) throws ErroConexaoServicoChat {
+    public String encaminharMensagem(ItfEventoMatix pEvento, EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemSimplesEnvioWhatsapp pMensagem) throws ErroConexaoServicoChat {
         return enviarMensagemTexto(pEvento, pEntrada, pContato, pMensagem);
     }
 
-    public String enviarMensagemTexto(RoomEvent pEvento, EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemSimplesEnvioWhatsapp pMensagem) throws ErroConexaoServicoChat {
+    public String enviarMensagemTexto(ItfEventoMatix pEvento, EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemSimplesEnvioWhatsapp pMensagem) throws ErroConexaoServicoChat {
 
         ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_ENVIAR.getAcao(
                 pEntrada.getCodigo(),

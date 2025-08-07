@@ -12,6 +12,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
@@ -24,10 +25,10 @@ public class ProcessadorMtxEventoLeituraMatrix implements
         ItfProcessadorPacoteMatrixWhatsap {
 
     private ItfUsuarioChat atendente;
-    private RoomEvent evento;
+    private ItfEventoMatix evento;
     private ItfChatSalaBean sala;
 
-    public ProcessadorMtxEventoLeituraMatrix(RoomEvent pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxEventoLeituraMatrix(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
         atendente = pAtendente;
         sala = pSala;
         evento = pEvento;

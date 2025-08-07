@@ -4,6 +4,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.whataspp.ApiWhatsappRecepMensagem;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -12,6 +13,7 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.cucumber.fluxomensagemorigemwhatsapp.EtapasFluxoMensagemOrigemWhatsapp;
 import cucumber.api.java.pt.Quando;
 import org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp.FluxoMensagemOrigemWhatsapp;
+import org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp.etapas.testes.UtilTestesSpark;
 import org.junit.Assert;
 
 public class E_Quando_o_usuario_Atendimento_le_a_mensagem_Ola_tudo_bem_no_Matrix {
@@ -28,9 +30,14 @@ public class E_Quando_o_usuario_Atendimento_le_a_mensagem_Ola_tudo_bem_no_Matrix
             ItfChatSalaBean sala;
             ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilha(mensagem.getEntrada(), contato, mensagem);
             sala = trilha.getRotaAtual().getComoRotaEncaminhamentoMatrix().getSala();
+            String mensagemJson = FluxoMensagemOrigemWhatsapp.MENSAGEM_whatsapp_SIMPLES_payload;
+            boolean enviarPacote = false;
             while (true) {
                 AplicacaoWsChat.SERVICO_MATRIX.salaLerUltimoEvento(sala.getCodigoChat(), usuarioAtendimento);
 
+                if (enviarPacote) {
+                    UtilTestesSpark.criarRequisicao(ApiWhatsappRecepMensagem.class, mensagemJson);
+                }
             }
 
         } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat ex) {
