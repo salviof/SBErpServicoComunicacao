@@ -1,7 +1,7 @@
 package org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -49,7 +49,7 @@ public class FluxoMensagemOrigemWhatsapp extends TesteIntegracaoFuncionalidadeCu
 
     @Override
     protected void configAmbienteDesevolvimento() {
-        SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
+        SBCore.configurar(new ConfigCoreServicoComunicacao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
         SBPersistencia.configuraJPA(new ConfigPercistenciaServicoComunicacao());
         DevOpsCucumberPersistenciaMysql.commpilarResultadoRequisito(FluxoMensagemOrigemWhatsapp.class);
         List<MensagemTrOrigemWhatsapp> mensagens = UtilSBPersistencia.getListaTodos(MensagemTrOrigemWhatsapp.class);

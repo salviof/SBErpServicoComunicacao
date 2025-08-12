@@ -4,7 +4,7 @@
  */
 package br.com.casanovadigital.servicos.chat.chat.controller.whatsapp;
 
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
@@ -21,7 +21,7 @@ public class PacoteMensagemAudio {
 
     @Test
     public void testeMensagemMedia3() throws ErroProcessandoJson {
-        SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
+        SBCore.configurar(new ConfigCoreServicoComunicacao(), SBCore.ESTADO_APP.HOMOLOGACAO);
         PacoteMemensagemRecebidoWhatsapp pacoteSimples = new PacoteMemensagemRecebidoWhatsapp(msgAudio);
         System.out.println(pacoteSimples);
 

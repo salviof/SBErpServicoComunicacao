@@ -15,9 +15,9 @@ import com.super_bits.modulosSB.SBCore.modulos.comunicacao.CentralComunicacaoDes
  *
  * @author salvio
  */
-public class ConfigCoreCNDNotificacaoContato extends ConfiguradorCoreDeProjetoJarPersistenciaAbstrato {
+public class ConfigCoreServicoComunicacao extends ConfiguradorCoreDeProjetoJarPersistenciaAbstrato {
 
-    public ConfigCoreCNDNotificacaoContato() {
+    public ConfigCoreServicoComunicacao() {
         setIgnorarConfiguracaoAcoesDoSistema(true);
 
     }

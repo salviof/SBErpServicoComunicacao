@@ -5,7 +5,7 @@
 package br.com.casanovadigital.servicos.chat.contextoChat.matrix;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.ContatoWhatsapp;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
@@ -37,7 +37,7 @@ public class ContextoMatrixTest {
      */
     @Test
     public void testGetUsuarioChatRelacionado() throws ErroCriandoContato {
-        SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
+        SBCore.configurar(new ConfigCoreServicoComunicacao(), SBCore.ESTADO_APP.HOMOLOGACAO);
         PacoteMemensagemRecebidoWhatsapp pacote;
         try {
             pacote = new PacoteMemensagemRecebidoWhatsapp(pacoteMilene);

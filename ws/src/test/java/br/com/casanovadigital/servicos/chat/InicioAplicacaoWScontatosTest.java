@@ -5,7 +5,7 @@
 package br.com.casanovadigital.servicos.chat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.InicioAplicacaoWsChat;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,7 +29,7 @@ public class InicioAplicacaoWScontatosTest {
         String[] args = null;
         System.out.println("main");
 
-        SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
+        SBCore.configurar(new ConfigCoreServicoComunicacao(), SBCore.ESTADO_APP.HOMOLOGACAO);
 
         InicioAplicacaoWsChat.main(args);
         while (!SBCore.isEmModoProducao()) {

@@ -5,7 +5,7 @@
 package br.com.casanovadigital.servicos.chat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreCNDNotificacaoContato;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -28,7 +28,7 @@ public class TesteEspacos {
 
     @Test
     public void teste() {
-        SBCore.configurar(new ConfigCoreCNDNotificacaoContato(), SBCore.ESTADO_APP.HOMOLOGACAO);
+        SBCore.configurar(new ConfigCoreServicoComunicacao(), SBCore.ESTADO_APP.HOMOLOGACAO);
         ChatMatrixOrgimpl erpChatService = AplicacaoWsChat.SERVICO_MATRIX;
         FabTipoSalaMatrix tipoSala = FabTipoSalaMatrix.WTZAP_VENDAS;
 

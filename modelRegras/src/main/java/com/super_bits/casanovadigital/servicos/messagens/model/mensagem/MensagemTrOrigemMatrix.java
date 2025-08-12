@@ -14,7 +14,7 @@ import javax.persistence.OneToMany;
  * @author salvio
  */
 @Entity
-@InfoObjetoSB(tags = "Mensagem pelo Matrix", plural = "Mensagens disparadas pelo Matrix")
+@InfoObjetoSB(tags = "Mensagem pelo Matrix ", plural = "Mensagens disparadas pelo Matrix")
 public class MensagemTrOrigemMatrix extends MensagemTransito {
 
     public MensagemTrOrigemMatrix() {
