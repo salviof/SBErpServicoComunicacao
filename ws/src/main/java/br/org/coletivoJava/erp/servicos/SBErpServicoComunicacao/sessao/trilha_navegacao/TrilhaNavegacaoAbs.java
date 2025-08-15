@@ -75,7 +75,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return caminhoTrilha;
     }
 
-    protected ItfChatSalaBean gerarSalaAtendimento(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+    protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
         ItfUsuarioChat UsuarioContato;
         try {

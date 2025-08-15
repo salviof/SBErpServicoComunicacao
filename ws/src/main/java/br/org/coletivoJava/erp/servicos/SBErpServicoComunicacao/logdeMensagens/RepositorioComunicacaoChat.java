@@ -173,30 +173,34 @@ public class RepositorioComunicacaoChat {
     }
 
     private synchronized Contato registrarDadosDoContato(ContatoWhatsapp pContato) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            Optional<Contato> pesquisaContato = ULTIMOS_CONTATOS.stream()
+                    .filter(ct -> ct.getWaid().equals(pContato.getWa_id())).findFirst();
 
-        Optional<Contato> pesquisaContato = ULTIMOS_CONTATOS.stream()
-                .filter(ct -> ct.getWaid().equals(pContato.getWa_id())).findFirst();
-
-        if (pesquisaContato.isPresent()) {
-            return registraUltimoContato(pesquisaContato.get());
-        }
-        Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "'", Contato.class);
-        if (contato == null) {
-            contato = new Contato();
-            contato.setNome(pContato.getNome());
-            contato.setWaid(pContato.getWa_id());
-
-            ItfUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
-            contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
-            contato.setDataHoraUltimaInteracao(new Date());
-            contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
-            contato = UtilSBPersistencia.mergeRegistro(contato);
-            if (contato == null) {
-                throw new ErroConexaoServicoChat("Falha persistindo contato no banco de dados");
+            if (pesquisaContato.isPresent()) {
+                return registraUltimoContato(pesquisaContato.get());
             }
-            return registraUltimoContato(contato);
-        } else {
-            return registraUltimoContato(contato);
+            Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "'", Contato.class, em);
+            if (contato == null) {
+                contato = new Contato();
+                contato.setNome(pContato.getNome());
+                contato.setWaid(pContato.getWa_id());
+
+                ItfUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
+                contato.setDataHoraUltimaInteracao(new Date());
+                contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato = UtilSBPersistencia.mergeRegistro(contato, em);
+                if (contato == null) {
+                    throw new ErroConexaoServicoChat("Falha persistindo contato no banco de dados");
+                }
+                return registraUltimoContato(contato);
+            } else {
+                return registraUltimoContato(contato);
+            }
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
         }
     }
 
