@@ -24,7 +24,7 @@ public interface ItfTrilhaNavegacao {
      *
      * @param pContato
      */
-    public void iniciarTrilha() throws ErroConexaoServicoChat;
+    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
 
     public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
