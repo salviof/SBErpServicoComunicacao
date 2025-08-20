@@ -14,8 +14,19 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.CHAT_DINAMICO_DE_ENTIDADE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_VENDAS;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO_GRUPO_CLIENTE;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.SalaMatrxOrg;
+import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import java.util.Date;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
@@ -75,7 +86,39 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return caminhoTrilha;
     }
 
+    protected ItfChatSalaBean gerarSalaVinculadaEntidade(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, ItfBeanSimples pEntidade, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+
+        ItfUsuarioChat usuarioContatoMatrix;
+        try {
+            usuarioContatoMatrix = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pContato.getMatrixID());
+            ItfChatSalaBean salaIdeal = pTipoSala
+                    .getSalaMatrix(pEntidade, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(), Lists.newArrayList(pUsuarioAtendimento), Lists.newArrayList(usuarioContatoMatrix));
+
+            String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContatoMatrix, pTipoSala.getSlug());
+            ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
+            if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
+                AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class);
+            }
+            AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
+            return (ItfChatSalaBean) salaRelacionada;
+
+        } catch (ErroPreparandoObjeto ex) {
+            throw new ErroConexaoServicoChat("Falha defininido sala de atendimento matrix" + ex.getMessage());
+        }
+
+    }
+
     protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+
+        switch (pTipoSala) {
+            case CHAT_DINAMICO_DE_ENTIDADE:
+            case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
+            case MATRIX_CHAT_VENDAS:
+            case MATRIX_CHAT_ATENDIMENTO:
+            case MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE:
+
+                throw new ErroConexaoServicoChat("tipo de sala não é compatível com estes parametros, envie a entidade relacionada ao " + this.toString());
+        }
 
         ItfUsuarioChat UsuarioContato;
         try {

@@ -120,8 +120,8 @@ public class AplicacaoWsChat {
      * @return
      * @throws ErroProcessandoJson
      * @throws ErroRegraDeNegocio
-     * @throws ErroRecursoNaoEncontrado
-     * @throws ErroConexaoSistemaTerceiro
+     * @th rows ErroRecursoNaoEncontrado
+     * @thr ows ErroConexaoSistemaTerceiro
      */
     public static String injetarPacoteWhatsapp(String corpoWhatsapp) throws ErroProcessandoJson, ErroRegraDeNegocio, ErroRecursoNaoEncontrado, ErroConexaoSistemaTerceiro {
         if (SBCore.isEmModoProducao()) {
