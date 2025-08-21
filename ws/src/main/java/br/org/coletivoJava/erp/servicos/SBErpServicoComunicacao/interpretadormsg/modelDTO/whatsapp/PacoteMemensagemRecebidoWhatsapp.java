@@ -204,19 +204,29 @@ public class PacoteMemensagemRecebidoWhatsapp {
                                             mensagem.setMensagem("Uma mensagem do tipo " + tipoMensagem + " foi enviadada prara você, nós estamos trabalhando no processamento deste tipo de arquivo, solicite ao cliente o envio em outro formato");
                                             mensagens.add(mensagem);
                                             break;
+                                        case INTERATIVA:
 
-                                        case RESP_BOTAO:
-                                            JsonObject jsonBotaoResposta = joMensagem.getJsonObject("button");
-                                            mensagem.setMensagem(jsonBotaoResposta.getString("text"));
-                                            mensagem.setPayloadRespostaProgramada(jsonBotaoResposta.getString("payload"));
+                                            JsonObject interacao = joMensagem.getJsonObject("interactive");
+
+                                            if (interacao.getString("type").equals("button_reply")) {
+                                                JsonObject respostaBotao = interacao.getJsonObject("button_reply");
+                                                if (respostaBotao.containsKey("payload")) {
+                                                    mensagem.setPayloadRespostaProgramada(respostaBotao.getString("payload"));
+                                                } else if (respostaBotao.containsKey("id")) {
+                                                    mensagem.setPayloadRespostaProgramada(respostaBotao.getString("id"));
+                                                }
+                                            }
+                                            if (interacao.getString("type").equals("list_reply")) {
+                                                JsonObject respostaBotao = interacao.getJsonObject("list_reply");
+                                                if (respostaBotao.containsKey("payload")) {
+                                                    mensagem.setPayloadRespostaProgramada(respostaBotao.getString("payload"));
+                                                } else if (respostaBotao.containsKey("id")) {
+                                                    mensagem.setPayloadRespostaProgramada(respostaBotao.getString("id"));
+                                                }
+                                            }
                                             mensagens.add(mensagem);
                                             break;
-                                        case RESP_OPCAO_DE_LISTA:
-                                            JsonObject respostaListas = joMensagem.getJsonObject("interactive");
-                                            mensagem.setMensagem(respostaListas.getString("title"));
-                                            mensagem.setPayloadRespostaProgramada(respostaListas.getString("id"));
-                                            mensagens.add(mensagem);
-                                            break;
+
                                         default:
                                             throw new AssertionError();
                                     }

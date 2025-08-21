@@ -18,18 +18,14 @@ public enum FabTipoMensagemWhatsapp {
     DESCONHECIDO,
     EVENTO_ENTREGA,
     EVENTO_LIDO,
-    RESP_BOTAO,
-    RESP_OPCAO_DE_LISTA;
+    INTERATIVA;
 
     ;
 
     public static FabTipoMensagemWhatsapp getTipoMensagemByType(String pType) {
 
         switch (pType) {
-            case "button":
-                return RESP_BOTAO;
-            case "list_reply":
-                return RESP_OPCAO_DE_LISTA;
+
             case "audio":
                 return AUDIO;
             case "text":
@@ -42,6 +38,8 @@ public enum FabTipoMensagemWhatsapp {
                 return REACAO;
             case "document":
                 return DOCUMENTO;
+            case "interactive":
+                return INTERATIVA;
             default:
                 return DESCONHECIDO;
         }
@@ -56,8 +54,7 @@ public enum FabTipoMensagemWhatsapp {
             case VIDEO:
             case DOCUMENTO:
             case DESCONHECIDO:
-            case RESP_OPCAO_DE_LISTA:
-            case RESP_BOTAO:
+            case INTERATIVA:
                 return true;
             case EVENTO_ENTREGA:
             case EVENTO_LIDO:
@@ -77,8 +74,7 @@ public enum FabTipoMensagemWhatsapp {
             case VIDEO:
             case DOCUMENTO:
             case DESCONHECIDO:
-            case RESP_OPCAO_DE_LISTA:
-            case RESP_BOTAO:
+            case INTERATIVA:
                 return false;
             case EVENTO_ENTREGA:
 
@@ -99,8 +95,7 @@ public enum FabTipoMensagemWhatsapp {
                 return true;
 
             default:
-            case RESP_OPCAO_DE_LISTA:
-            case RESP_BOTAO:
+            case INTERATIVA:
             case TEXTO_SIMPLES:
                 return false;
         }

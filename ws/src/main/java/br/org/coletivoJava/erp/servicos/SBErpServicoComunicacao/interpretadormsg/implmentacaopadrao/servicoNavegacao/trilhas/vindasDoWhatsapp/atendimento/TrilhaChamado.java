@@ -25,7 +25,7 @@ public class TrilhaChamado extends TrilhaNavegacaoAbs implements ItfTrilhaNavega
 
     @Override
     public void iniciarTrilha() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+
     }
 
     @Override
