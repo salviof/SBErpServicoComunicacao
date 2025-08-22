@@ -12,6 +12,12 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
  */
 public interface ItfServicoNavegacao {
 
+    /**
+     *
+     * @param pContato
+     * @param pCaminho
+     * @return
+     */
     public Class<? extends ItfTrilhaNavegacao> getClasseTrilhaDeNavegacao(Contato pContato, String pCaminho);
 
 }

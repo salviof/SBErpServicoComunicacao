@@ -8,6 +8,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.logdeMensagens.RepositorioComunicacaoChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient.ServicoWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
@@ -17,6 +18,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNa
 import br.org.coletivoJava.fw.api.erp.chat.ERPChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroMtxParalizacaoDeProcessamento;
+import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
@@ -25,6 +27,8 @@ import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.SalaChatSessaoE
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
@@ -110,6 +114,28 @@ public class AplicacaoWsChat {
         } catch (ErroConexaoServicoChat ex) {
             Logger.getLogger(AplicacaoWsChat.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public static void encerrrarSessao(EntradaNumeroWhatsapp pCanalComunicacaoWtp, String pWpIDcontado) {
+        Contato ct;
+        try {
+            ct = REPOSITORIO_COMUNICACAO_CHAT.getContato(pWpIDcontado);
+        } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat ex) {
+            return;
+        }
+        if (ct == null) {
+            return;
+        }
+
+        ContextoContato ctxContato = REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(pCanalComunicacaoWtp, ct);
+        ctxContato.setTrilhaAtual(null);
+        REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(ctxContato);
+        try {
+            GESTAO_SERVICO_NAVEGACAO.removerRota(pCanalComunicacaoWtp, ct);
+        } catch (ErroComDevolucaoMensagemUsuario ex) {
+            Logger.getLogger(AplicacaoWsChat.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
 
     /**

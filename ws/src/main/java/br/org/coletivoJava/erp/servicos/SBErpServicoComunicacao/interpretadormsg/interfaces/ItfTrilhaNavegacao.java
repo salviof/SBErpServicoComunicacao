@@ -26,6 +26,15 @@ public interface ItfTrilhaNavegacao {
      */
     public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
 
+    /**
+     * TODO RETORNAR A CLASSE E NO NOVO CAMINHO VINCULADO A ESSA NOVA TRILHA OU
+     * RETORNA SÓ O NOVO CAMINHO E A RESPONSABILIDADE DE DEFINIR A CLASSE, FICA
+     * EXCLUSIVA DO SERVIÇO DE NAVEGAÇÃO
+     *
+     * @param p
+     * @return
+     * @throws ErroComDevolucaoMensagemUsuario
+     */
     public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
     public void AcaoTimeoutResposta(Contato pContato);
@@ -33,6 +42,8 @@ public interface ItfTrilhaNavegacao {
     public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario;
 
     public RotaMensagemContato getRotaAtual();
+
+    public String getCaminhoTrilha();
 
     public void finalizarSesaso();
 

@@ -20,8 +20,11 @@
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/canaltypebot/CPCanalTypebot.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contato/CPContato.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/CPContextoContato.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/ValorLogicoContextoContato.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/ValoresLogicosContextoContato.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/encaminhamentomatrixparawtzp/CPEncaminhamentoMatrixParaWtzp.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtransito/CPMensagemTransito.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemwhatsapp/CPMensagemTrOrigemWhatsapp.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/api/model/pessoa/CPPessoa.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/org/coletivoJava/fw/projetos/erpColetivoJava/implemetation/model/contextocontato/ValorLogicoContextoContatoNomeContexto.java

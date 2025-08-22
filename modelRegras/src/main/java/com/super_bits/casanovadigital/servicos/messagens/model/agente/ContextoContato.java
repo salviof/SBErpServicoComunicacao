@@ -7,14 +7,18 @@ package com.super_bits.casanovadigital.servicos.messagens.model.agente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.canais.CanalOminieChannel;
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeSimples;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampoValorLogico;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import java.util.Date;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 /**
  *
@@ -25,10 +29,15 @@ import javax.persistence.TemporalType;
 public class ContextoContato extends EntidadeSimples {
 
     @Id
-    @InfoCampo()
+    @InfoCampo(tipo = FabTipoAtributoObjeto.ID)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(targetEntity = Contato.class)
     private Contato contato;
+
+    @InfoCampo(tipo = FabTipoAtributoObjeto.NOME)
+
+    private String nomeContexto;
 
     @ManyToOne(targetEntity = CanalOminieChannel.class)
     private CanalOminieChannel canal;
@@ -120,6 +129,14 @@ public class ContextoContato extends EntidadeSimples {
 
     public void setDataHoraFinalSessao(Date dataHoraFinalSessao) {
         this.dataHoraFinalSessao = dataHoraFinalSessao;
+    }
+
+    public String getNomeContexto() {
+        return nomeContexto;
+    }
+
+    public void setNomeContexto(String nomeContexto) {
+        this.nomeContexto = nomeContexto;
     }
 
 }

@@ -11,7 +11,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@InfoObjetoSB(tags = {"Contato"}, plural = "Contatos", icone = "fa fa-user")
+@InfoObjetoSB(tags = {"Contato "}, plural = "Contatos", icone = "fa fa-user")
 @EntityListeners(ListenerEntidadePadrao.class)
 public class Contato extends Pessoa {
 

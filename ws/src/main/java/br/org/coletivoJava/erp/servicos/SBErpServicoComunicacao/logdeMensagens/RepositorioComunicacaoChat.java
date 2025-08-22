@@ -37,6 +37,7 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO_GRUPO_CLIENTE;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
@@ -44,6 +45,7 @@ import jakarta.json.JsonArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
+import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.contextocontato.CPContextoContato;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
@@ -66,6 +68,41 @@ public class RepositorioComunicacaoChat {
             atendenteRegistrado = UtilSBPersistencia.mergeRegistro(atendente);
         }
         return atendenteRegistrado;
+    }
+
+    public synchronized void contextoAtualizar(ContextoContato pContexto) {
+
+        UtilSBPersistencia.mergeRegistro(pContexto);
+    }
+
+    public synchronized ContextoContato getContextoContato(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            ContextoContato contexto = (ContextoContato) UtilSBPersistencia.gerarConsultaDeEntidade(ContextoContato.class, em)
+                    .addCondicaoManyToOneIgualA(CPContextoContato.contato, pContato)
+                    .addcondicaoCampoIgualA(CPContextoContato.codigoentrada, pEntrada.getCodigo()).getPrimeiroRegistro();
+            if (contexto != null) {
+                return contexto;
+            } else {
+                ContextoContato novoContext = new ContextoContato();
+                novoContext.setContato(pContato);
+
+                novoContext.setDataHoraInicioSessao(new Date());
+                novoContext.setCodigoEntrada(pEntrada.getCodigo());
+
+                String nomeContexto = "Ctx:" + novoContext.getCodigoEntrada()
+                        + novoContext.getContato().getWaid();
+                novoContext.setNomeContexto(nomeContexto);
+
+//novoContext.getCPinst(CPContextoContato.nomecontexto).getValorTextoFormatado();
+                novoContext.setDataHoraInicioSessao(new Date());
+                return UtilSBPersistencia.mergeRegistro(novoContext);
+            }
+
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+
+        }
     }
 
     public static boolean isContatoNaListaUltimosContatos(EntradaNumeroWhatsapp pEntrada, Contato pContato) {

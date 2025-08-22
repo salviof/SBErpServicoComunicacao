@@ -9,6 +9,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
@@ -49,7 +50,7 @@ public class GestaoDeServicosNavegacao {
         }
     }
 
-    private boolean removerRota(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroComDevolucaoMensagemUsuario {
+    public boolean removerRota(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroComDevolucaoMensagemUsuario {
         if (!ULTIMAS_TRILHAS.containsKey(pEntrada)) {
             return false;
         }
@@ -88,13 +89,19 @@ public class GestaoDeServicosNavegacao {
         if (ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato)) {
             trilhaAtual = ULTIMAS_TRILHAS.get(pEntrada).get(pContato);
         }
+        ContextoContato contextoDoUsuario = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(pEntrada, pContato);
+        String caminhoTrilha = null;
+        if (pMensagem.getPayloadRespostaProgramada() != null && !pMensagem.getPayloadRespostaProgramada().isEmpty()) {
+            caminhoTrilha = pMensagem.getPayloadRespostaProgramada();
+        } else {
+            caminhoTrilha = contextoDoUsuario.getTrilhaAtual();
+
+        }
 
         if (trilhaAtual == null) {
-            ContextoContato novoContext = new ContextoContato();
-            novoContext.setContato(pContato);
-            novoContext.setDataHoraInicioSessao(new Date());
-            Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, pMensagem.getPayloadRespostaProgramada());
-            trilhaAtual = instanciarTrilha(classe, novoContext, null, pEntrada, pMensagem.getPayloadRespostaProgramada());
+
+            Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoTrilha);
+            trilhaAtual = instanciarTrilha(classe, contextoDoUsuario, null, pEntrada, caminhoTrilha);
 
             try {
                 trilhaAtual.iniciarTrilha();
@@ -106,9 +113,13 @@ public class GestaoDeServicosNavegacao {
         Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = trilhaAtual.getClasseDesvioDeTrilha(pMensagem);
         if (classeTrilhaAlternativa != null) {
 
-            trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, trilhaAtual.getContextoDeSessao(), trilhaAtual, pEntrada, pMensagem.getPayloadRespostaProgramada());
+            contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
+
+            trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, pMensagem.getPayloadRespostaProgramada());
+
             try {
                 trilhaAtual.iniciarTrilha();
+                AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDoUsuario);
                 if (trilhaAtual.getRotaAtual() == null) {
                     throw new ErroComDevolucaoMensagemUsuario("A rota precisa ser definida ao iniciar uma trilha, isso não aconteceu na trilha" + trilhaAtual.getClass().getSimpleName(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
                 }

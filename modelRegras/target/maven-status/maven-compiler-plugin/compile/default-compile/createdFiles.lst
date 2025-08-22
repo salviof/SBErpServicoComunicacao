@@ -1,6 +1,7 @@
 com/super_bits/casanovadigital/servicos/messagens/model/mensagem/MensagemTrOrigemMatrix.class
 com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalTypebot.class
 com/super_bits/casanovadigital/servicos/messagens/model/agente/Atendente.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/ValoresLogicosContextoContato.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemmatrix/CPMensagemTrOrigemMatrix.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/canalchatfacebook/CPCanalChatFacebook.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtransito/CPMensagemTransito.class
@@ -18,8 +19,10 @@ com/super_bits/casanovadigital/servicos/messagens/model/agente/Pessoa.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/CPContextoContato.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/pessoa/CPPessoa.class
 com/super_bits/casanovadigital/servicos/messagens/model/agente/Contato.class
+org/coletivoJava/fw/projetos/erpColetivoJava/implemetation/model/contextocontato/ValorLogicoContextoContatoNomeContexto.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/canaltypebot/CPCanalTypebot.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/mensagemtrorigemwhatsapp/CPMensagemTrOrigemWhatsapp.class
+org/coletivoJava/fw/projetos/erpColetivoJava/api/model/contextocontato/ValorLogicoContextoContato.class
 com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalOminieChanelWtzp.class
 org/coletivoJava/fw/projetos/erpColetivoJava/api/model/encaminhamentomatrixparawtzp/CPEncaminhamentoMatrixParaWtzp.class
 com/super_bits/casanovadigital/servicos/messagens/model/mensagem/FabTipoOrigem.class

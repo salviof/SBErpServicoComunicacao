@@ -83,7 +83,8 @@ public class ApiWhatsappRecepMensagem extends RotaPadraoWtzp {
                     throw new ErroComDevolucaoMensagemUsuario("Erro de conexão com serviço chat" + ex.getMessage(), "Erro conectando com serviço de entrega, entre em contato com o administrador");
                 }
             } catch (ErroComDevolucaoMensagemUsuario ex) {
-                ItfRespostaWebServiceSimples retornoFalhaProcessamento = FabApiRestIntWhatsappMensagem.MENSAGEM_ENVIAR.getAcao(msgWtsap.getEntrada().getCodigo(), msgWtsap.getContatoOrigem().getWa_id(), "Falha encontrando usuário associado ao contato " + ex.getMessage()).getResposta();
+                ItfRespostaWebServiceSimples retornoFalhaProcessamento = FabApiRestIntWhatsappMensagem.MENSAGEM_ENVIAR.
+                        getAcao(msgWtsap.getEntrada().getCodigo(), msgWtsap.getContatoOrigem().getWa_id(), "Falha encontrando usuário associado ao contato " + ex.getMessage()).getResposta();
                 if (!retornoFalhaProcessamento.isSucesso()) {
                     throw new ErroConexaoSistemaTerceiro("Falha retornando mensagem de erro para o usuário, o pacote foi recusado");
                 }

@@ -5,10 +5,11 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = ContextoContato.class)
 public enum CPContextoContato {
-	_ID, _CONTATO, _CANAL, _CODIGOENTRADA, _TRILHAATUAL, _DATAHORAINTERACAOCONTATO, _DATAHORAINTERACAOATENDIMENTO, _DATAHORAINICIOSESSAO, _DATAHORAFINALSESSAO;
+	_ID, _CONTATO, _NOMECONTEXTO, _CANAL, _CODIGOENTRADA, _TRILHAATUAL, _DATAHORAINTERACAOCONTATO, _DATAHORAINTERACAOATENDIMENTO, _DATAHORAINICIOSESSAO, _DATAHORAFINALSESSAO;
 
 	public static final String id = "id";
 	public static final String contato = "contato";
+	public static final String nomecontexto = "nomeContexto";
 	public static final String canal = "canal";
 	public static final String codigoentrada = "codigoEntrada";
 	public static final String trilhaatual = "trilhaAtual";

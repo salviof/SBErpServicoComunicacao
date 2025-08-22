@@ -19,10 +19,6 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_VENDAS;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_ATENDIMENTO_GRUPO_CLIENTE;
-import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.SalaMatrxOrg;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -52,6 +48,9 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         trilhaOrigem = pTrilhaOrigem;
         caminhoTrilha = pCaminhoTrilha;
         contextoDeSessao = pContato;
+        if (pCaminhoTrilha == null) {
+            this.getClass().getSimpleName();
+        }
     }
 
     public Long getId() {
@@ -82,6 +81,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return entrada;
     }
 
+    @Override
     public String getCaminhoTrilha() {
         return caminhoTrilha;
     }
