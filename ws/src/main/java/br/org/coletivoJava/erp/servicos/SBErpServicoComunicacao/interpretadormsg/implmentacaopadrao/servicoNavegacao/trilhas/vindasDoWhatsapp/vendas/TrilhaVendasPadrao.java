@@ -48,7 +48,7 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(MensagemWhatsapp p) {
+    public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) {
         return null;
     }
 
@@ -58,7 +58,7 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
+    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
         return null;
     }
 

@@ -35,11 +35,11 @@ public interface ItfTrilhaNavegacao {
      * @return
      * @throws ErroComDevolucaoMensagemUsuario
      */
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
+    public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
     public void AcaoTimeoutResposta(Contato pContato);
 
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario;
+    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario;
 
     public RotaMensagemContato getRotaAtual();
 

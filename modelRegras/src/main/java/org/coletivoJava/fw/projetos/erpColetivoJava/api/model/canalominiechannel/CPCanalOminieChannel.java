@@ -1,6 +1,6 @@
 package org.coletivoJava.fw.projetos.erpColetivoJava.api.model.canalominiechannel;
 
-import com.super_bits.casanovadigital.servicos.messagens.model.agente.canais.CanalOminieChannel;
+import com.super_bits.casanovadigital.servicos.messagens.model.agente.canais.tipos.CanalOminieChannel;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoReferenciaEntidade;
 
 @InfoReferenciaEntidade(tipoObjeto = CanalOminieChannel.class)

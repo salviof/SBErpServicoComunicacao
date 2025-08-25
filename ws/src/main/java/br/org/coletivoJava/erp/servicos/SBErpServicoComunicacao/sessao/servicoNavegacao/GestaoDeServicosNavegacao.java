@@ -109,13 +109,13 @@ public class GestaoDeServicosNavegacao {
                 throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
             }
         }
+        String caminhoNovaTrilha = trilhaAtual.getDesvioTrilhaPorMensgemWhatsapp(pMensagem);
 
-        Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = trilhaAtual.getClasseDesvioDeTrilha(pMensagem);
-        if (classeTrilhaAlternativa != null) {
-
+        if (caminhoNovaTrilha != null) {
+            Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoNovaTrilha);
             contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
 
-            trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, pMensagem.getPayloadRespostaProgramada());
+            trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, caminhoNovaTrilha);
 
             try {
                 trilhaAtual.iniciarTrilha();

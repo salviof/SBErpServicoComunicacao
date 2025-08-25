@@ -29,7 +29,7 @@ public class TrilhaAtendimentoSimples extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(MensagemWhatsapp p) {
+    public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -39,7 +39,7 @@ public class TrilhaAtendimentoSimples extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public Class<? extends ItfTrilhaNavegacao> getClasseDesvioDeTrilha(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
+    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
