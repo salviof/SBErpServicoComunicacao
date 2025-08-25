@@ -112,22 +112,25 @@ public class GestaoDeServicosNavegacao {
         String caminhoNovaTrilha = trilhaAtual.getDesvioTrilhaPorMensgemWhatsapp(pMensagem);
 
         if (caminhoNovaTrilha != null) {
-            Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoNovaTrilha);
-            contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
+            String caminhoTrrilhaAtual = trilhaAtual.getCaminhoTrilha();
+            if (caminhoTrrilhaAtual.equals(caminhoNovaTrilha)) {
+                Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoNovaTrilha);
+                contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
 
-            trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, caminhoNovaTrilha);
+                trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, caminhoNovaTrilha);
 
-            try {
-                trilhaAtual.iniciarTrilha();
-                AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDoUsuario);
-                if (trilhaAtual.getRotaAtual() == null) {
-                    throw new ErroComDevolucaoMensagemUsuario("A rota precisa ser definida ao iniciar uma trilha, isso não aconteceu na trilha" + trilhaAtual.getClass().getSimpleName(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                try {
+                    trilhaAtual.iniciarTrilha();
+                    AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDoUsuario);
+                    if (trilhaAtual.getRotaAtual() == null) {
+                        throw new ErroComDevolucaoMensagemUsuario("A rota precisa ser definida ao iniciar uma trilha, isso não aconteceu na trilha" + trilhaAtual.getClass().getSimpleName(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                    }
+
+                } catch (ErroConexaoServicoChat ex) {
+                    throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                } catch (Throwable t) {
+                    throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + t.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
                 }
-
-            } catch (ErroConexaoServicoChat ex) {
-                throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
-            } catch (Throwable t) {
-                throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + t.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
             }
 
         }
