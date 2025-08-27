@@ -23,8 +23,9 @@ public interface ItfTrilhaNavegacao {
      * este método precisa definir a rota atual da tralha
      *
      * @param pContato
+     * @return Nova Trilha
      */
-    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
+    public String iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
 
     /**
      * TODO RETORNAR A CLASSE E NO NOVO CAMINHO VINCULADO A ESSA NOVA TRILHA OU

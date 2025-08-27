@@ -97,20 +97,21 @@ public class GestaoDeServicosNavegacao {
             caminhoTrilha = contextoDoUsuario.getTrilhaAtual();
 
         }
-
+        String caminhoNovaTrilha = null;
         if (trilhaAtual == null) {
 
             Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoTrilha);
             trilhaAtual = instanciarTrilha(classe, contextoDoUsuario, null, pEntrada, caminhoTrilha);
 
             try {
-                trilhaAtual.iniciarTrilha();
+                caminhoNovaTrilha = trilhaAtual.iniciarTrilha();
             } catch (ErroConexaoServicoChat ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
             }
         }
-        String caminhoNovaTrilha = trilhaAtual.getDesvioTrilhaPorMensgemWhatsapp(pMensagem);
-
+        if (caminhoNovaTrilha == null) {
+            caminhoNovaTrilha = trilhaAtual.getDesvioTrilhaPorMensgemWhatsapp(pMensagem);
+        }
         if (caminhoNovaTrilha != null) {
             String caminhoTrrilhaAtual = trilhaAtual.getCaminhoTrilha();
             if (caminhoTrrilhaAtual == null || !caminhoTrrilhaAtual.equals(caminhoNovaTrilha)) {
