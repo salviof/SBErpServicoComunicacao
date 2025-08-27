@@ -65,6 +65,8 @@ public class ProcessadorMtxMensagem implements
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
             }
+
+            /// TODO MOVER TRECHO ABAIXO  PARA AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
             MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
             novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
             String textomensagem = evento.getContent().getString("body");
@@ -77,6 +79,9 @@ public class ProcessadorMtxMensagem implements
                     break;
 
             }
+
+            //TODO SUBISTIUIR AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto, por
+            //AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
             codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
 
             if (codReciboWhatsapp != null) {

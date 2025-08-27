@@ -24,7 +24,7 @@ public class TrilhaAtendimentoSimples extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public void iniciarTrilha() {
+    public String iniciarTrilha() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

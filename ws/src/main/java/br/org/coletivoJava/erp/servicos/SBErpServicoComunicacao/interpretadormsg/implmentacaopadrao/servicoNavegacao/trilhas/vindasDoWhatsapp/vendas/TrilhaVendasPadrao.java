@@ -29,7 +29,7 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public void iniciarTrilha() throws ErroConexaoServicoChat {
+    public String iniciarTrilha() throws ErroConexaoServicoChat {
 
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(getEntrada(), getContextoDeSessao().getContato());
         try {
@@ -45,6 +45,7 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
         } catch (ErroConexaoServicoChat ex) {
             Logger.getLogger(TrilhaVendasPadrao.class.getName()).log(Level.SEVERE, null, ex);
         }
+        return null;
     }
 
     @Override

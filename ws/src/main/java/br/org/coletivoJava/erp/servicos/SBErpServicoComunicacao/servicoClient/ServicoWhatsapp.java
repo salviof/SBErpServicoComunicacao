@@ -19,8 +19,10 @@ import jakarta.json.JsonValue;
 public class ServicoWhatsapp {
 
     public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento) throws ErroConexaoServicoChat {
-
+        /// implameNTAR o swith case para os tipos de eventos.
+        //// IMPLEMENTAR O CABEÇALHO DO CONATO AQUI , REMOVENDO DO ProcessadorMtxMensagem
         MensagemSimplesEnvioWhatsapp novamensagem = new MensagemSimplesEnvioWhatsapp();
+
         novamensagem.setCorpo(pEvento.getContent().getString("body"));
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
 

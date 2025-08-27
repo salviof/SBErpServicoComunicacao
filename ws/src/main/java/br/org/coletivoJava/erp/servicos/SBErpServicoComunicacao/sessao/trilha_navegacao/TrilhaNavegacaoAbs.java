@@ -22,10 +22,13 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
 
 /**
@@ -45,6 +48,19 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private ContextoContato contextoDeSessao;
     private Date ultimaInteracaoContato;
     private Date ultimaInteracaoAtendimento;
+    private long segundosTimeoutAguardandoContato = 79200;
+    private long segundosTimeoutAguardandoAtendimento = 1320;
+    //segundosTimeoutAguardandoAtendimento:600000
+    private boolean agenteUltimaInteracaoContato;
+    private final Monitor monitor;
+
+    public void setSegundosTimeoutAguardandoContato(long segundosTimeoutAguardandoContato) {
+        this.segundosTimeoutAguardandoContato = segundosTimeoutAguardandoContato;
+    }
+
+    public void setSegundosTimeoutAguardandoAtendimento(long segundosTimeoutAguardandoAtendimento) {
+        this.segundosTimeoutAguardandoAtendimento = segundosTimeoutAguardandoAtendimento;
+    }
 
     public TrilhaNavegacaoAbs(ContextoContato pContato, ItfTrilhaNavegacao pTrilhaOrigem, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) {
         entrada = pEntrada;
@@ -55,6 +71,46 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             this.getClass().getSimpleName();
         }
         ultimaInteracaoContato = new Date();
+        monitor = new Monitor();
+        monitor.start();
+    }
+
+    public class Monitor extends Thread {
+
+        private final long segundosMonitorTimeoutAguardandoAtendimento;
+        private final long segundosMonitorTimeoutAguardandoContato;
+
+        public Monitor() {
+            this(segundosTimeoutAguardandoAtendimento, segundosTimeoutAguardandoContato);
+        }
+
+        public Monitor(long pSegundosTimeoutAguardandoAtendimento, long pSegundosTimeoutAguardandoContato) {
+            segundosMonitorTimeoutAguardandoAtendimento = pSegundosTimeoutAguardandoAtendimento;
+            segundosMonitorTimeoutAguardandoContato = pSegundosTimeoutAguardandoContato;
+        }
+
+        @Override
+        public void run() {
+
+            while (true && AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isTrilhaExiste(entrada, getContextoDeSessao().getContato())) {
+
+                if (agenteUltimaInteracaoContato) {
+                    //Aguardando interacao do Atendimento
+                    long tempoPassouInteracaoContato = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoContato, new Date());
+                    if (tempoPassouInteracaoContato >= segundosTimeoutAguardandoAtendimento) {
+                        acaoTimeoutAguardandoRespostaAtendimento();
+                    }
+                } else {
+                    //Aguardando interação do Contato
+                    long tempoPassouInteracaoAtendimento = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoAtendimento, new Date());
+                    if (tempoPassouInteracaoAtendimento >= segundosTimeoutAguardandoContato) {
+                        acaoTimeoutAguardandoInteracaoContato();
+                    }
+                }
+
+            }
+        }
+
     }
 
     public Long getId() {
@@ -100,8 +156,10 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
             String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContatoMatrix, pTipoSala.getSlug());
             ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
+
             if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
-                AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class);
+                AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class
+                );
             }
             AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
             return (ItfChatSalaBean) salaRelacionada;
@@ -133,8 +191,10 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
             String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(UsuarioContato, pTipoSala.getSlug());
             ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
+
             if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
-                AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class);
+                AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class
+                );
             }
             AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
             return (ItfChatSalaBean) salaRelacionada;
@@ -158,7 +218,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         String possivelPalavraChave = UtilSBCoreStringFiltros.filtrarApenasLetra(p.getMensagem().toLowerCase());
         if (p.getMensagem() != null) {
             for (String palavra : AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getPalavrasParaCaminhoTrilhaRaiz()) {
-                if (possivelPalavraChave.equals(possivelPalavraChave)) {
+                if (palavra.equals(possivelPalavraChave)) {
                     return AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
                 }
             }
@@ -185,6 +245,35 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     @Override
     public void acaoTimeoutAguardandoInteracaoContato() {
         finalizarSesaso();
+    }
+
+    @Override
+    public void acaoTimeoutAguardandoRespostaAtendimento() {
+        if (rotaAtual != null) {
+            switch (rotaAtual.getTipoRota().getTipoRotaMensagem()) {
+
+                case MENU_OPCOES:
+                    break;
+                case RESPOSTA_WEBSERVICE:
+                    break;
+                case RETORNO_LINK:
+                    break;
+                case ENCAMINHAMENTO: {
+                    try {
+                        AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(rotaAtual.getComoRotaEncaminhamentoMatrix().getAtendentePrincipal().getMatrixID(),
+                                getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome()
+                        );
+                    } catch (ErroConexaoServicoChat ex) {
+
+                    }
+                }
+                break;
+
+                default:
+                    throw new AssertionError();
+            }
+
+        }
     }
 
 }

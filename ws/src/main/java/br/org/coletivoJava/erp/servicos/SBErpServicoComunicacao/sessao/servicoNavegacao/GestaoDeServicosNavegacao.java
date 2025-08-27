@@ -80,6 +80,11 @@ public class GestaoDeServicosNavegacao {
         return novaTrilha;
     }
 
+    public boolean isTrilhaExiste(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
+        return ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato);
+
+    }
+
     public ItfTrilhaNavegacao getTrilha(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario {
         ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada);
         ItfTrilhaNavegacao trilhaAtual = null;
