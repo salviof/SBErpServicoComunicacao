@@ -53,13 +53,18 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public void AcaoTimeoutResposta(Contato pContato) {
+    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
+        return null;
+    }
+
+    @Override
+    public void acaoTimeoutAguardandoRespostaAtendimento() {
 
     }
 
     @Override
-    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
-        return null;
+    public void acaoTimeoutAguardandoInteracaoContato() {
+
     }
 
 }

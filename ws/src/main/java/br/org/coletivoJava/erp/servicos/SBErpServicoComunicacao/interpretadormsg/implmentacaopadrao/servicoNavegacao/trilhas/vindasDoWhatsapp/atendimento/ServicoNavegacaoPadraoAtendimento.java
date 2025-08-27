@@ -8,7 +8,9 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.ServicoNavegacaoAbs;
+import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import java.util.List;
 
 /**
  *
@@ -23,6 +25,16 @@ public class ServicoNavegacaoPadraoAtendimento extends ServicoNavegacaoAbs imple
     @Override
     public Class<? extends ItfTrilhaNavegacao> getClasseTrilhaDeNavegacao(Contato pContato, String pCaminho) {
         return TrilhaAtendimentoSimples.class;
+    }
+
+    @Override
+    public String getCaminhoTrilhaRaiz() {
+        return "menu";
+    }
+
+    @Override
+    public List<String> getPalavrasParaCaminhoTrilhaRaiz() {
+        return Lists.newArrayList("menu");
     }
 
 }

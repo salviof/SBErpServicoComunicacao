@@ -5,6 +5,7 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces;
 
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import java.util.List;
 
 /**
  *
@@ -19,5 +20,9 @@ public interface ItfServicoNavegacao {
      * @return
      */
     public Class<? extends ItfTrilhaNavegacao> getClasseTrilhaDeNavegacao(Contato pContato, String pCaminho);
+
+    public String getCaminhoTrilhaRaiz();
+
+    public List<String> getPalavrasParaCaminhoTrilhaRaiz();
 
 }

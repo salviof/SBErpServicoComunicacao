@@ -23,14 +23,12 @@ import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatri
 import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.LEITURA;
 import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.MENSAGEM;
 import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.REACAO;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

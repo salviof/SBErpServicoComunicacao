@@ -16,10 +16,12 @@ import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 
 /**
@@ -51,8 +53,8 @@ public class ProcessadorMtxMensagem implements
 
         usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(evento.getSender());
 
-        if (AplicacaoWsChat.SERVICO_MATRIX.isUmUsuarioAtendimento(usuarioAtendimento)) {
-            throw new ErroComDevolucaoMensagemUsuario("Evento " + evento.getEvent_id() + " não foi emitido por um usuário de atendimento", "Seu usuário não é um usuário de atendimento");
+        if (!AplicacaoWsChat.SERVICO_MATRIX.isUmUsuarioAtendimento(usuarioAtendimento)) {
+            throw new ErroComDevolucaoMensagemUsuario("Evento " + evento.getEvent_id() + " não foi emitido por um usuário de atendimento", "Mensagem não foi entregue, Seu usuário não é um usuário de atendimento");
         }
 
         try {
@@ -67,7 +69,15 @@ public class ProcessadorMtxMensagem implements
             novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
             String textomensagem = evento.getContent().getString("body");
             novaMensagem.setCorpo(textomensagem);
-            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(evento, entrada, contato, novaMensagem);
+
+            FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(sala.getApelido());
+            switch (tipoSAla) {
+                case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
+                    novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(sala.getNome()) + " " + usuarioAtendimento.getNome());
+                    break;
+
+            }
+            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
 
             if (codReciboWhatsapp != null) {
 

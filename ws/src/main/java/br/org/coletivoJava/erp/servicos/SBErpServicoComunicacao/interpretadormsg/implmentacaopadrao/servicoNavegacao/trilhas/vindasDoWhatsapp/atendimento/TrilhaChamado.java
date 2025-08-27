@@ -34,12 +34,17 @@ public class TrilhaChamado extends TrilhaNavegacaoAbs implements ItfTrilhaNavega
     }
 
     @Override
-    public void AcaoTimeoutResposta(Contato pContato) {
+    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario {
+    public void acaoTimeoutAguardandoRespostaAtendimento() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void acaoTimeoutAguardandoInteracaoContato() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

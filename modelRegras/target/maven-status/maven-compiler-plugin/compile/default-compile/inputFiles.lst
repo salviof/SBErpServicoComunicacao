@@ -2,10 +2,10 @@
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/Contato.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/ContextoContato.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/Pessoa.java
-/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalChatFacebook.java
-/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalOminieChanelWtzp.java
-/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalOminieChannel.java
-/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/CanalTypebot.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/tipos/CanalChatFacebook.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/tipos/CanalOminieChanelWtzp.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/tipos/CanalOminieChannel.java
+/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/agente/canais/tipos/CanalTypebot.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/configModel/ConfigPercistenciaServicoComunicacao.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/EncaminhamentoMatrixParaWtzp.java
 /home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/modelRegras/src/main/java/com/super_bits/casanovadigital/servicos/messagens/model/mensagem/FabTipoOrigem.java

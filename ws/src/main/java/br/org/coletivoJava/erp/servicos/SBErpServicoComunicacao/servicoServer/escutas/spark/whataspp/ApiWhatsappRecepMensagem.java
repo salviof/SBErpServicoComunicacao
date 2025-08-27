@@ -15,6 +15,7 @@ import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import javax.persistence.EntityManager;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorMensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.FabTipoMensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
@@ -27,6 +28,8 @@ import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.Path;
 import spark.Request;
 
@@ -65,42 +68,50 @@ public class ApiWhatsappRecepMensagem extends RotaPadraoWtzp {
 
         for (MensagemWhatsapp msgWtsap : pacoteMensagemWtzp.getMensagens()) {
             EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
-            UtilSBPersistencia.iniciarTransacao(em);
-
-            MensagemTrOrigemWhatsapp logTransidoDeMensagem = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorWhatsappByRegistrWhatsapp(msgWtsap.getId());
-            if (logTransidoDeMensagem == null) {
-                logTransidoDeMensagem = new MensagemTrOrigemWhatsapp();
-            }
-            logTransidoDeMensagem.setCorpoJsonRecebido(UtilSBCoreJson.getTextoByJsonObjeect(pPacote.getDadosJson()));
-            logTransidoDeMensagem.setRegistrado(true);
-            logTransidoDeMensagem.setEncaminhado(false);
-            logTransidoDeMensagem.setCodigoRegistroMensagemWhatsapp(msgWtsap.getId());
             try {
-                ItfProcessadorMensagemWhatsapp processador = new ProcessadorWtzpMsg(msgWtsap, logTransidoDeMensagem);
-                try {
-                    processador.processar();
-                } catch (ErroConexaoServicoChat ex) {
-                    throw new ErroComDevolucaoMensagemUsuario("Erro de conexão com serviço chat" + ex.getMessage(), "Erro conectando com serviço de entrega, entre em contato com o administrador");
-                }
-            } catch (ErroComDevolucaoMensagemUsuario ex) {
-                ItfRespostaWebServiceSimples retornoFalhaProcessamento = FabApiRestIntWhatsappMensagem.MENSAGEM_ENVIAR.
-                        getAcao(msgWtsap.getEntrada().getCodigo(), msgWtsap.getContatoOrigem().getWa_id(), "Falha encontrando usuário associado ao contato " + ex.getMessage()).getResposta();
-                if (!retornoFalhaProcessamento.isSucesso()) {
-                    throw new ErroConexaoSistemaTerceiro("Falha retornando mensagem de erro para o usuário, o pacote foi recusado");
-                }
-                continue;
-            } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | AssertionError t) {
-                // TODO IMPLEMENTAR NOTIFICAÇÃO DE ERRO
+                UtilSBPersistencia.iniciarTransacao(em);
 
-                UtilServicoAdministrativo.notificarAdmiministrador("ATENÇÃO! FALHA PROCESSANDO PACOTE " + t.getClass().getSimpleName() + ":" + t.getMessage() + "PAYLOAD:" + pPacote.getDadosJson());
-                throw new ErroConexaoSistemaTerceiro("falha processando mensagem vinda do whatsapp " + t.getMessage());
-            } finally {
-                logTransidoDeMensagem = UtilSBPersistencia.mergeRegistro(logTransidoDeMensagem);
+                MensagemTrOrigemWhatsapp logTransidoDeMensagem = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getMensagemEnviadaPorWhatsappByRegistrWhatsapp(msgWtsap.getId());
                 if (logTransidoDeMensagem == null) {
-                    throw new ErroConexaoSistemaTerceiro("Falha persistindo mensagem no repositório");
+                    logTransidoDeMensagem = new MensagemTrOrigemWhatsapp();
                 }
+                logTransidoDeMensagem.setCorpoJsonRecebido(UtilSBCoreJson.getTextoByJsonObjeect(pPacote.getDadosJson()));
+                logTransidoDeMensagem.setRegistrado(true);
+                logTransidoDeMensagem.setEncaminhado(false);
+                logTransidoDeMensagem.setCodigoRegistroMensagemWhatsapp(msgWtsap.getId());
+                try {
+                    ItfProcessadorMensagemWhatsapp processador = new ProcessadorWtzpMsg(msgWtsap, logTransidoDeMensagem);
+                    try {
+                        processador.processar();
+                    } catch (ErroConexaoServicoChat ex) {
+                        throw new ErroComDevolucaoMensagemUsuario("Erro de conexão com serviço chat" + ex.getMessage(), "Erro conectando com serviço de entrega, entre em contato com o administrador");
+                    }
+                } catch (ErroComDevolucaoMensagemUsuario ex) {
+
+                    String retorno = null;
+                    try {
+                        retorno = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(msgWtsap.getEntrada(), msgWtsap.getContatoOrigem().getWa_id(), ex.getMensagemRetorno());
+                    } catch (ErroConexaoServicoChat ex1) {
+                        throw new ErroConexaoSistemaTerceiro("Falha retornando mensagem de erro para o usuário, o pacote foi recusado");
+                    }
+                    if (retorno == null) {
+                        throw new ErroConexaoSistemaTerceiro("Falha retornando mensagem de erro para o usuário, o pacote foi recusado");
+                    }
+                    continue;
+                } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | AssertionError t) {
+                    // TODO IMPLEMENTAR NOTIFICAÇÃO DE ERRO
+
+                    UtilServicoAdministrativo.notificarAdmiministrador("ATENÇÃO! FALHA PROCESSANDO PACOTE " + t.getClass().getSimpleName() + ":" + t.getMessage() + "PAYLOAD:" + pPacote.getDadosJson());
+                    throw new ErroConexaoSistemaTerceiro("falha processando mensagem vinda do whatsapp " + t.getMessage());
+                } finally {
+                    logTransidoDeMensagem = UtilSBPersistencia.mergeRegistro(logTransidoDeMensagem);
+                    if (logTransidoDeMensagem == null) {
+                        throw new ErroConexaoSistemaTerceiro("Falha persistindo mensagem no repositório");
+                    }
+                }
+            } finally {
+                UtilSBPersistencia.finzalizaTransacaoEFechaEM(em);
             }
-            UtilSBPersistencia.finzalizaTransacaoEFechaEM(em);
         }
 
         for (EventoMensagemWtzap evento : pacoteMensagemWtzp.getStatusMensagem()) {

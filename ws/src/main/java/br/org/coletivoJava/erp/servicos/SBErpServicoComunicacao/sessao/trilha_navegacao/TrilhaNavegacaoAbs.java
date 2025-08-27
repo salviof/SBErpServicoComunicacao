@@ -22,6 +22,7 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import java.util.Date;
 import java.util.List;
@@ -42,6 +43,8 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private String caminhoTrilha;
     protected RotaMensagemContato rotaAtual;
     private ContextoContato contextoDeSessao;
+    private Date ultimaInteracaoContato;
+    private Date ultimaInteracaoAtendimento;
 
     public TrilhaNavegacaoAbs(ContextoContato pContato, ItfTrilhaNavegacao pTrilhaOrigem, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) {
         entrada = pEntrada;
@@ -51,6 +54,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         if (pCaminhoTrilha == null) {
             this.getClass().getSimpleName();
         }
+        ultimaInteracaoContato = new Date();
     }
 
     public Long getId() {
@@ -150,6 +154,15 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             return p.getPayloadRespostaProgramada();
 
         }
+        ultimaInteracaoContato = new Date();
+        String possivelPalavraChave = UtilSBCoreStringFiltros.filtrarApenasLetra(p.getMensagem().toLowerCase());
+        if (p.getMensagem() != null) {
+            for (String palavra : AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getPalavrasParaCaminhoTrilhaRaiz()) {
+                if (possivelPalavraChave.equals(possivelPalavraChave)) {
+                    return AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
+                }
+            }
+        }
         return null;
     }
 
@@ -164,7 +177,14 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     @Override
     public void finalizarSesaso() {
         contextoDeSessao.setDataHoraFinalSessao(new Date());
+        AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDeSessao);
+        AplicacaoWsChat.encerrrarSessao(entrada, getContextoDeSessao().getContato().getWaid());
 
+    }
+
+    @Override
+    public void acaoTimeoutAguardandoInteracaoContato() {
+        finalizarSesaso();
     }
 
 }

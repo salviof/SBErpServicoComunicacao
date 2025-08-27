@@ -113,7 +113,7 @@ public class GestaoDeServicosNavegacao {
 
         if (caminhoNovaTrilha != null) {
             String caminhoTrrilhaAtual = trilhaAtual.getCaminhoTrilha();
-            if (caminhoTrrilhaAtual.equals(caminhoNovaTrilha)) {
+            if (caminhoTrrilhaAtual == null || !caminhoTrrilhaAtual.equals(caminhoNovaTrilha)) {
                 Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoNovaTrilha);
                 contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
 

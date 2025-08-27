@@ -37,7 +37,9 @@ public interface ItfTrilhaNavegacao {
      */
     public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
-    public void AcaoTimeoutResposta(Contato pContato);
+    public void acaoTimeoutAguardandoRespostaAtendimento();
+
+    public void acaoTimeoutAguardandoInteracaoContato();
 
     public String getDesvioTrilhaPorEventoMatrix(EventoSalaMatrix p) throws ErroComDevolucaoMensagemUsuario;
 
