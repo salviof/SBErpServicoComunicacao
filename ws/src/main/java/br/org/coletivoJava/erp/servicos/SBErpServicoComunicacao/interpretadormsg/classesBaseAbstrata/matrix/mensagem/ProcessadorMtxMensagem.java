@@ -6,11 +6,15 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.comandosAtendimento.UtilSBComandosAtendimento;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
+import br.org.coletivoJava.fw.api.erp.chat.model.ErroComandoAtendimentoInvalido;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -23,6 +27,8 @@ import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.Encaminh
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -64,6 +70,13 @@ public class ProcessadorMtxMensagem implements
                 entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala.getApelido());
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
+            }
+            try {
+                ComandoDeAtendimento comandoAendimento = UtilSBComandosAtendimento.gerarComandoAtendimento(evento);
+                ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByComandoMatrix(entrada, contato, comandoAendimento);
+                return;
+            } catch (ErroComandoAtendimentoInvalido ex) {
+                Logger.getLogger(ProcessadorMtxMensagem.class.getName()).log(Level.SEVERE, null, ex);
             }
 
             /// TODO MOVER TRECHO ABAIXO  PARA AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)

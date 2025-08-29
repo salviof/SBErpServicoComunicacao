@@ -1,13 +1,13 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -73,12 +73,20 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         ultimaInteracaoContato = new Date();
         monitor = new Monitor();
         monitor.start();
+        if (pCaminhoTrilha == null) {
+            try {
+                caminhoTrilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
+            } catch (ErroComDevolucaoMensagemUsuario ex) {
+
+            }
+        }
     }
 
     public class Monitor extends Thread {
 
         private final long segundosMonitorTimeoutAguardandoAtendimento;
         private final long segundosMonitorTimeoutAguardandoContato;
+        private boolean monitorAtivo = true;
 
         public Monitor() {
             this(segundosTimeoutAguardandoAtendimento, segundosTimeoutAguardandoContato);
@@ -92,20 +100,28 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         @Override
         public void run() {
 
-            while (true && AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isTrilhaExiste(entrada, getContextoDeSessao().getContato())) {
-
-                if (agenteUltimaInteracaoContato) {
-                    //Aguardando interacao do Atendimento
-                    long tempoPassouInteracaoContato = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoContato, new Date());
-                    if (tempoPassouInteracaoContato >= segundosTimeoutAguardandoAtendimento) {
-                        acaoTimeoutAguardandoRespostaAtendimento();
+            while (monitorAtivo && AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isTrilhaExiste(entrada, getContextoDeSessao().getContato(), caminhoTrilha)) {
+                try {
+                    sleep(5000);
+                } catch (InterruptedException ex) {
+                    monitorAtivo = false;
+                }
+                try {
+                    if (agenteUltimaInteracaoContato) {
+                        //Aguardando interacao do Atendimento
+                        long tempoPassouInteracaoContato = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoContato, new Date());
+                        if (tempoPassouInteracaoContato >= segundosMonitorTimeoutAguardandoAtendimento) {
+                            acaoTimeoutAguardandoRespostaAtendimento();
+                        }
+                    } else {
+                        //Aguardando interação do Contato
+                        long tempoPassouInteracaoAtendimento = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoAtendimento, new Date());
+                        if (tempoPassouInteracaoAtendimento >= segundosMonitorTimeoutAguardandoContato) {
+                            acaoTimeoutAguardandoInteracaoContato();
+                        }
                     }
-                } else {
-                    //Aguardando interação do Contato
-                    long tempoPassouInteracaoAtendimento = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoAtendimento, new Date());
-                    if (tempoPassouInteracaoAtendimento >= segundosTimeoutAguardandoContato) {
-                        acaoTimeoutAguardandoInteracaoContato();
-                    }
+                } catch (Throwable t) {
+                    monitorAtivo = false;
                 }
 
             }
@@ -236,7 +252,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     @Override
     public void finalizarSesaso() {
-        contextoDeSessao.setDataHoraFinalSessao(new Date());
+
         AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDeSessao);
         AplicacaoWsChat.encerrrarSessao(entrada, getContextoDeSessao().getContato().getWaid());
 
@@ -274,6 +290,11 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             }
 
         }
+    }
+
+    @Override
+    public String getDesvioTrilhaPorEventoMatrix(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario {
+        return p.getNovaRota();
     }
 
 }
