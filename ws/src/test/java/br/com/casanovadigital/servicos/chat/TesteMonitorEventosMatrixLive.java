@@ -8,9 +8,13 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerComandosPadrao;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
+import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import com.super_bits.casanovadigital.servicos.messagens.model.configModel.ConfigPercistenciaServicoComunicacao;
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.SBPersistencia;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
+import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.junit.Before;
@@ -35,6 +39,7 @@ public class TesteMonitorEventosMatrixLive {
             //AplicacaoWsChat.iniciarAplicacao();
             AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrixTestesLive.class);
             AplicacaoWsChat.SERVICO_MATRIX.registrarClasseEscutaNotificacoes(ListenerComandosPadrao.class);
+
             while (true) {
                 try {
                     Thread.sleep(1000000000);

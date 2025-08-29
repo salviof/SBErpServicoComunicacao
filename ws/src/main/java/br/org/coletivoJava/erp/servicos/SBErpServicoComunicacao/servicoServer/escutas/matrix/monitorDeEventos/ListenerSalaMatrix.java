@@ -241,6 +241,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                     try {
                         // Devolve mensagem e ignora
                         String codigoEnvioWhatsapp = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), devolucao.getMensagemRetorno());
+
                     } catch (ErroConexaoServicoChat ex) {
                         try {
                             AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(codigoAtendimento, "Falha enviando mensagem na sala " + getSala().getCodigoChat() + " ");

@@ -29,7 +29,7 @@ public class D_Entao_a_mensagem_Ola_tudo_bem_e_encaminhada_para_o_usuario_Atendi
                     FluxoMensagemOrigemWhatsapp.getPacoteEnvioMensagem().getMensagens().get(0).getEntrada(),
                     contato);
             ItfChatSalaBean sala;
-            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilha(mensagem.getEntrada(), contato, mensagem);
+            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
             sala = trilha.getRotaAtual().getComoRotaEncaminhamentoMatrix().getSala();
             JsonArray mensagens;
             mensagens = AplicacaoWsChat.SERVICO_MATRIX.salaLerUltimasMensagens(sala.getCodigoChat());

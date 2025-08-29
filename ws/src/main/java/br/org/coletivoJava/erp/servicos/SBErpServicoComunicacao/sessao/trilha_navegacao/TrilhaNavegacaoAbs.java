@@ -11,6 +11,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
@@ -19,6 +20,7 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_VENDAS;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -52,7 +54,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private long segundosTimeoutAguardandoAtendimento = 900;
     //segundosTimeoutAguardandoAtendimento:600000
     private boolean agenteUltimaInteracaoContato;
-    private final Monitor monitor;
+    private Monitor monitor;
 
     public void setSegundosTimeoutAguardandoContato(long segundosTimeoutAguardandoContato) {
         this.segundosTimeoutAguardandoContato = segundosTimeoutAguardandoContato;
@@ -71,8 +73,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             this.getClass().getSimpleName();
         }
         ultimaInteracaoContato = new Date();
-        monitor = new Monitor();
-        monitor.start();
+
         if (pCaminhoTrilha == null) {
             try {
                 caminhoTrilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
@@ -100,12 +101,13 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         @Override
         public void run() {
 
-            while (monitorAtivo && AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isTrilhaExiste(entrada, getContextoDeSessao().getContato(), caminhoTrilha)) {
+            while (monitorAtivo) {
                 try {
                     sleep(5000);
                 } catch (InterruptedException ex) {
                     monitorAtivo = false;
                 }
+                monitorAtivo = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isTrilhaExiste(entrada, getContextoDeSessao().getContato(), caminhoTrilha);
                 try {
                     if (agenteUltimaInteracaoContato) {
                         //Aguardando interacao do Atendimento
@@ -223,6 +225,11 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     @Override
     public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario {
+
+        ultimaInteracaoContato = new Date();
+        agenteUltimaInteracaoContato = true;
+
+        agenteUltimaInteracaoContato = true;
         if (p.getPayloadRespostaProgramada() != null && !p.getPayloadRespostaProgramada().isEmpty()) {
 
             //ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada);
@@ -290,9 +297,43 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         }
     }
 
+    enum TIPO_INTERACAO {
+
+        CONTATO, ATENDIMENTO;
+    }
+
+    private void registrarInteracao(TIPO_INTERACAO tipoInteracao) {
+
+        if (monitor == null) {
+            monitor = new Monitor();
+            monitor.start();
+        }
+        switch (tipoInteracao) {
+
+            case CONTATO:
+                ultimaInteracaoContato = new Date();
+                agenteUltimaInteracaoContato = true;
+                break;
+            case ATENDIMENTO:
+                ultimaInteracaoAtendimento = new Date();
+                agenteUltimaInteracaoContato = false;
+                break;
+            default:
+                throw new AssertionError();
+        }
+    }
+
     @Override
     public String getDesvioTrilhaPorEventoMatrix(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario {
+        registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
         return p.getNovaRota();
+    }
+
+    @Override
+    public String getDesvioTrilhaporEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
+        registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
+
+        return null;
     }
 
 }

@@ -97,6 +97,66 @@ public class GestaoDeServicosNavegacao {
 
     }
 
+    public ItfTrilhaNavegacao getTrilhaByEventoExistente(EntradaNumeroWhatsapp pEntrada, Contato pContato, ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
+        ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada);
+        ItfTrilhaNavegacao trilhaAtual = null;
+        if (!ULTIMAS_TRILHAS.containsKey(pEntrada)) {
+            ULTIMAS_TRILHAS.put(pEntrada, Collections.synchronizedMap(new HashMap<>()));
+        }
+        if (ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato)) {
+            trilhaAtual = ULTIMAS_TRILHAS.get(pEntrada).get(pContato);
+
+        }
+
+        ContextoContato contextoDoUsuario = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(pEntrada, pContato);
+        String caminhoTrilha = null;
+
+        String caminhoNovaTrilha = null;
+        if (trilhaAtual == null) {
+
+            Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoTrilha);
+            trilhaAtual = instanciarTrilha(classe, contextoDoUsuario, null, pEntrada, caminhoTrilha);
+
+            try {
+                caminhoNovaTrilha = trilhaAtual.iniciarTrilha();
+            } catch (ErroConexaoServicoChat ex) {
+                throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+            }
+        }
+        if (caminhoNovaTrilha == null) {
+            caminhoNovaTrilha = trilhaAtual.getDesvioTrilhaporEventoMatrix(pEvento);
+        }
+        if (caminhoNovaTrilha != null) {
+            String caminhoTrrilhaAtual = trilhaAtual.getCaminhoTrilha();
+            if (caminhoTrrilhaAtual == null || !caminhoTrrilhaAtual.equals(caminhoNovaTrilha)) {
+                Class<? extends ItfTrilhaNavegacao> classeTrilhaAlternativa = servicoNavegacao.getClasseTrilhaDeNavegacao(pContato, caminhoNovaTrilha);
+                contextoDoUsuario.setTrilhaAtual(caminhoTrilha);
+
+                trilhaAtual = instanciarTrilha(classeTrilhaAlternativa, contextoDoUsuario, trilhaAtual, pEntrada, caminhoNovaTrilha);
+
+                try {
+                    trilhaAtual.iniciarTrilha();
+                    AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(contextoDoUsuario);
+                    if (trilhaAtual.getRotaAtual() == null) {
+                        throw new ErroComDevolucaoMensagemUsuario("A rota precisa ser definida ao iniciar uma trilha, isso não aconteceu na trilha" + trilhaAtual.getClass().getSimpleName(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                    }
+
+                } catch (ErroConexaoServicoChat ex) {
+                    throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                } catch (Throwable t) {
+                    throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + t.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                }
+            }
+
+        }
+
+        if (trilhaAtual.getRotaAtual() == null) {
+            throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + trilhaAtual.getClass().getSimpleName() + " para " + pContato, "Não consegui definir uma rota para sua mensagem, entre em contato com nosso suporte");
+        }
+        ULTIMAS_TRILHAS.get(pEntrada).put(pContato, trilhaAtual);
+        return trilhaAtual;
+    }
+
     public ItfTrilhaNavegacao getTrilhaByComandoMatrix(EntradaNumeroWhatsapp pEntrada, Contato pContato, ComandoDeAtendimento pComandoAtendimento) throws ErroComDevolucaoMensagemUsuario {
         ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada);
         ItfTrilhaNavegacao trilhaAtual = null;
@@ -165,7 +225,7 @@ public class GestaoDeServicosNavegacao {
         return trilhaAtual;
     }
 
-    public ItfTrilhaNavegacao getTrilha(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario {
+    public ItfTrilhaNavegacao getTrilhaByMensagemWhatasapp(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario {
         ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada);
         ItfTrilhaNavegacao trilhaAtual = null;
         if (!ULTIMAS_TRILHAS.containsKey(pEntrada)) {

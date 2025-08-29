@@ -5,6 +5,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 
 /**
@@ -38,6 +40,8 @@ public interface ItfTrilhaNavegacao {
     public void acaoTimeoutAguardandoInteracaoContato();
 
     public String getDesvioTrilhaPorEventoMatrix(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario;
+
+    public String getDesvioTrilhaporEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario;
 
     public RotaMensagemContato getRotaAtual();
 

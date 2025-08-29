@@ -21,7 +21,7 @@ public class MensagemTrOrigemMatrix extends MensagemTransito {
         setTipoOrigem(FabTipoOrigem.MATRIX);
     }
 
-    @Column(length = 5000)
+    @Column(length = 5000, columnDefinition = "VARCHAR(5000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String jsonMensagemOriginal;
 

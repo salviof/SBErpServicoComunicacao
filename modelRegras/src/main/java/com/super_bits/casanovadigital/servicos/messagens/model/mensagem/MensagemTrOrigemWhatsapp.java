@@ -22,7 +22,7 @@ public class MensagemTrOrigemWhatsapp extends MensagemTransito {
     private String codigoEncaminhamentoMatrix;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
-    @Column(length = 8000)
+    @Column(length = 8000, columnDefinition = "VARCHAR(8000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String corpoJsonRecebido;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.DATAHORA)

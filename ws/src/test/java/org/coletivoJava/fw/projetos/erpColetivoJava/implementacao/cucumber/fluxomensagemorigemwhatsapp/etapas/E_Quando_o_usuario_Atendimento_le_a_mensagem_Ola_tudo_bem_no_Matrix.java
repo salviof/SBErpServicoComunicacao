@@ -28,7 +28,7 @@ public class E_Quando_o_usuario_Atendimento_le_a_mensagem_Ola_tudo_bem_no_Matrix
                     FluxoMensagemOrigemWhatsapp.getPacoteEnvioMensagem().getMensagens().get(0).getEntrada(),
                     contato);
             ItfChatSalaBean sala;
-            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilha(mensagem.getEntrada(), contato, mensagem);
+            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
             sala = trilha.getRotaAtual().getComoRotaEncaminhamentoMatrix().getSala();
             String mensagemJson = FluxoMensagemOrigemWhatsapp.MENSAGEM_whatsapp_SIMPLES_payload;
             boolean enviarPacote = false;

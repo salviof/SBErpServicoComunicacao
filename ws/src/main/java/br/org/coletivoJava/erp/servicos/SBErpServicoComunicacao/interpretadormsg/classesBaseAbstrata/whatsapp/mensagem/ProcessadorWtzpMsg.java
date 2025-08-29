@@ -61,7 +61,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
 
         try {
 
-            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilha(mensagem.getEntrada(), contato, mensagem);
+            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
 
             RotaMensagemContato rota = trilha.getRotaAtual();
             switch (rota.getTipoRota().getTipoRotaMensagem()) {

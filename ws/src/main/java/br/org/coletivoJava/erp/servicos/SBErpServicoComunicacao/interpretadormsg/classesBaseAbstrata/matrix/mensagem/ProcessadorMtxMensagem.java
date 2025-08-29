@@ -70,21 +70,15 @@ public class ProcessadorMtxMensagem implements
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
             }
-            try {
-                ComandoDeAtendimento comandoAendimento = UtilSBComandosAtendimento.gerarComandoAtendimento(evento);
-                ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByComandoMatrix(entrada, contato, comandoAendimento);
-                return;
-            } catch (ErroComandoAtendimentoInvalido ex) {
-                Logger.getLogger(ProcessadorMtxMensagem.class.getName()).log(Level.SEVERE, null, ex);
-            }
 
             /// TODO MOVER TRECHO ABAIXO  PARA AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
 
             //TODO SUBISTIUIR AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto, por
-            AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento, sala);
-//            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
+           codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada, contato.getWaid(), evento, sala);
 
+//            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
             if (codReciboWhatsapp != null) {
+                ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByEventoExistente(entrada, contato, evento);
 
                 EncaminhamentoMatrixParaWtzp encaminhamento = new EncaminhamentoMatrixParaWtzp();
                 encaminhamento.setMensagem(mensagemTransito);
