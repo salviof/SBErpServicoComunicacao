@@ -3,13 +3,17 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.implementacao.UtilSBApiWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import jakarta.json.JsonValue;
 
@@ -18,7 +22,7 @@ import jakarta.json.JsonValue;
  */
 public class ServicoWhatsapp {
 
-    public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento) throws ErroConexaoServicoChat {
+    public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento, ItfChatSalaBean pSala) throws ErroConexaoServicoChat {
         /// implameNTAR o swith case para os tipos de eventos.
         //// IMPLEMENTAR O CABEÇALHO DO CONATO AQUI , REMOVENDO DO ProcessadorMtxMensagem
         MensagemSimplesEnvioWhatsapp novamensagem = new MensagemSimplesEnvioWhatsapp();
@@ -29,6 +33,20 @@ public class ServicoWhatsapp {
         if (usuarioAtendimento == null) {
             throw new ErroConexaoServicoChat("Usuário de atendimento " + pEvento.getSender() + " não foi encontrado");
         }
+        MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
+        novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
+        String textomensagem = pEvento.getContent().getString("body");
+        novaMensagem.setCorpo(textomensagem);
+
+        FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
+        switch (tipoSAla) {
+            case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
+                novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getNome()) + " " + usuarioAtendimento.getNome());
+                break;
+        }
+
+//        FabTipoPacoteDeAcaoMatrix
+//        EventoSalaMatrix
         novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
     }

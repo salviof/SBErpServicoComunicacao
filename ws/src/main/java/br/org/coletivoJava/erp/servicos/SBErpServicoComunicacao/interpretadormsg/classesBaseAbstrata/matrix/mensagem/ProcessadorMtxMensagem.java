@@ -58,7 +58,6 @@ public class ProcessadorMtxMensagem implements
         }
 
         try {
-
             EntradaNumeroWhatsapp entrada;
             try {
                 entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala.getApelido());
@@ -67,22 +66,10 @@ public class ProcessadorMtxMensagem implements
             }
 
             /// TODO MOVER TRECHO ABAIXO  PARA AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
-            MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
-            novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
-            String textomensagem = evento.getContent().getString("body");
-            novaMensagem.setCorpo(textomensagem);
-
-            FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(sala.getApelido());
-            switch (tipoSAla) {
-                case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
-                    novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(sala.getNome()) + " " + usuarioAtendimento.getNome());
-                    break;
-
-            }
 
             //TODO SUBISTIUIR AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto, por
-            //AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
-            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
+            AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento, sala);
+//            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
 
             if (codReciboWhatsapp != null) {
 

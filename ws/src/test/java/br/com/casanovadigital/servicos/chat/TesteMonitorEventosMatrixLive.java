@@ -6,7 +6,6 @@ package br.com.casanovadigital.servicos.chat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.configModel.ConfigPercistenciaServicoComunicacao;
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.SBPersistencia;
@@ -20,7 +19,7 @@ import org.junit.Test;
  *
  * @author salvio
  */
-public class TEsteMonitorEventosMatrixLive {
+public class TesteMonitorEventosMatrixLive {
 
     @Before
     public void configuracoes() {
@@ -39,12 +38,12 @@ public class TEsteMonitorEventosMatrixLive {
                 try {
                     Thread.sleep(1000000000);
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(TEsteMonitorEventosMatrixLive.class.getName()).log(Level.SEVERE, null, ex);
+                    Logger.getLogger(TesteMonitorEventosMatrixLive.class.getName()).log(Level.SEVERE, null, ex);
                 }
 
             }
         } catch (ErroConexaoServicoChat ex) {
-            Logger.getLogger(TEsteMonitorEventosMatrixLive.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(TesteMonitorEventosMatrixLive.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -49,7 +49,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private Date ultimaInteracaoContato;
     private Date ultimaInteracaoAtendimento;
     private long segundosTimeoutAguardandoContato = 79200;
-    private long segundosTimeoutAguardandoAtendimento = 1320;
+    private long segundosTimeoutAguardandoAtendimento = 900;
     //segundosTimeoutAguardandoAtendimento:600000
     private boolean agenteUltimaInteracaoContato;
     private final Monitor monitor;
@@ -253,9 +253,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             switch (rotaAtual.getTipoRota().getTipoRotaMensagem()) {
 
                 case MENU_OPCOES:
-                    break;
                 case RESPOSTA_WEBSERVICE:
-                    break;
                 case RETORNO_LINK:
                     break;
                 case ENCAMINHAMENTO: {
