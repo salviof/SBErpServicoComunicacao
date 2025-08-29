@@ -11,6 +11,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.logdeMensagens.RepositorioComunicacaoChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient.ServicoWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerComandosPadrao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.ServicoRecepcaoEventoSpark;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.whataspp.ApiWhatsappRecepMensagem;
@@ -22,9 +23,8 @@ import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
-import br.org.coletivoJava.fw.erp.implementacao.chat.json_bind_matrix_org.pacotematrix.EventMatrixParsing;
+import br.org.coletivoJava.fw.erp.implementacao.chat.json_bind_matrix_org.pacotematrix.PacoteMatrixParsing;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.SalaChatSessaoEscutaAtiva;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -33,6 +33,7 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.ServiceLoader;
@@ -80,6 +81,7 @@ public class AplicacaoWsChat {
             }
             //TODO VALIDAR AUTENTICAÇÃO DO SERVIÇO MATRIX ANTES DE INICIAR
             AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class);
+            AplicacaoWsChat.SERVICO_MATRIX.registrarClasseEscutaNotificacoes(ListenerComandosPadrao.class);
             //      AplicacaoWsChat.SERVICO_MATRIX.registrarClasseEscutaNotificacoes(ListenerNotificacaoMatrixAuxiliadora.class);
             ServicoRecepcaoEventoSpark.iniciarServico();
             getCentralLogicaProcesasmento().inicializacaoServicosTerceiros();
@@ -129,6 +131,7 @@ public class AplicacaoWsChat {
 
         ContextoContato ctxContato = REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(pCanalComunicacaoWtp, ct);
         ctxContato.setTrilhaAtual(null);
+        ctxContato.setDataHoraFinalSessao(new Date());
         REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(ctxContato);
         try {
             GESTAO_SERVICO_NAVEGACAO.removerRota(pCanalComunicacaoWtp, ct);
@@ -176,7 +179,7 @@ public class AplicacaoWsChat {
             throw new ErroRegraDeNegocio("Este método tem o propósito de ser usado em testes apenas");
         }
         JSONObject syncData = new JSONObject(pPacoteMatrix);
-        List<ItfEventoMatix> eventosDeSala = EventMatrixParsing.parseEventoSalas(syncData);
+        List<ItfEventoMatix> eventosDeSala = PacoteMatrixParsing.parseEventoSalas(syncData, AplicacaoWsChat.SERVICO_MATRIX).getEventos();
         for (ItfEventoMatix evento : eventosDeSala) {
             ItfChatSalaBean sala;
 

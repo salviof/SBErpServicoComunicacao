@@ -6,6 +6,7 @@ package br.com.casanovadigital.servicos.chat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerComandosPadrao;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.configModel.ConfigPercistenciaServicoComunicacao;
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.SBPersistencia;
@@ -33,7 +34,7 @@ public class TesteMonitorEventosMatrixLive {
         try {
             //AplicacaoWsChat.iniciarAplicacao();
             AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrixTestesLive.class);
-
+            AplicacaoWsChat.SERVICO_MATRIX.registrarClasseEscutaNotificacoes(ListenerComandosPadrao.class);
             while (true) {
                 try {
                     Thread.sleep(1000000000);
