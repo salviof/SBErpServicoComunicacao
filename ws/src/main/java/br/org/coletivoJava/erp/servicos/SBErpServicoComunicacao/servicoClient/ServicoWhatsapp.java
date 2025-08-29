@@ -3,12 +3,13 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
+import br.org.coletivoJava.integracoes.restIntmatrixchat.UtilsbApiMatrixChat;
+import br.org.coletivoJava.integracoes.restIntmatrixchat.implementacao.UtilMatrixApiServer;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.implementacao.UtilSBApiWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
@@ -32,6 +33,17 @@ public class ServicoWhatsapp {
 
         if (usuarioAtendimento == null) {
             throw new ErroConexaoServicoChat("Usuário de atendimento " + pEvento.getSender() + " não foi encontrado");
+        }
+        //
+        // byte[] arquivo = UtilMatrixApiServer.getMediaBytesByID(idMedia);
+        String tipo = "texto";
+        switch (tipo) {
+            case "texto":
+                enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
+
+                break;
+            default:
+                throw new AssertionError();
         }
         MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
         novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
