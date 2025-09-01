@@ -7,31 +7,21 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.comandosAtendimento.UtilSBComandosAtendimento;
-import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
-import br.org.coletivoJava.fw.api.erp.chat.model.ErroComandoAtendimentoInvalido;
-
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
-import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
- *
  * @author salvio
  */
 public class ProcessadorMtxMensagem implements
@@ -52,8 +42,6 @@ public class ProcessadorMtxMensagem implements
     @Override
     public void processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento, ErroConexaoServicoChat {
 
-        //JSONObject conteudo = pEventoSala.getContent();
-        //Encaminhar para Whatsapp
         String codReciboWhatsapp = null;
         ItfUsuarioChat usuarioAtendimento;
 
@@ -67,16 +55,12 @@ public class ProcessadorMtxMensagem implements
             EntradaNumeroWhatsapp entrada;
             try {
                 entrada = AplicacaoWsChat.getCentralLogicaProcesasmento().getEntradaBySala(sala.getApelido());
+                System.out.println("ENTRADA::: " + entrada);
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
             }
 
-            /// TODO MOVER TRECHO ABAIXO  PARA AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada,  contato.getWaid(), evento)
-
-            //TODO SUBISTIUIR AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto, por
-           codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada, contato.getWaid(), evento, sala);
-
-//            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), novaMensagem);
+            codReciboWhatsapp = AplicacaoWsChat.SERVICO_WHATSAPP.encaminharMensagem(entrada, contato.getWaid(), evento, sala);
             if (codReciboWhatsapp != null) {
                 ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByEventoExistente(entrada, contato, evento);
 

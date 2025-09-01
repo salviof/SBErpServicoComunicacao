@@ -25,23 +25,34 @@ public class ServicoWhatsapp {
 
     public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento, ItfChatSalaBean pSala) throws ErroConexaoServicoChat {
         /// implameNTAR o swith case para os tipos de eventos.
-        //// IMPLEMENTAR O CABEÇALHO DO CONATO AQUI , REMOVENDO DO ProcessadorMtxMensagem
+
         MensagemSimplesEnvioWhatsapp novamensagem = new MensagemSimplesEnvioWhatsapp();
 
         novamensagem.setCorpo(pEvento.getContent().getString("body"));
+
+
+        System.out.println("TIPO DE CONTENT: " + pEvento.getContent());
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
         novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         if (usuarioAtendimento == null) {
             throw new ErroConexaoServicoChat("Usuário de atendimento " + pEvento.getSender() + " não foi encontrado");
         }
         //
-        // byte[] arquivo = UtilMatrixApiServer.getMediaBytesByID(idMedia);
-        String tipo = "texto";
-        switch (tipo) {
-            case "texto":
+//         byte[] arquivo = UtilMatrixApiServer.getMediaBytesByID(idMedia);
+        String tipoEvento = pEvento.getContent().getString("msgtype");
+        switch (tipoEvento) {
+            case "m.text":
                 enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
-
                 break;
+            case "m.image":
+                String urlImagem = pEvento.getContent().getString("url");
+                return enviarImagem(pEntrada, pContatoWtzpID, UtilMatrixApiServer.getMediaByteaIDByURIMatrix(urlImagem), pEvento.getContent().getString("body"));
+            case "m.file":
+                String urlFile = pEvento.getContent().getString("url");
+                return enviarPdf(pEntrada, pContatoWtzpID, UtilMatrixApiServer.getMediaByteaIDByURIMatrix(urlFile), pEvento.getContent().getString("body"));
+            case "m.audio":
+                String urlAudio = pEvento.getContent().getString("url");
+                return enviarAudio(pEntrada, pContatoWtzpID, UtilMatrixApiServer.getMediaByteaIDByURIMatrix(urlAudio), pEvento.getContent().getString("body"));
             default:
                 throw new AssertionError();
         }
@@ -49,7 +60,6 @@ public class ServicoWhatsapp {
         novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         String textomensagem = pEvento.getContent().getString("body");
         novaMensagem.setCorpo(textomensagem);
-
         FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
         novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         switch (tipoSAla) {
@@ -58,8 +68,6 @@ public class ServicoWhatsapp {
                 break;
         }
 
-//        FabTipoPacoteDeAcaoMatrix
-//        EventoSalaMatrix
         return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
     }
 
@@ -102,8 +110,8 @@ public class ServicoWhatsapp {
         return valor.asJsonObject().getString("id");
     }
 
-    public String enviarImagem(EntradaNumeroWhatsapp pEntrada, Contato pContato, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
-        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_IMAGEM_ENVIAR.getAcao(pEntrada.getCodigo(), pContato.getWaid(), pArquivo, pNomeArquivo).getResposta();
+    public String enviarImagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
+        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_IMAGEM_ENVIAR.getAcao(pEntrada.getCodigo(), pContatoWtzpID, pArquivo, pNomeArquivo).getResposta();
         if (!resposta.isSucesso()) {
             throw new ErroConexaoServicoChat(resposta.getRespostaTexto());
         }
@@ -111,12 +119,12 @@ public class ServicoWhatsapp {
         return valor.asJsonObject().getString("id");
     }
 
-    public String enviarAudio(EntradaNumeroWhatsapp pEntrada, Contato pContato, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
+    public String enviarAudio(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
         String tipoArquivo = "audio/ogg";
         JsonValue valor = null;
         try {
             String codigoMetaArquivo = UtilSBApiWhatsapp.mediaUpload(pArquivo, pNomeArquivo, tipoArquivo);
-            ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_AUDIO_ENVIAR.getAcao(pEntrada.getCodigo(), pContato.getWaid(), codigoMetaArquivo).getResposta();
+            ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_AUDIO_ENVIAR.getAcao(pEntrada.getCodigo(), pContatoWtzpID, codigoMetaArquivo).getResposta();
             if (!resposta.isSucesso()) {
                 throw new ErroConexaoServicoChat(resposta.getRespostaTexto());
             }
@@ -129,8 +137,8 @@ public class ServicoWhatsapp {
         return valor.asJsonObject().getString("id");
     }
 
-    public String enviarPdf(EntradaNumeroWhatsapp pEntrada, Contato pContato, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
-        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_PDF_ENVIAR.getAcao(pEntrada.getCodigo(), pContato.getWaid(), pArquivo, pNomeArquivo).getResposta();
+    public String enviarPdf(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
+        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_PDF_ENVIAR.getAcao(pEntrada.getCodigo(), pContatoWtzpID, pArquivo, pNomeArquivo).getResposta();
         if (!resposta.isSucesso()) {
             throw new ErroConexaoServicoChat(resposta.getRespostaTexto());
         }

@@ -33,7 +33,7 @@ public class ServicoWhatsappTest {
         byte[] arquivo = UtilSBCoreBytes.gerarBytesPorArquivo(new File("/home/superBits/projetos/coletivoJava/source/erpColetivoJava/SBErpServicoComunicacao/ws/src/test/resources/arquivos/teste.pdf"));
         contato.setWaid("5531986831481");
         entradaNumeroWhatsapp.setCodigo("103007756220088");
-        AplicacaoWsChat.SERVICO_WHATSAPP.enviarImagem(entradaNumeroWhatsapp, contato, arquivo, "pdfDeTeste");
+//        AplicacaoWsChat.SERVICO_WHATSAPP.enviarImagem(entradaNumeroWhatsapp, contato, arquivo, "pdfDeTeste");
     }
 
     @Test

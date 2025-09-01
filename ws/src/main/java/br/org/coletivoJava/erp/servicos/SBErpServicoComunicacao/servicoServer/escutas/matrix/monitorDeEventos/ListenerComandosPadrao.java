@@ -17,11 +17,11 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfListenerEventoComandoAtendim
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * @author salvio
  */
 public class ListenerComandosPadrao implements ItfListenerEventoComandoAtendimento {
@@ -37,23 +37,18 @@ public class ListenerComandosPadrao implements ItfListenerEventoComandoAtendimen
         public String getComando() {
 
             switch (this) {
-
                 case NOVA_ROTA:
                     return "rota";
-
                 case AGENDA_CONSULTOR:
                     return "agenda venda";
                 case AGENDA_ATENDIMENTO:
-
                     return "agenda atendimento";
                 case AREA_CLIENTE:
                     return "linkCliente";
                 case SALA_VENDAS:
                     return "vendas";
-
                 case SALA_ATENDIMENTO:
                     return "atendimento";
-
                 default:
                     throw new AssertionError();
             }

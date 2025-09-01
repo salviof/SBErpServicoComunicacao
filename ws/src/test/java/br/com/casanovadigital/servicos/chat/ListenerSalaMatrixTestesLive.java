@@ -35,10 +35,10 @@ public class ListenerSalaMatrixTestesLive extends ListenerSalaMatrix {
         if (pNomeSAla == null) {
             return false;
         }
-        if (pNomeSAla.equals("#5531984178550wc:casanovadigital.com.br")) {
+        if (pNomeSAla.equals("#5531986831481wv:casanovadigital.com.br")) {
             return true;
         }
-        return pNomeSAla.equals("#5531986831481wc:casanovadigital.com.br");
+        return pNomeSAla.equals("#5531984178550wc:casanovadigital.com.br");
     }
 
 }
