@@ -30,7 +30,7 @@ public class ServicoWhatsapp {
 
         novamensagem.setCorpo(pEvento.getContent().getString("body"));
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
-
+        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         if (usuarioAtendimento == null) {
             throw new ErroConexaoServicoChat("Usuário de atendimento " + pEvento.getSender() + " não foi encontrado");
         }
@@ -51,15 +51,15 @@ public class ServicoWhatsapp {
         novaMensagem.setCorpo(textomensagem);
 
         FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
+        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         switch (tipoSAla) {
             case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
-                novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getNome()) + " " + usuarioAtendimento.getNome());
+                novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getApelido()) + " " + usuarioAtendimento.getNome() + ":");
                 break;
         }
 
 //        FabTipoPacoteDeAcaoMatrix
 //        EventoSalaMatrix
-        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
     }
 

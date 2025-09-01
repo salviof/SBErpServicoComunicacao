@@ -24,6 +24,7 @@ import br.org.coletivoJava.integracoes.whatsapp.config.FabConfigApiWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreNumeros;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import jakarta.json.Json;
@@ -33,6 +34,7 @@ import jakarta.json.JsonObject;
 import jakarta.json.JsonObjectBuilder;
 import jakarta.json.JsonValue;
 import java.net.URL;
+import java.util.Random;
 
 /**
  *
@@ -46,8 +48,10 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
     @Override
     public ItfUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
         String caminhoArquivo = SBCore.getConfigModulo(FabConfigServicoComunicacao.class).getPropriedade(FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO);
-
         String email = FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema();
+        if (!new Random().nextBoolean()) {
+            email = "camila@casanovadigital.com.br";
+        }
         try {
             return AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByEmail(email);
         } catch (ErroConexaoServicoChat ex) {

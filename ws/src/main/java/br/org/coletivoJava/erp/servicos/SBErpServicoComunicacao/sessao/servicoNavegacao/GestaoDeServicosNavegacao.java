@@ -87,10 +87,12 @@ public class GestaoDeServicosNavegacao {
         if (!ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato)) {
             return false;
         }
-        String rota = ULTIMAS_TRILHAS.get(pEntrada).get(pCaminhoTrilha).getCaminhoTrilha();
-        if (rota != null && pCaminhoTrilha != null) {
-            if (rota.equals(pCaminhoTrilha)) {
-                return true;
+        if (ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato)) {
+            String rota = ULTIMAS_TRILHAS.get(pEntrada).get(pContato).getCaminhoTrilha();
+            if (rota != null && pCaminhoTrilha != null) {
+                if (rota.equals(pCaminhoTrilha)) {
+                    return true;
+                }
             }
         }
         return false;
@@ -143,7 +145,10 @@ public class GestaoDeServicosNavegacao {
 
                 } catch (ErroConexaoServicoChat ex) {
                     throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + ex.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
+                } catch (ErroComDevolucaoMensagemUsuario t) {
+                    throw t;
                 } catch (Throwable t) {
+
                     throw new ErroComDevolucaoMensagemUsuario("Falha obtendo regra de negocio " + t.getMessage(), "A Mensagem não foi entregue,a trilha de navegação falhou a ser carregada, entre em contato com o administrador");
                 }
             }

@@ -20,7 +20,6 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_DEBATE_INTERNO_LEAD_CLIENTE;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_VENDAS;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -29,8 +28,6 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
 
 /**
@@ -50,7 +47,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private ContextoContato contextoDeSessao;
     private Date ultimaInteracaoContato;
     private Date ultimaInteracaoAtendimento;
-    private long segundosTimeoutAguardandoContato = 79200;
+    private long segundosTimeoutAguardandoContato = 90000;
     private long segundosTimeoutAguardandoAtendimento = 900;
     //segundosTimeoutAguardandoAtendimento:600000
     private boolean agenteUltimaInteracaoContato;
@@ -72,7 +69,6 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         if (pCaminhoTrilha == null) {
             this.getClass().getSimpleName();
         }
-        ultimaInteracaoContato = new Date();
 
         if (pCaminhoTrilha == null) {
             try {
@@ -103,7 +99,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
             while (monitorAtivo) {
                 try {
-                    sleep(5000);
+                    sleep(120000);
                 } catch (InterruptedException ex) {
                     monitorAtivo = false;
                 }
@@ -226,8 +222,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     @Override
     public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario {
 
-        ultimaInteracaoContato = new Date();
-        agenteUltimaInteracaoContato = true;
+        registrarInteracao(TIPO_INTERACAO.CONTATO);
 
         agenteUltimaInteracaoContato = true;
         if (p.getPayloadRespostaProgramada() != null && !p.getPayloadRespostaProgramada().isEmpty()) {
