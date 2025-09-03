@@ -218,7 +218,7 @@ public class RepositorioComunicacaoChat {
             if (pesquisaContato.isPresent()) {
                 return registraUltimoContato(pesquisaContato.get());
             }
-            Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "'", Contato.class, em);
+            Contato contato = (Contato) UtilSBPersistencia.getRegistroByJPQL("from " + Contato.class.getSimpleName() + " where " + CPContato.waid + " = '" + pContato.getWa_id() + "' and tipoPessoa='" + Contato.class.getSimpleName() + "'", Contato.class, em);
             if (contato == null) {
                 contato = new Contato();
                 contato.setNome(pContato.getNome());
@@ -234,6 +234,16 @@ public class RepositorioComunicacaoChat {
                 }
                 return registraUltimoContato(contato);
             } else {
+
+                contato.setNome(pContato.getNome());
+                contato.setWaid(pContato.getWa_id());
+
+                ItfUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
+                contato.setDataHoraUltimaInteracao(new Date());
+                contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato = UtilSBPersistencia.mergeRegistro(contato, em);
+
                 return registraUltimoContato(contato);
             }
         } finally {

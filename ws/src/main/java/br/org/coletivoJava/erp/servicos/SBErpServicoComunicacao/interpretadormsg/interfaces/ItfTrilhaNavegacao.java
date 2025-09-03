@@ -3,6 +3,8 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
@@ -22,26 +24,21 @@ public interface ItfTrilhaNavegacao {
      * @param pContato
      * @return Nova Trilha
      */
-    public String iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
+    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
 
-    /**
-     * TODO RETORNAR A CLASSE E NO NOVO CAMINHO VINCULADO A ESSA NOVA TRILHA OU
-     * RETORNA SÓ O NOVO CAMINHO E A RESPONSABILIDADE DE DEFINIR A CLASSE, FICA
-     * EXCLUSIVA DO SERVIÇO DE NAVEGAÇÃO
-     *
-     * @param p
-     * @return
-     * @throws ErroComDevolucaoMensagemUsuario
-     */
-    public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
+    public AcaoGatilhoTrilha getAcaoDeGatilhoPorMensagemWtzp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
+
+    public AcaoGatilhoTrilha getAcaoDeGatilhoPorComandoAtendimento(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario;
+
+    public AcaoGatilhoTrilha getAcaoDeGatilhoPorEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario;
+
+    public AcaoGatilhoTrilha getAcaoDeGatilhoLoadDadosSessao(ContextoContato pContexto);
+
+    public void registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO tipoInteracao);
 
     public void acaoTimeoutAguardandoRespostaAtendimento();
 
     public void acaoTimeoutAguardandoInteracaoContato();
-
-    public String getDesvioTrilhaPorEventoMatrix(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario;
-
-    public String getDesvioTrilhaporEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario;
 
     public RotaMensagemContato getRotaAtual();
 
@@ -50,4 +47,5 @@ public interface ItfTrilhaNavegacao {
     public void finalizarSesaso();
 
     public ContextoContato getContextoDeSessao();
+
 }

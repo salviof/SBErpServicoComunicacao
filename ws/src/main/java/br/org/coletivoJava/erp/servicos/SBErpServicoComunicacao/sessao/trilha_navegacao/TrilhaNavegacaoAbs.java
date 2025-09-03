@@ -10,6 +10,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.es
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
@@ -24,10 +25,15 @@ import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringListas;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
 
 /**
@@ -52,6 +58,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     //segundosTimeoutAguardandoAtendimento:600000
     private boolean agenteUltimaInteracaoContato;
     private Monitor monitor;
+    private boolean umaTrilhaRaiz;
 
     public void setSegundosTimeoutAguardandoContato(long segundosTimeoutAguardandoContato) {
         this.segundosTimeoutAguardandoContato = segundosTimeoutAguardandoContato;
@@ -61,11 +68,24 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         this.segundosTimeoutAguardandoAtendimento = segundosTimeoutAguardandoAtendimento;
     }
 
+    public void setUltimaInteracaoContato(Date ultimaInteracaoContato) {
+        this.ultimaInteracaoContato = ultimaInteracaoContato;
+    }
+
     public TrilhaNavegacaoAbs(ContextoContato pContato, ItfTrilhaNavegacao pTrilhaOrigem, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) {
         entrada = pEntrada;
         trilhaOrigem = pTrilhaOrigem;
         caminhoTrilha = pCaminhoTrilha;
         contextoDeSessao = pContato;
+        if (caminhoTrilha == null) {
+            umaTrilhaRaiz = true;
+        } else {
+            try {
+                umaTrilhaRaiz = caminhoTrilha.equals(AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz());
+            } catch (ErroComDevolucaoMensagemUsuario ex) {
+                umaTrilhaRaiz = false;
+            }
+        }
         if (pCaminhoTrilha == null) {
             this.getClass().getSimpleName();
         }
@@ -196,14 +216,15 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
                 throw new ErroConexaoServicoChat("tipo de sala não é compatível com estes parametros, envie a entidade relacionada ao " + this.toString());
         }
 
-        ItfUsuarioChat UsuarioContato;
+        ItfUsuarioChat usuarioContato;
         try {
-            UsuarioContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pContato.getMatrixID());
+            usuarioContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pContato.getMatrixID());
+
             ItfChatSalaBean salaIdeal = pTipoSala
                     .getSalaMatrixPadrao(pUsuarioAtendimento,
-                            UsuarioContato);
+                            usuarioContato);
 
-            String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(UsuarioContato, pTipoSala.getSlug());
+            String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContato, pTipoSala.getSlug());
             ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
 
             if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
@@ -219,29 +240,26 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     }
 
+    public abstract AcaoGatilhoTrilha getAcaoTrilhaPorMensgemContato(String pMensagem, String pComando);
+
+    public abstract AcaoGatilhoTrilha getAcaoTrilhaPorMensgemAtendimento(String pMensagem, String pComando);
+
     @Override
-    public String getDesvioTrilhaPorMensgemWhatsapp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario {
+    public final AcaoGatilhoTrilha getAcaoDeGatilhoPorMensagemWtzp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario {
 
-        registrarInteracao(TIPO_INTERACAO.CONTATO);
+        return getAcaoTrilhaPorMensgemContato(p.getMensagem(), p.getPayloadRespostaProgramada());
 
-        agenteUltimaInteracaoContato = true;
-        if (p.getPayloadRespostaProgramada() != null && !p.getPayloadRespostaProgramada().isEmpty()) {
+    }
 
-            //ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada);
-            //Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(getContextoDeSessao().getContato(), p.getPayloadRespostaProgramada());
-            return p.getPayloadRespostaProgramada();
+    @Override
+    public final AcaoGatilhoTrilha getAcaoDeGatilhoPorComandoAtendimento(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario {
 
-        }
-        ultimaInteracaoContato = new Date();
-        String possivelPalavraChave = UtilSBCoreStringFiltros.filtrarApenasLetra(p.getMensagem().toLowerCase());
-        if (p.getMensagem() != null) {
-            for (String palavra : AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getPalavrasParaCaminhoTrilhaRaiz()) {
-                if (palavra.equals(possivelPalavraChave)) {
-                    return AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
-                }
-            }
-        }
-        return null;
+        return getAcaoTrilhaPorMensgemAtendimento(p.getTextoCompleto(), p.getNovaRota());
+    }
+
+    @Override
+    public final AcaoGatilhoTrilha getAcaoDeGatilhoPorEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
+        return getAcaoTrilhaPorMensgemAtendimento(pEvento.getContent().getString("body"), null);
     }
 
     public RotaMensagemContato getRotaAtual() {
@@ -292,12 +310,12 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         }
     }
 
-    enum TIPO_INTERACAO {
+    public enum TIPO_INTERACAO {
 
         CONTATO, ATENDIMENTO;
     }
 
-    private void registrarInteracao(TIPO_INTERACAO tipoInteracao) {
+    public void registrarInteracao(TIPO_INTERACAO tipoInteracao) {
 
         if (monitor == null) {
             monitor = new Monitor();
@@ -318,17 +336,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         }
     }
 
-    @Override
-    public String getDesvioTrilhaPorEventoMatrix(ComandoDeAtendimento p) throws ErroComDevolucaoMensagemUsuario {
-        registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
-        return p.getNovaRota();
+    public boolean isUmaTrilhaRaiz() {
+        return umaTrilhaRaiz;
     }
-
-    @Override
-    public String getDesvioTrilhaporEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
-        registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
-
-        return null;
-    }
-
 }

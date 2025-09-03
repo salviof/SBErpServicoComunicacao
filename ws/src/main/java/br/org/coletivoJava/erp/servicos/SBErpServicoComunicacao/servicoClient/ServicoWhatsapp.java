@@ -71,7 +71,7 @@ public class ServicoWhatsapp {
         return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
     }
 
-    public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, String pMensagem) throws ErroConexaoServicoChat {
+    public String enviarMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, String pMensagem) throws ErroConexaoServicoChat {
 
         MensagemSimplesEnvioWhatsapp novamensagem = new MensagemSimplesEnvioWhatsapp();
         novamensagem.setCorpo(pMensagem);

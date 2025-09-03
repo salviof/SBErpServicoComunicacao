@@ -3,9 +3,11 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.ServicoNavegacaoAbs;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import jakarta.json.JsonObject;
 import java.util.List;
 
 /**
@@ -15,7 +17,7 @@ import java.util.List;
 public class ServicoNavegacaoPadraoVendas extends ServicoNavegacaoAbs implements ItfServicoNavegacao {
 
     public ServicoNavegacaoPadraoVendas(EntradaNumeroWhatsapp pEntrada) {
-        super(pEntrada);
+        super(pEntrada, TrilhaVendasPadrao.class, new Class[]{TrilhaVendasPadrao.class});
     }
 
     public Class<? extends ItfTrilhaNavegacao> getClasseTrilhaDeNavegacao(Contato pContato, String pCaminho) {
@@ -40,6 +42,11 @@ public class ServicoNavegacaoPadraoVendas extends ServicoNavegacaoAbs implements
     @Override
     public List<String> getPalavrasParaCaminhoTrilhaRaiz() {
         return Lists.newArrayList("menu");
+    }
+
+    @Override
+    public JsonObject gerarJsonDadosDeSessao(Contato pContato) {
+        return null;
     }
 
 }

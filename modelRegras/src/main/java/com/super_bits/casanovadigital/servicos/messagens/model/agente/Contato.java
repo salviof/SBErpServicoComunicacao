@@ -33,14 +33,6 @@ public class Contato extends Pessoa {
         this.waid = waid;
     }
 
-    public String getJsonDadosDoContexto() {
-        return jsonDadosDoContexto;
-    }
-
-    public void setJsonDadosDoContexto(String jsonDadosDoContexto) {
-        this.jsonDadosDoContexto = jsonDadosDoContexto;
-    }
-
     public Date getDataHoraUltimaInteracao() {
         return dataHoraUltimaInteracao;
     }

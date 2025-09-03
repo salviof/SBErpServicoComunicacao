@@ -10,6 +10,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.ServicoNavegacaoAbs;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
+import jakarta.json.JsonObject;
 import java.util.List;
 
 /**
@@ -19,7 +20,7 @@ import java.util.List;
 public class ServicoNavegacaoPadraoAtendimento extends ServicoNavegacaoAbs implements ItfServicoNavegacao {
 
     public ServicoNavegacaoPadraoAtendimento(EntradaNumeroWhatsapp pEntrada) {
-        super(pEntrada);
+        super(pEntrada, TrilhaAtendimentoSimples.class, new Class[]{TrilhaAtendimentoSimples.class});
     }
 
     @Override
@@ -28,13 +29,13 @@ public class ServicoNavegacaoPadraoAtendimento extends ServicoNavegacaoAbs imple
     }
 
     @Override
-    public String getCaminhoTrilhaRaiz() {
-        return "menu";
+    public List<String> getPalavrasParaCaminhoTrilhaRaiz() {
+        return Lists.newArrayList("menu");
     }
 
     @Override
-    public List<String> getPalavrasParaCaminhoTrilhaRaiz() {
-        return Lists.newArrayList("menu");
+    public JsonObject gerarJsonDadosDeSessao(Contato pContato) {
+        return null;
     }
 
 }

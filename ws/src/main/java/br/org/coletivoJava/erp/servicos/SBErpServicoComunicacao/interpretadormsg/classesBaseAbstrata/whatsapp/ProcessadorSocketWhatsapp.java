@@ -92,9 +92,16 @@ public abstract class ProcessadorSocketWhatsapp {
                 case DESCONHECIDO:
                     codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarDocumento(pSala, pContato, msg.getId(), msg.getMensagem(), arquivo);
                     break;
+                case EVENTO_ENTREGA:
+                    break;
+                case EVENTO_LIDO:
+                    break;
+                case INTERATIVA:
+                    codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, pContato, msg.getId(), "Selecionou " + msg.getPayloadRespostaProgramada());
+                    break;
 
                 default:
-                    codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, pContato, msg.getId(), "Enviou um tipo de arquivo não conhecido" + conteudomsg);
+                    codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, pContato, msg.getId(), "Enviou um tipo de arquivo não conhecido" + msg.getMensagem());
 
                     break;
 

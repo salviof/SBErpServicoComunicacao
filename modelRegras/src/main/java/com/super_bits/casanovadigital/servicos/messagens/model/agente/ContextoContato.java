@@ -11,6 +11,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import java.util.Date;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -58,6 +59,9 @@ public class ContextoContato extends EntidadeSimples {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHoraFinalSessao;
+
+    @Column(length = 10000)
+    private String jsonDadosDoContexto;
 
     public Contato getContato() {
         return contato;
@@ -137,6 +141,14 @@ public class ContextoContato extends EntidadeSimples {
 
     public void setNomeContexto(String nomeContexto) {
         this.nomeContexto = nomeContexto;
+    }
+
+    public String getJsonDadosDoContexto() {
+        return jsonDadosDoContexto;
+    }
+
+    public void setJsonDadosDoContexto(String jsonDadosDoContexto) {
+        this.jsonDadosDoContexto = jsonDadosDoContexto;
     }
 
 }

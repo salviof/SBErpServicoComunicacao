@@ -19,6 +19,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -59,10 +60,25 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
             throw new ErroFalhaEncaminhando("Falha obtendo usuário correspentente ao contato no sistema Matrix, serviço indisponivel" + tServicoIndisponivel.getMessage());
         }
 
+        System.out.println("DEFININDO TRILHA");
+        ItfTrilhaNavegacao trilha = null;
         try {
+            trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
 
-            ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
+            trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.CONTATO);
 
+            System.out.println("TRILHA DEFINIDA");
+        } catch (ErroComDevolucaoMensagemUsuario p) {
+            throw p;
+        } catch (Throwable t) {
+            throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário" + t.getMessage(), "Falha definindo trilha:"
+                    + t.getMessage() + " por favor, entre em contato com nossa equipe, para resolvermos sua demanda, e  relate o horário do erro, para melhorarmos nosso serviço,ligando neste relefone");
+        }
+        try {
+            if (trilha == null) {
+                throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário", "Falha definindo trilha para:" + contato.getNome() + " por favor, entre em contato com nossa equipe, para resolvermos sua demanda, e  relate o horário do erro, para melhorarmos nosso serviço,ligando neste relefone");
+            }
+            System.out.println(trilha.getCaminhoTrilha());
             RotaMensagemContato rota = trilha.getRotaAtual();
             switch (rota.getTipoRota().getTipoRotaMensagem()) {
                 case MENU_OPCOES:
@@ -84,8 +100,12 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         } catch (ErroConexaoServicoChat ex) {
             throw new ErroFalhaEncaminhando("Falha encaminhando mensagem " + ex.getMessage());
         } catch (ErroRegraDeNEgocioChat ex) {
-            throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário" + ex.getMessage(), "Falha encaminhando mensagem:" + ex.getMessage());
+            throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário" + ex.getMessage(), "Falha encaminhando mensagem:" + ex.getMessage() + " por favor, entre em contato com nossa equipe, para resolvermos sua demanda, e  relate o horário do erro, para melhorarmos nosso serviço,ligando neste relefone");
+        } catch (Throwable t) {
+            throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário" + t.getMessage(), "Falha encaminhando mensagem:" + t.getMessage() + " por favor, entre em contato com nossa equipe, para resolvermos sua demanda, e  relate o horário do erro, para melhorarmos nosso serviço,ligando neste relefone");
+
         }
+
     }
 
     public ProcessadorWtzpMsg(MensagemWhatsapp pMensagem, MensagemTrOrigemWhatsapp pMensagemEmTransito) throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento {
