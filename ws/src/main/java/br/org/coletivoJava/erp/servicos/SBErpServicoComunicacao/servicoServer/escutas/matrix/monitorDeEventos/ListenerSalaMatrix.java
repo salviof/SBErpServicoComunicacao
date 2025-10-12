@@ -216,6 +216,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
 
     @Override
     public void eventoMensagem(ItfEventoMatix pEvento) {
+
         if (mensagemReferencia.getId() != null && mensagemReferencia.getId() > 0) {
             if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos() != null) {
                 //Tem encamimnhamentos?
@@ -227,9 +228,15 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
         }
 
         if (contatos.isEmpty()) {
-
+            try {
+                AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Nenhum contato válido foi encontrado nesta sala");
+            } catch (ErroConexaoServicoChat ex) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "nenhum contato na sala", ex);
+            }
         }
 
+        List<Contato> contatosSucesso = new ArrayList<>();
+        List<Contato> contatosErro = new ArrayList<>();
         for (Contato contato : contatos) {
 
             ProcessadorMtxMensagem processador = (ProcessadorMtxMensagem) FabTipoProcessamentoMatrix.getProcessadorMatrix(FabTipoPacoteDeAcaoMatrix.MENSAGEM, pEvento, getSala(), mensagemReferencia, contato, usuarioAtendimento);
@@ -237,12 +244,16 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                 try {
                     processador.processar();
                     mensagemReferencia = UtilSBPersistencia.mergeRegistro(mensagemReferencia, em);
+                    contatosSucesso.add(contato);
                 } catch (ErroComDevolucaoMensagemUsuario devolucao) {
+
+                    contatosErro.add(contato);
                     try {
                         // Devolve mensagem e ignora
-                        String codigoEnvioWhatsapp = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), devolucao.getMensagemRetorno());
+                        String codigoEnvioWhatsapp = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Falha enviando mensagem na sala " + getSala().getCodigoChat() + devolucao.getMessage() + "||" + devolucao.getMensagemRetorno());
 
                     } catch (ErroConexaoServicoChat ex) {
+
                         try {
                             AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(codigoAtendimento, "Falha enviando mensagem na sala " + getSala().getCodigoChat() + " ");
                         } catch (ErroConexaoServicoChat ex1) {
@@ -255,11 +266,37 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                         | ErroFalhaGerandoSalaAtendimento
                         | ErroFalhaGerandoUsuarioAtendimento ex) {
                     try {
-                        AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Falha entregando mensagem");
+                        contatosErro.add(contato);
+
+                        AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Falha entregando mensagem" + ex.getMessage());
                     } catch (ErroConexaoServicoChat ex1) {
                         Logger.getLogger(ListenerSalaMatrix.class.getName()).log(Level.SEVERE, null, ex1);
                     }
                 }
+            }
+        }
+        if ((!contatosErro.isEmpty() && !contatosSucesso.isEmpty()) || contatosErro.size() > 1) {
+            try {
+                StringBuilder str = new StringBuilder();
+                str.append("Relatório de entrega: \n");
+                str.append("Sucesso:");
+                for (Contato contatoSucesso : contatosSucesso) {
+                    str.append(contatoSucesso.getNome());
+                    str.append(" ");
+                    str.append(contatoSucesso.getTelefone());
+                    str.append(" ");
+                }
+                for (Contato contatoFalha : contatosErro) {
+                    str.append("\n Falha:");
+                    str.append(contatoFalha.getNome());
+                    str.append(" ");
+                    str.append(contatoFalha.getTelefone());
+                    str.append(" ");
+
+                }
+                AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Relatório de entrega: \n" + str.toString());
+            } catch (ErroConexaoServicoChat ex) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, codigoAtendimento, ex);
             }
         }
 

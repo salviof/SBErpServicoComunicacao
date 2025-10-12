@@ -39,6 +39,7 @@ import java.util.Optional;
 import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import org.json.JSONObject;
 
 /**
@@ -134,9 +135,10 @@ public class AplicacaoWsChat {
         ctxContato.setDataHoraFinalSessao(new Date());
         REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(ctxContato);
         try {
-            GESTAO_SERVICO_NAVEGACAO.removerRota(pCanalComunicacaoWtp, ct);
-        } catch (ErroComDevolucaoMensagemUsuario ex) {
-            Logger.getLogger(AplicacaoWsChat.class.getName()).log(Level.SEVERE, null, ex);
+            GESTAO_SERVICO_NAVEGACAO.removerRota(ctxContato);
+        } catch (Throwable ex) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha encerrando sesssao" + ctxContato.getContato().getNome(), ex);
+
         }
 
     }

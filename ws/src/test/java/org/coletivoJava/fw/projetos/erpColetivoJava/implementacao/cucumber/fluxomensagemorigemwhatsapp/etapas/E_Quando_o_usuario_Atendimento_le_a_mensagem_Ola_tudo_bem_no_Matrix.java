@@ -4,6 +4,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.whataspp.ApiWhatsappRecepMensagem;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
@@ -12,6 +13,8 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.cucumber.fluxomensagemorigemwhatsapp.EtapasFluxoMensagemOrigemWhatsapp;
 import cucumber.api.java.pt.Quando;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp.FluxoMensagemOrigemWhatsapp;
 import org.coletivoJava.fw.projetos.erpColetivoJava.implementacao.cucumber.fluxomensagemorigemwhatsapp.etapas.testes.UtilTestesSpark;
 import org.junit.Assert;
@@ -44,6 +47,8 @@ public class E_Quando_o_usuario_Atendimento_le_a_mensagem_Ola_tudo_bem_no_Matrix
             Assert.fail("Falha lendo ultimo evento");
         } catch (ErroComDevolucaoMensagemUsuario ex) {
             Assert.fail("Falha lendo ultimo evento");
+        } catch (ErroIniciandoTrilha ex) {
+            Logger.getLogger(E_Quando_o_usuario_Atendimento_le_a_mensagem_Ola_tudo_bem_no_Matrix.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

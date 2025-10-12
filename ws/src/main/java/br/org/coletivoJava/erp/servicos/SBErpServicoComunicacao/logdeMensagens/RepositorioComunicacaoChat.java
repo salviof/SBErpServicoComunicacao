@@ -55,7 +55,6 @@ import org.coletivojava.fw.api.tratamentoErros.FabErro;
 public class RepositorioComunicacaoChat {
 
     private static List<Contato> ULTIMOS_CONTATOS = Collections.synchronizedList(new ArrayList<>());
-    private static List<Atendente> ULTIMOS_ATENDENTES = Collections.synchronizedList(new ArrayList<>());
 
     public synchronized Atendente getAtendente(ItfUsuarioChat pUSuarioAtendimento) {
 

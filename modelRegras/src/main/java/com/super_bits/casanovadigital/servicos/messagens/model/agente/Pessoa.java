@@ -39,6 +39,10 @@ public class Pessoa extends EntidadeNormal implements ItfBeanContatoSimples, Ser
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @InfoCampo(tipo = FabTipoAtributoObjeto.NOME)
+    @Column(
+            name = "jsonDadosDoContexto",
+            columnDefinition = "VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+    )
     private String nome;
     @InfoCampo(tipo = FabTipoAtributoObjeto.TEXTO_SIMPLES)
     private String avatarWatsap;

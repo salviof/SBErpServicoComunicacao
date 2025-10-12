@@ -20,12 +20,6 @@ public class ListenerSalaMatrixTestesLive extends ListenerSalaMatrix {
     }
 
     @Override
-    public synchronized boolean isElegivel(ItfEventoMatix pEvento) {
-        return true;
-
-    }
-
-    @Override
     public synchronized void processarEvento(ItfEventoMatix pEvento) throws ErroMtxParalizacaoDeProcessamento {
         super.processarEvento(pEvento); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
@@ -34,6 +28,9 @@ public class ListenerSalaMatrixTestesLive extends ListenerSalaMatrix {
     public boolean isSalaComAutoMonitoramento(String pNomeSAla) {
         if (pNomeSAla == null) {
             return false;
+        }
+        if (pNomeSAla.equals("#chamadocliente131_ct:casanovadigital.com.br")) {
+            return true;
         }
         if (pNomeSAla.equals("#5531986831481wv:casanovadigital.com.br")) {
             return true;

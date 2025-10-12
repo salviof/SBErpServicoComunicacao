@@ -12,8 +12,6 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -44,7 +42,7 @@ public class UtilAplicacaoWsChat {
 
     public static String getTextoRotaExplicitaPorMensagemMatrix(EntradaNumeroWhatsapp pEntrada, ItfEventoMatix pEvento) {
         try {
-            return getTextoRotaExplicitaTextoUsuario(pEntrada, pEvento.getContent().getString(pEvento.getContent().getString("body")));
+            return getTextoRotaExplicitaTextoUsuario(pEntrada, pEvento.getContent().getString("body"));
         } catch (ErroComDevolucaoMensagemUsuario ex) {
             return null;
         }
@@ -79,4 +77,5 @@ public class UtilAplicacaoWsChat {
         }
         return novaRotaAuto;
     }
+
 }

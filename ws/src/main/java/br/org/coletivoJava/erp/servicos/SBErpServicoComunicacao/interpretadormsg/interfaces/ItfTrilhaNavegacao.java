@@ -3,6 +3,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
@@ -34,6 +35,8 @@ public interface ItfTrilhaNavegacao {
 
     public AcaoGatilhoTrilha getAcaoDeGatilhoLoadDadosSessao(ContextoContato pContexto);
 
+    public void atualizarContextoSessao();
+
     public void registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO tipoInteracao);
 
     public void acaoTimeoutAguardandoRespostaAtendimento();
@@ -47,5 +50,7 @@ public interface ItfTrilhaNavegacao {
     public void finalizarSesaso();
 
     public ContextoContato getContextoDeSessao();
+
+    public SessaoDeContato getSessao();
 
 }

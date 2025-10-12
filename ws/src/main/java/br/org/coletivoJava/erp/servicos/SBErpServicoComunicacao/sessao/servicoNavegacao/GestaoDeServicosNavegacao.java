@@ -9,9 +9,11 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.FabTipoGatilho.GATILHO_COMANDO_ATENDIMENTO;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.FabTipoGatilho.GATILHO_EVENTO_MATRIX;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.FabTipoGatilho.GATILHO_MENSAGEM_WHATSAPP;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.ENCERRAR_SESSAO;
@@ -21,21 +23,17 @@ import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.tr
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonValue;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
@@ -46,6 +44,22 @@ public class GestaoDeServicosNavegacao {
 
     private static Map<EntradaNumeroWhatsapp, Map<Contato, ItfTrilhaNavegacao>> ULTIMAS_TRILHAS = Collections.synchronizedMap(new HashMap<>());
     private static Map<EntradaNumeroWhatsapp, ItfServicoNavegacao> MAPA_SERVICOS_NAVEGACAO = Collections.synchronizedMap(new HashMap<>());
+    private static Map<Long, SessaoDeContato> MAPA_SESSOES = new HashMap<>();
+
+    public SessaoDeContato getSessaoDoContato(ContextoContato pContexto) throws ErroConexaoServicoChat, ErroRegraDeNegocio, ErroComDevolucaoMensagemUsuario {
+        if (pContexto == null) {
+            throw new ErroRegraDeNegocio("Contexto de sessao nulo enviado");
+        }
+        if (!MAPA_SESSOES.containsKey(pContexto.getId())) {
+            EntradaNumeroWhatsapp entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
+            ItfChatSalaBean chat = getServicoNavegacao(entrada).gerarSalaAtendimentoPadrao(entrada, pContexto.getContato());
+            MAPA_SESSOES.put(pContexto.getId(), new SessaoDeContato(pContexto, chat));
+        }
+        MAPA_SESSOES.get(pContexto.getId()).setContexto(pContexto);
+
+        return MAPA_SESSOES.get(pContexto.getId());
+
+    }
 
     public ItfServicoNavegacao getServicoNavegacao(EntradaNumeroWhatsapp pEntrada) throws ErroComDevolucaoMensagemUsuario {
         if (MAPA_SERVICOS_NAVEGACAO.containsKey(pEntrada)) {
@@ -74,22 +88,24 @@ public class GestaoDeServicosNavegacao {
         }
     }
 
-    public boolean removerRota(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroComDevolucaoMensagemUsuario {
-        if (!ULTIMAS_TRILHAS.containsKey(pEntrada)) {
+    public boolean removerRota(ContextoContato pContexto) throws ErroComDevolucaoMensagemUsuario, ErroRegraDeNegocio {
+        EntradaNumeroWhatsapp entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
+        if (!ULTIMAS_TRILHAS.containsKey(entrada)) {
             return false;
         }
-        if (!ULTIMAS_TRILHAS.get(pEntrada).containsKey(pContato)) {
+        if (!ULTIMAS_TRILHAS.get(entrada).containsKey(pContexto.getContato())) {
             return false;
         }
-        ULTIMAS_TRILHAS.get(pEntrada).remove(pContato);
+        ULTIMAS_TRILHAS.get(entrada).remove(pContexto.getContato());
+        MAPA_SESSOES.remove(pContexto.getId());
         return true;
     }
 
-    private ItfTrilhaNavegacao instanciarTrilha(Class classeRegraDeNegocioTrilha, ContextoContato pContexto, ItfTrilhaNavegacao trilhaPai, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) throws ErroComDevolucaoMensagemUsuario {
+    private ItfTrilhaNavegacao instanciarTrilha(Class classeRegraDeNegocioTrilha, SessaoDeContato pContexto, ItfTrilhaNavegacao trilhaPai, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) throws ErroComDevolucaoMensagemUsuario {
         ItfTrilhaNavegacao novaTrilha = null;
 
         try {
-            Constructor construtor = (Constructor) classeRegraDeNegocioTrilha.getConstructor(ContextoContato.class, ItfTrilhaNavegacao.class, EntradaNumeroWhatsapp.class, String.class);
+            Constructor construtor = (Constructor) classeRegraDeNegocioTrilha.getConstructor(SessaoDeContato.class, ItfTrilhaNavegacao.class, EntradaNumeroWhatsapp.class, String.class);
             novaTrilha = (ItfTrilhaNavegacao) construtor.newInstance(pContexto, trilhaPai, pEntrada, pCaminhoTrilha);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             throw new ErroComDevolucaoMensagemUsuario("Verifique o constructor da  trilha," + classeRegraDeNegocioTrilha.getCanonicalName() + " "
@@ -135,49 +151,44 @@ public class GestaoDeServicosNavegacao {
             System.out.println("PEsquisando trilha para " + pRota);
 
             Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContexto.getContato(), pRota);
-            trilhaAtual = instanciarTrilha(classe, pContexto, null, entrada, pRota);
-            trilhaAtual.iniciarTrilha();
-            try {
-                JsonObject dadosContexto = servicoNavegacao.gerarJsonDadosDeSessao(pContexto.getContato());
-                String textoDadosContexto = UtilSBCoreJson.getTextoByJsonObjeect(dadosContexto);
-                if (textoDadosContexto != null) {
-                    pContexto.setJsonDadosDoContexto(textoDadosContexto);
-                }
+            trilhaAtual = instanciarTrilha(classe, AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getSessaoDoContato(pContexto), null, entrada, pRota);
+            trilhaAtual.atualizarContextoSessao();
 
-            } catch (Throwable t) {
-                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Erro atualizando dados de contexto" + pContexto, t);
-            }
+            trilhaAtual.iniciarTrilha();
 
             AcaoGatilhoTrilha acaoGatilho = trilhaAtual.getAcaoDeGatilhoLoadDadosSessao(pContexto);
-            if (acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_ROTA)) {
+            if (acaoGatilho != null && acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_ROTA)) {
                 if (!acaoGatilho.getNovaRota().equals(pRota)) {
                     if (servicoNavegacao.isRotaExiste(pRota)) {
                         return getTrilha(pContexto, trilhaAtual, acaoGatilho.getNovaRota());
                     }
                 }
             }
-            pContexto.setTrilhaAtual(trilhaAtual.getCaminhoTrilha());
-            AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(pContexto);
+
         }
         return trilhaAtual;
 
     }
 
-    public ItfTrilhaNavegacao getTrilhaByEventoExistente(EntradaNumeroWhatsapp pEntrada, Contato pContato, ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
-        return executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pEvento));
+    public ItfTrilhaNavegacao getTrilhaByEventoExistente(EntradaNumeroWhatsapp pEntrada, Contato pContato, ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {
+        ItfTrilhaNavegacao trilha = executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pEvento));
+        trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.ATENDIMENTO);
+        return trilha;
     }
 
-    public ItfTrilhaNavegacao getTrilhaByComandoMatrix(EntradaNumeroWhatsapp pEntrada, Contato pContato, ComandoDeAtendimento pComandoAtendimento) throws ErroComDevolucaoMensagemUsuario {
-        return executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pComandoAtendimento));
+    public ItfTrilhaNavegacao getTrilhaByComandoMatrix(EntradaNumeroWhatsapp pEntrada, Contato pContato, ComandoDeAtendimento pComandoAtendimento) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {
+        ItfTrilhaNavegacao trilha = executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pComandoAtendimento));
+        trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.ATENDIMENTO);
+        return trilha;
     }
 
-    public ItfTrilhaNavegacao getTrilhaByMensagemWhatasapp(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario {
-
-        return executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pMensagem));
-
+    public ItfTrilhaNavegacao getTrilhaByMensagemWhatasapp(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {
+        ItfTrilhaNavegacao trilha = executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pMensagem));
+        trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.CONTATO);
+        return trilha;
     }
 
-    private ItfTrilhaNavegacao executarGatilhosDefinirTrilha(EntradaNumeroWhatsapp pEntrada, Contato pContato, TipoGatilho pTipoGatilho) throws ErroComDevolucaoMensagemUsuario {
+    private ItfTrilhaNavegacao executarGatilhosDefinirTrilha(EntradaNumeroWhatsapp pEntrada, Contato pContato, TipoGatilho pTipoGatilho) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {
         ItfServicoNavegacao servicoNavegacao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada);
         ItfTrilhaNavegacao trilhaAtual = null;
 
@@ -213,35 +224,20 @@ public class GestaoDeServicosNavegacao {
         }
 
         try {
-            trilhaAtual = getTrilha(contextoDoUsuario, trilhaAtual, caminhoTrilha);
-        } catch (ErroRegraDeNegocio | ErroConexaoServicoChat ex) {
-            throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + trilhaAtual.getClass().getSimpleName() + " para " + pContato + " ->" + ex.getMessage(), "A Mensagem não foi entregue. Falha definindo a trilha da sua comunicação, tente digitar menu para retomar ao início, ou entre em contato ligando neste número ");
-        }
+            try {
+                trilhaAtual = getTrilha(contextoDoUsuario, trilhaAtual, caminhoTrilha);
+            } catch (ErroRegraDeNegocio | ErroConexaoServicoChat ex) {
+                throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + trilhaAtual.getClass().getSimpleName() + " para " + pContato + " ->" + ex.getMessage(), "A Mensagem não foi entregue. Falha definindo a trilha da sua comunicação, tente digitar menu para retomar ao início, ou entre em contato ligando neste número ");
+            }
 
-        if (trilhaAtual == null) {
-            throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + trilhaAtual.getClass().getSimpleName() + " para " + pContato, "A Mensagem não foi entregue. Falha definindo a trilha da sua comunicação, tente digitar menu para retomar ao início, ou entre em contato ligando neste número ");
+            if (trilhaAtual == null) {
+                throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + trilhaAtual.getClass().getSimpleName() + " para " + pContato, "A Mensagem não foi entregue. Falha definindo a trilha da sua comunicação, tente digitar menu para retomar ao início, ou entre em contato ligando neste número ");
+            }
+        } catch (ErroComDevolucaoMensagemUsuario pErro) {
+            throw new ErroIniciandoTrilha(pErro);
         }
         AcaoGatilhoTrilha acaoGatilho = null;
-
-        switch (pTipoGatilho.getTipoGatilho()) {
-            case GATILHO_MENSAGEM_WHATSAPP:
-                acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorMensagemWtzp(pTipoGatilho.getMensagemWtzp());
-                break;
-            case GATILHO_COMANDO_ATENDIMENTO:
-                acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorComandoAtendimento(pTipoGatilho.getComando());
-                break;
-            case GATILHO_EVENTO_MATRIX:
-                acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorEventoMatrix(pTipoGatilho.getEvento());
-                break;
-
-            default:
-                throw new AssertionError();
-        }
-
-        ItfTrilhaNavegacao novaTrilha = processarAcaoGatilho(acaoGatilho);
-        while (novaTrilha != null) {
-            trilhaAtual = novaTrilha;
-
+        try {
             switch (pTipoGatilho.getTipoGatilho()) {
                 case GATILHO_MENSAGEM_WHATSAPP:
                     acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorMensagemWtzp(pTipoGatilho.getMensagemWtzp());
@@ -256,10 +252,34 @@ public class GestaoDeServicosNavegacao {
                 default:
                     throw new AssertionError();
             }
-            if (acaoGatilho != null) {
-                novaTrilha = processarAcaoGatilho(acaoGatilho);
-            }
 
+            ItfTrilhaNavegacao novaTrilha = processarAcaoGatilho(acaoGatilho);
+            while (novaTrilha != null) {
+                trilhaAtual = novaTrilha;
+
+                switch (pTipoGatilho.getTipoGatilho()) {
+                    case GATILHO_MENSAGEM_WHATSAPP:
+                        acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorMensagemWtzp(pTipoGatilho.getMensagemWtzp());
+                        break;
+                    case GATILHO_COMANDO_ATENDIMENTO:
+                        acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorComandoAtendimento(pTipoGatilho.getComando());
+                        break;
+                    case GATILHO_EVENTO_MATRIX:
+                        acaoGatilho = trilhaAtual.getAcaoDeGatilhoPorEventoMatrix(pTipoGatilho.getEvento());
+                        break;
+
+                    default:
+                        throw new AssertionError();
+                }
+                if (acaoGatilho != null) {
+                    novaTrilha = processarAcaoGatilho(acaoGatilho);
+                }
+
+            }
+        } catch (ErroComDevolucaoMensagemUsuario e) {
+            throw e;
+        } catch (Throwable t) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Houve um erro não esperado processando o gatilho na trilha" + trilhaAtual.getClass().getSimpleName(), t);
         }
 
         ULTIMAS_TRILHAS.get(pEntrada).put(pContato, trilhaAtual);
@@ -267,7 +287,7 @@ public class GestaoDeServicosNavegacao {
         return trilhaAtual;
     }
 
-    private ItfTrilhaNavegacao processarAcaoGatilho(AcaoGatilhoTrilha pAcaoGatilho) throws ErroComDevolucaoMensagemUsuario {
+    public ItfTrilhaNavegacao processarAcaoGatilho(AcaoGatilhoTrilha pAcaoGatilho) throws ErroComDevolucaoMensagemUsuario {
         if (pAcaoGatilho == null) {
             return null;
         }
@@ -288,14 +308,16 @@ public class GestaoDeServicosNavegacao {
                     return novaTrilha;
 
                 case NOVA_ROTA:
+
                     if (pAcaoGatilho.getNovaRota() == null
                             || pAcaoGatilho.getNovaRota().equals(pAcaoGatilho.getTrilha().getCaminhoTrilha())) {
+                        ULTIMAS_TRILHAS.get(entrada).put(pAcaoGatilho.getContexto().getContato(), novaTrilha);
                         return novaTrilha;
                     } else {
                         if (servicoNavegacao.isRotaExiste(pAcaoGatilho.getNovaRota())) {
                             try {
                                 novaTrilha = getTrilha(pAcaoGatilho.getContexto(), pAcaoGatilho.getTrilha(), pAcaoGatilho.getNovaRota());
-
+                                ULTIMAS_TRILHAS.get(entrada).put(pAcaoGatilho.getContexto().getContato(), novaTrilha);
                                 return novaTrilha;
                             } catch (ErroRegraDeNegocio | ErroConexaoServicoChat ex) {
                                 throw new ErroComDevolucaoMensagemUsuario("A rota não foi definida na trilha" + pAcaoGatilho.getTrilha().getClass().getSimpleName() + " para " + pAcaoGatilho.getContexto().getContato(),

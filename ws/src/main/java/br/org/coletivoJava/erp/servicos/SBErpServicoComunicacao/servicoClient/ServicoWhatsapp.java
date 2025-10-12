@@ -2,12 +2,14 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoClient;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
 import br.org.coletivoJava.integracoes.restIntmatrixchat.UtilsbApiMatrixChat;
 import br.org.coletivoJava.integracoes.restIntmatrixchat.implementacao.UtilMatrixApiServer;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
@@ -23,13 +25,13 @@ import jakarta.json.JsonValue;
  */
 public class ServicoWhatsapp {
 
-    public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento, ItfChatSalaBean pSala) throws ErroConexaoServicoChat {
+    public String encaminharMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, ItfEventoMatix pEvento, ItfChatSalaBean pSala) throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario {
         /// implameNTAR o swith case para os tipos de eventos.
 
         MensagemSimplesEnvioWhatsapp novamensagem = new MensagemSimplesEnvioWhatsapp();
 
-        novamensagem.setCorpo(pEvento.getContent().getString("body"));
-
+        String textomensagem = pEvento.getContent().getString("body");
+        novamensagem.setCorpo(textomensagem);
 
         System.out.println("TIPO DE CONTENT: " + pEvento.getContent());
         ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
@@ -39,11 +41,20 @@ public class ServicoWhatsapp {
         }
         //
 //         byte[] arquivo = UtilMatrixApiServer.getMediaBytesByID(idMedia);
+
+        FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
+
+        switch (tipoSAla) {
+            case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
+                novamensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getApelido()) + " " + usuarioAtendimento.getNome() + ":");
+
+                break;
+        }
         String tipoEvento = pEvento.getContent().getString("msgtype");
         switch (tipoEvento) {
             case "m.text":
-                enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
-                break;
+                return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
+
             case "m.image":
                 String urlImagem = pEvento.getContent().getString("url");
                 return enviarImagem(pEntrada, pContatoWtzpID, UtilMatrixApiServer.getMediaByteaIDByURIMatrix(urlImagem), pEvento.getContent().getString("body"));
@@ -54,21 +65,9 @@ public class ServicoWhatsapp {
                 String urlAudio = pEvento.getContent().getString("url");
                 return enviarAudio(pEntrada, pContatoWtzpID, UtilMatrixApiServer.getMediaByteaIDByURIMatrix(urlAudio), pEvento.getContent().getString("body"));
             default:
-                throw new AssertionError();
-        }
-        MensagemSimplesEnvioWhatsapp novaMensagem = new MensagemSimplesEnvioWhatsapp();
-        novaMensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
-        String textomensagem = pEvento.getContent().getString("body");
-        novaMensagem.setCorpo(textomensagem);
-        FabTipoSalaMatrix tipoSAla = FabTipoSalaMatrix.getTipoByAlias(pSala.getApelido());
-        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
-        switch (tipoSAla) {
-            case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
-                novaMensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getApelido()) + " " + usuarioAtendimento.getNome() + ":");
-                break;
+                throw new ErroComDevolucaoMensagemUsuario("tipo de arquivoi não reconhecido" + pEvento.getContent().toString(4), "O tipo de arquivo content.msgtype [" + tipoEvento + "] não é reconhecido ");
         }
 
-        return enviarMensagemTexto(pEntrada, pContatoWtzpID, novamensagem);
     }
 
     public String enviarMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, String pMensagem) throws ErroConexaoServicoChat {

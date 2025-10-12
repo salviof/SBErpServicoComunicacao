@@ -4,6 +4,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
@@ -36,6 +37,8 @@ public class D_Entao_a_mensagem_Ola_tudo_bem_e_encaminhada_para_o_usuario_Atendi
         } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroComDevolucaoMensagemUsuario ex) {
             Logger.getLogger(D_Entao_a_mensagem_Ola_tudo_bem_e_encaminhada_para_o_usuario_Atendimento_no_Matrix.class.getName()).log(Level.SEVERE, null, ex);
             Assert.fail("Falhu lendo ultimas mensagens");
+        } catch (ErroIniciandoTrilha ex) {
+            Logger.getLogger(D_Entao_a_mensagem_Ola_tudo_bem_e_encaminhada_para_o_usuario_Atendimento_no_Matrix.class.getName()).log(Level.SEVERE, null, ex);
         }
 
     }

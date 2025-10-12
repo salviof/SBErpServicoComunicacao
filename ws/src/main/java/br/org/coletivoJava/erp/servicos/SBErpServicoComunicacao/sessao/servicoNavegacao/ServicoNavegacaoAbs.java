@@ -53,6 +53,8 @@ public abstract class ServicoNavegacaoAbs implements ItfServicoNavegacao {
         if (trilhaRaiz == null) {
             throw new ErroFalhaEncaminhando("a rota raiz do serviço de navegação não foi definida");
         }
+        rotaClasse.put(getCaminhoTrilhaRaiz(), trilhaRaiz);
+
     }
 
     @Override

@@ -2,6 +2,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.TipoRota;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Pessoa;
 
@@ -13,6 +14,7 @@ public class RotaMensagemContato implements ItfRotaMensagemDoContato {
 
     private Pessoa contatoPrincipal;
     private TipoRota tipoRota;
+    private AcaoGatilhoTrilha acaoPosDispacho;
 
     public RotaMensagemContato(FabTipoRotaMensagem pTipoRota, Contato p) {
         id = p.getId();
@@ -65,6 +67,14 @@ public class RotaMensagemContato implements ItfRotaMensagemDoContato {
     @Override
     public Pessoa getContatoPrincipal() {
         return contatoPrincipal;
+    }
+
+    public AcaoGatilhoTrilha getAcaoPosDispacho() {
+        return acaoPosDispacho;
+    }
+
+    public void setAcaoPosDispacho(AcaoGatilhoTrilha acaoPosDispacho) {
+        this.acaoPosDispacho = acaoPosDispacho;
     }
 
 }

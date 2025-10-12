@@ -7,7 +7,6 @@ package com.super_bits.casanovadigital.servicos.messagens.model.agente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.canais.tipos.CanalOminieChannel;
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeSimples;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampoValorLogico;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
 import java.util.Date;
@@ -19,7 +18,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.persistence.Transient;
 
 /**
  *
@@ -60,7 +58,10 @@ public class ContextoContato extends EntidadeSimples {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHoraFinalSessao;
 
-    @Column(length = 10000)
+    @Column(
+            name = "jsonDadosDoContexto",
+            columnDefinition = "VARCHAR(16000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+    )
     private String jsonDadosDoContexto;
 
     public Contato getContato() {

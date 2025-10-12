@@ -74,7 +74,9 @@ public class ProcessadorMtxMensagem implements
             } else {
                 throw new ErroComDevolucaoMensagemUsuario("", "Falha registrando pedido de entrega de mensagem no servidor do Whatsapp");
             }
-        } catch (ErroConexaoServicoChat ex) {
+        } catch (ErroComDevolucaoMensagemUsuario enc) {
+            throw enc;
+        } catch (Throwable ex) {
             throw new ErroComDevolucaoMensagemUsuario(ex.getMessage(), "Falha registrando pedido de entrega de mensagem no servidor do Whatsapp");
         }
 

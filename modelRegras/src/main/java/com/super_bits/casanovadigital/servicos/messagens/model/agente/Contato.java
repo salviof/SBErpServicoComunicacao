@@ -17,8 +17,6 @@ public class Contato extends Pessoa {
 
     private String waid;
 
-    private String jsonDadosDoContexto;
-
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHoraUltimaInteracao;
 

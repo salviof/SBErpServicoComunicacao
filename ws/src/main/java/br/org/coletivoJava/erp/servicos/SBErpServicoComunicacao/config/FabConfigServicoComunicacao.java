@@ -13,13 +13,28 @@ import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ItfFabCo
  */
 public enum FabConfigServicoComunicacao implements ItfFabConfigModulo {
 
-    USUARIO_ATENDIMENTO_PADRAO;
+    USUARIO_ATENDIMENTO_PADRAO,
+    URL_CRM_SERVICE,;
 
     @Override
     public String getValorPadrao() {
         String dominio = FabConfigApiMatrixChat.DOMINIO_FEDERADO.getValorParametroSistema();
-        String valorPadrao = "atendimento@" + dominio;
-        return valorPadrao;
+        switch (this) {
+
+            case USUARIO_ATENDIMENTO_PADRAO:
+
+                String atendimentoPadrao = "atendimento@" + dominio;
+                return atendimentoPadrao;
+
+            case URL_CRM_SERVICE:
+
+                String crmlHostPadrao = "https://crm." + dominio;
+                return crmlHostPadrao;
+
+            default:
+                throw new AssertionError();
+        }
+
     }
 
 }

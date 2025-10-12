@@ -20,9 +20,9 @@ public class AcaoGatilhoTrilha {
     private final ContextoContato contexto;
     private final ItfTrilhaNavegacao trilha;
 
-    public AcaoGatilhoTrilha(FabAcaoGatilhosTrilha ptipoAcao, ItfTrilhaNavegacao pTrinha, ContextoContato pContexto) {
+    public AcaoGatilhoTrilha(FabAcaoGatilhosTrilha ptipoAcao, ItfTrilhaNavegacao pTrilhaOrigem, ContextoContato pContexto) {
         this.tipoAcao = ptipoAcao;
-        this.trilha = pTrinha;
+        this.trilha = pTrilhaOrigem;
         contexto = pContexto;
 
     }
@@ -31,32 +31,31 @@ public class AcaoGatilhoTrilha {
         return mensagemParaContato;
     }
 
-    public void setMensagemParaContato(String mensagemParaContato) {
+    public AcaoGatilhoTrilha setMensagemParaContato(String mensagemParaContato) {
         this.mensagemParaContato = mensagemParaContato;
+        return this;
     }
 
     public String getNovaRota() {
         return novaRota;
     }
 
-    public void setNovaRota(String novaRota) {
+    public AcaoGatilhoTrilha setNovaRota(String novaRota) {
         this.novaRota = novaRota;
+        return this;
     }
 
     public String getMensagemParaAtendimento() {
         return mensagemParaAtendimento;
     }
 
-    public void setMensagemParaAtendimento(String mensagemParaAtendimento) {
+    public AcaoGatilhoTrilha setMensagemParaAtendimento(String mensagemParaAtendimento) {
         this.mensagemParaAtendimento = mensagemParaAtendimento;
+        return this;
     }
 
     public FabAcaoGatilhosTrilha getTipoAcao() {
         return tipoAcao;
-    }
-
-    public void setTipoAcao(FabAcaoGatilhosTrilha tipoAcao) {
-        this.tipoAcao = tipoAcao;
     }
 
     public ContextoContato getContexto() {

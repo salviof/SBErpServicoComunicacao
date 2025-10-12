@@ -19,6 +19,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
@@ -32,7 +33,10 @@ import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
+import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import jakarta.json.JsonObject;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -59,17 +63,19 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         } catch (ErroConexaoServicoChat tServicoIndisponivel) {
             throw new ErroFalhaEncaminhando("Falha obtendo usuário correspentente ao contato no sistema Matrix, serviço indisponivel" + tServicoIndisponivel.getMessage());
         }
-
         System.out.println("DEFININDO TRILHA");
         ItfTrilhaNavegacao trilha = null;
         try {
             trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByMensagemWhatasapp(mensagem.getEntrada(), contato, mensagem);
-
             trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.CONTATO);
 
             System.out.println("TRILHA DEFINIDA");
         } catch (ErroComDevolucaoMensagemUsuario p) {
             throw p;
+
+        } catch (ErroIniciandoTrilha pErroIniandoTrilha) {
+            AplicacaoWsChat.encerrrarSessao(mensagem.getEntrada(), contato.getWaid());
+            throw pErroIniandoTrilha.getErroComDevolucao();
         } catch (Throwable t) {
             throw new ErroComDevolucaoMensagemUsuario("Falha de comunicação, com retorno para o usuário" + t.getMessage(), "Falha definindo trilha:"
                     + t.getMessage() + " por favor, entre em contato com nossa equipe, para resolvermos sua demanda, e  relate o horário do erro, para melhorarmos nosso serviço,ligando neste relefone");
@@ -83,6 +89,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
             switch (rota.getTipoRota().getTipoRotaMensagem()) {
                 case MENU_OPCOES:
                     despachar((RotaMenuOpcoes) rota);
+
                     break;
                 case RESPOSTA_WEBSERVICE:
                     despachar((RotaWebservice) rota);
@@ -96,6 +103,10 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
 
                 default:
                     throw new AssertionError();
+            }
+
+            if (rota.getAcaoPosDispacho() != null) {
+                AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.processarAcaoGatilho(rota.getAcaoPosDispacho());
             }
         } catch (ErroConexaoServicoChat ex) {
             throw new ErroFalhaEncaminhando("Falha encaminhando mensagem " + ex.getMessage());
@@ -124,12 +135,29 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
     }
 
     protected void despachar(RotaLinkAcesso pRotaMenu) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat {
-        throw new ErroRegraDeNEgocioChat("rotaDeLinkDeACessonaofoiDefinida ");
+        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_LINK_ENVIAR.getAcao(getMensagemWhatsapp().getEntrada().getCodigo(),
+                contato.getWaid(),
+                pRotaMenu.getDescricaoLink(),
+                pRotaMenu.getNomeAcao(),
+                pRotaMenu.getLinkAcao()
+        ).getResposta();
+        if (!resposta.isSucesso()) {
+            throw new ErroConexaoServicoChat("Falha enviando link para o usuário");
+        }
+
     }
 
     protected void despachar(RotaMenuOpcoes pRotaMenu) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat {
+
         ItfRespostaWebServiceSimples retornoEnvioMenu = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(getMensagemWhatsapp().getEntrada().getCodigo(), contato.getWaid(),
                 pRotaMenu.getComoRotaMenuOpcoes().getMenuWhatsapp()).getResposta();
+        try {
+            ItfChatSalaBean salaPadrao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getSessaoDoContato(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(getMensagemWhatsapp().getEntrada(), contato)).getSalaPadrao();
+            encaminharMensagemParaMatrix(mensagem, salaPadrao, usuarioMAtrixContato);
+        } catch (ErroRegraDeNegocio | ErroComDevolucaoMensagemUsuario ex) {
+
+        }
+
         if (!retornoEnvioMenu.isSucesso()) {
             throw new ErroConexaoServicoChat("Falha enviando Menu");
         }
