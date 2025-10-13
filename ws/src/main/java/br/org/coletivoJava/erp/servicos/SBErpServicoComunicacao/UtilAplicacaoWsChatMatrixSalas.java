@@ -26,7 +26,9 @@ import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
  */
 public class UtilAplicacaoWsChatMatrixSalas {
 
-    public static ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+    public static ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento,
+            boolean pRemoverOutrosUsuarios
+    ) throws ErroConexaoServicoChat {
 
         switch (pTipoSala) {
             case CHAT_DINAMICO_DE_ENTIDADE:
@@ -48,12 +50,14 @@ public class UtilAplicacaoWsChatMatrixSalas {
 
             String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContato, pTipoSala.getSlug());
             ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
-            NormalizarMembrosThread normalizarMembros = new NormalizarMembrosThread(AplicacaoWsChat.SERVICO_MATRIX, salaRelacionada.getCodigoChat(), salaIdeal.getUsuarios(), salaRelacionada.getUsuarios());
+            NormalizarMembrosThread normalizarMembros = new NormalizarMembrosThread(AplicacaoWsChat.SERVICO_MATRIX, salaRelacionada.getCodigoChat(), salaIdeal.getUsuarios(), salaRelacionada.getUsuarios(), pRemoverOutrosUsuarios);
             normalizarMembros.start();
+            AplicacaoWsChat.SERVICO_MATRIX.salaTornarMembroAdmin(salaIdeal, pUsuarioAtendimento.getCodigoUsuario());
             if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
                 AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class
                 );
             }
+
             AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
             return (ItfChatSalaBean) salaRelacionada;
 

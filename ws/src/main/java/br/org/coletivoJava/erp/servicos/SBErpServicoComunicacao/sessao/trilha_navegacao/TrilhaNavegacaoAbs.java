@@ -248,7 +248,13 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
-        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, pTipoSala, pContato, pUsuarioAtendimento);
+        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, pTipoSala, pContato, pUsuarioAtendimento, false);
+
+    }
+
+    protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento, boolean pRemoverOutrosUsuarios) throws ErroConexaoServicoChat {
+
+        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, pTipoSala, pContato, pUsuarioAtendimento, pRemoverOutrosUsuarios);
 
     }
 

@@ -52,8 +52,8 @@ public class GestaoDeServicosNavegacao {
         }
         if (!MAPA_SESSOES.containsKey(pContexto.getId())) {
             EntradaNumeroWhatsapp entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
-            ItfChatSalaBean chat = getServicoNavegacao(entrada).gerarSalaAtendimentoPadrao(entrada, pContexto.getContato());
-            MAPA_SESSOES.put(pContexto.getId(), new SessaoDeContato(pContexto, chat));
+
+            MAPA_SESSOES.put(pContexto.getId(), new SessaoDeContato(pContexto, entrada));
         }
         MAPA_SESSOES.get(pContexto.getId()).setContexto(pContexto);
 

@@ -61,6 +61,9 @@ public abstract class ProcessadorSocketWhatsapp {
                 case TEXTO_SIMPLES:
                     ItfUsuarioChat usuario = pContato;
                     codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, usuario, msg.getId(), conteudomsg);
+                    if (codigoeventoMatrix == null) {
+                        throw new ErroConexaoServicoChat("Falha encaminhando mensagem para " + pSala.getApelido());
+                    }
                     System.out.println("CodEvento envioMensagem: " + msg.getId() + "[" + msg.getMensagem() + "] foi enviada na sala" + pSala.getApelido() + "  " + pSala.getNome());
                     System.out.println(codigoeventoMatrix);
                     System.out.println("Membros");

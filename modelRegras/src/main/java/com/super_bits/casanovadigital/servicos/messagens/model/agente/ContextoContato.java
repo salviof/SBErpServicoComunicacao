@@ -35,7 +35,6 @@ public class ContextoContato extends EntidadeSimples {
     private Contato contato;
 
     @InfoCampo(tipo = FabTipoAtributoObjeto.NOME)
-
     private String nomeContexto;
 
     @ManyToOne(targetEntity = CanalOminieChannel.class)
@@ -58,10 +57,8 @@ public class ContextoContato extends EntidadeSimples {
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataHoraFinalSessao;
 
-    @Column(
-            name = "jsonDadosDoContexto",
-            columnDefinition = "VARCHAR(16000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
-    )
+    @Column(name = "jsonDadosDoContexto",
+            columnDefinition = "VARCHAR(16000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String jsonDadosDoContexto;
 
     public Contato getContato() {

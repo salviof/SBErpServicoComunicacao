@@ -25,6 +25,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
 import br.org.coletivoJava.fw.erp.implementacao.chat.json_bind_matrix_org.pacotematrix.PacoteMatrixParsing;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.SalaChatSessaoEscutaAtiva;
+import br.org.coletivoJava.fw.erp.implementacao.chat.sessaoMatrix.SincronizacaoSalasMatrix;
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;

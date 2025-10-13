@@ -46,7 +46,7 @@ public class ServicoNavegacaoPadraoAtendimento extends ServicoNavegacaoAbs imple
     @Override
     public ItfChatSalaBean gerarSalaAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroConexaoServicoChat {
 
-        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, FabTipoSalaMatrix.WTZAP_ATENDIMENTO, pContato, AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(pEntrada, pContato));
+        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, FabTipoSalaMatrix.WTZAP_ATENDIMENTO, pContato, AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(pEntrada, pContato), false);
 
     }
 

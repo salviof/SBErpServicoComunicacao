@@ -5,8 +5,12 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
  *
@@ -15,11 +19,11 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoCo
 public class SessaoDeContato {
 
     private ContextoContato contexto;
-    private ItfChatSalaBean salaPadrao;
+    private EntradaNumeroWhatsapp entrada;
 
-    public SessaoDeContato(ContextoContato contexto, ItfChatSalaBean salaPadrao) {
+    public SessaoDeContato(ContextoContato contexto, EntradaNumeroWhatsapp pEntrada) {
         this.contexto = contexto;
-        this.salaPadrao = salaPadrao;
+        this.entrada = pEntrada;
 
     }
 
@@ -31,8 +35,14 @@ public class SessaoDeContato {
         return contexto;
     }
 
-    public ItfChatSalaBean getSalaPadrao() {
-        return salaPadrao;
+    public ItfServicoNavegacao getServicoNavegacao() {
+        try {
+            return AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada);
+        } catch (ErroComDevolucaoMensagemUsuario ex) {
+            SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo serviço de navegação", ex);
+            return null;
+        }
+
     }
 
 }

@@ -152,8 +152,8 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         ItfRespostaWebServiceSimples retornoEnvioMenu = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(getMensagemWhatsapp().getEntrada().getCodigo(), contato.getWaid(),
                 pRotaMenu.getComoRotaMenuOpcoes().getMenuWhatsapp()).getResposta();
         try {
-            ItfChatSalaBean salaPadrao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getSessaoDoContato(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(getMensagemWhatsapp().getEntrada(), contato)).getSalaPadrao();
-            encaminharMensagemParaMatrix(mensagem, salaPadrao, usuarioMAtrixContato);
+            pRotaMenu.get encaminharMensagemParaMatrix(mensagem, salaPadrao, usuarioMAtrixContato
+         );
         } catch (ErroRegraDeNegocio | ErroComDevolucaoMensagemUsuario ex) {
 
         }
