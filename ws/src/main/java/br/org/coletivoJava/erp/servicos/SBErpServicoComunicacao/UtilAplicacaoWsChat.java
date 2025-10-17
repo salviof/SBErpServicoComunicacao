@@ -65,7 +65,7 @@ public class UtilAplicacaoWsChat {
         }
 
         List<String> partes = UtilSBCoreStringBuscaTrecho.getPartesEntreColchete(pConteudo);
-        Optional<String> novaRotareferenciaTexto = partes.stream().filter(prota -> prota.contains("rota.")).findFirst();
+        Optional<String> novaRotareferenciaTexto = partes.stream().filter(prota -> prota.contains("rota.") || prota.contains("consultoria.")).findFirst();
 
         if (novaRotareferenciaTexto.isPresent()) {
             String caminho = novaRotareferenciaTexto.get();

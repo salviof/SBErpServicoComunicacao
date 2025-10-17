@@ -20,6 +20,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
@@ -152,8 +153,15 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         ItfRespostaWebServiceSimples retornoEnvioMenu = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(getMensagemWhatsapp().getEntrada().getCodigo(), contato.getWaid(),
                 pRotaMenu.getComoRotaMenuOpcoes().getMenuWhatsapp()).getResposta();
         try {
-            pRotaMenu.get encaminharMensagemParaMatrix(mensagem, salaPadrao, usuarioMAtrixContato
-         );
+
+            SessaoDeContato sessao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO
+                    .getSessaoDoContato(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(getMensagemWhatsapp().getEntrada(), contato));
+
+            if (sessao.getContexto().getSalaUltimaConversa() != null) {
+                ItfChatSalaBean sala = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(sessao.getContexto().getSalaUltimaConversa());
+                encaminharMensagemParaMatrix(mensagem, sala, usuarioMAtrixContato);
+            }
+
         } catch (ErroRegraDeNegocio | ErroComDevolucaoMensagemUsuario ex) {
 
         }

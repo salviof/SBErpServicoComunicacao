@@ -31,7 +31,7 @@ public class TrilhaChamado extends TrilhaNavegacaoAbs implements ItfTrilhaNavega
     }
 
     @Override
-    public AcaoGatilhoTrilha getAcaoDeGatilhoLoadDadosSessao(ContextoContato pContexto) {
+    public AcaoGatilhoTrilha getAcaoDeGatilhoInicioTrilha(ContextoContato pContexto) {
         return null;
     }
 

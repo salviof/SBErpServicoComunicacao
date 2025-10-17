@@ -61,6 +61,8 @@ public class ContextoContato extends EntidadeSimples {
             columnDefinition = "VARCHAR(16000) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci")
     private String jsonDadosDoContexto;
 
+    private String salaUltimaConversa;
+
     public Contato getContato() {
         return contato;
     }
@@ -147,6 +149,14 @@ public class ContextoContato extends EntidadeSimples {
 
     public void setJsonDadosDoContexto(String jsonDadosDoContexto) {
         this.jsonDadosDoContexto = jsonDadosDoContexto;
+    }
+
+    public String getSalaUltimaConversa() {
+        return salaUltimaConversa;
+    }
+
+    public void setSalaUltimaConversa(String salaUltimaConversa) {
+        this.salaUltimaConversa = salaUltimaConversa;
     }
 
 }

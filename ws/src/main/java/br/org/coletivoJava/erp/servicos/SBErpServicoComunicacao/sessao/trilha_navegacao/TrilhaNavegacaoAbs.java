@@ -28,7 +28,10 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoCo
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
+import jakarta.json.Json;
 import jakarta.json.JsonObject;
+import jakarta.json.JsonObjectBuilder;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
@@ -70,6 +73,23 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     }
 
     @Override
+    public void atualizarUltimaSalaConversaDeSessao(String pSala) {
+        if (pSala == null) {
+            return;
+        }
+        if (sessaoDoContato.getContexto().getSalaUltimaConversa() == null) {
+            sessaoDoContato.getContexto().setSalaUltimaConversa(pSala);
+            AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(sessaoDoContato.getContexto());
+        } else {
+            if (!sessaoDoContato.getContexto().getSalaUltimaConversa().equals(pSala)) {
+                sessaoDoContato.getContexto().setSalaUltimaConversa(pSala);
+                AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(sessaoDoContato.getContexto());
+            }
+        }
+
+    }
+
+    @Override
     public void atualizarContextoSessao() {
         ContextoContato contextoAtualizado = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(entrada, sessaoDoContato.getContexto().getContato());
         if (contextoAtualizado != null) {
@@ -77,6 +97,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             ItfServicoNavegacao servico;
             try {
                 servico = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada);
+
                 JsonObject dadosDeSesaoAtualizados = servico.gerarJsonDadosDeSessao(sessaoDoContato.getContexto().getContato());
                 if (dadosDeSesaoAtualizados != null) {
                     sessaoDoContato.getContexto().setJsonDadosDoContexto(UtilSBCoreJson.getTextoByJsonObjeect(dadosDeSesaoAtualizados));

@@ -8,6 +8,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRota;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.FabTipoGatilho.GATILHO_COMANDO_ATENDIMENTO;
@@ -23,17 +25,20 @@ import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.tr
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
+import jakarta.json.JsonObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
@@ -52,7 +57,6 @@ public class GestaoDeServicosNavegacao {
         }
         if (!MAPA_SESSOES.containsKey(pContexto.getId())) {
             EntradaNumeroWhatsapp entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
-
             MAPA_SESSOES.put(pContexto.getId(), new SessaoDeContato(pContexto, entrada));
         }
         MAPA_SESSOES.get(pContexto.getId()).setContexto(pContexto);
@@ -152,20 +156,47 @@ public class GestaoDeServicosNavegacao {
 
             Class classe = servicoNavegacao.getClasseTrilhaDeNavegacao(pContexto.getContato(), pRota);
             trilhaAtual = instanciarTrilha(classe, AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getSessaoDoContato(pContexto), null, entrada, pRota);
+
             trilhaAtual.atualizarContextoSessao();
 
-            trilhaAtual.iniciarTrilha();
-
-            AcaoGatilhoTrilha acaoGatilho = trilhaAtual.getAcaoDeGatilhoLoadDadosSessao(pContexto);
-            if (acaoGatilho != null && acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_ROTA)) {
-                if (!acaoGatilho.getNovaRota().equals(pRota)) {
-                    if (servicoNavegacao.isRotaExiste(pRota)) {
-                        return getTrilha(pContexto, trilhaAtual, acaoGatilho.getNovaRota());
+            try {
+                trilhaAtual.iniciarTrilha();
+            } catch (ErroComEncaminhamentoRota ex) {
+                if (ex.getRota() != null) {
+                    if (servicoNavegacao.isRotaExiste(ex.getRota())) {
+                        if (!trilhaAtual.getCaminhoTrilha().equals(ex.getRota())) {
+                            getTrilha(pContexto, trilhaAtual, ex.getRota());
+                        }
                     }
                 }
             }
+            if (trilhaAtual.getRotaAtual() != null) {
+                if (trilhaAtual.getRotaAtual().getTipoRota().getTipoRotaMensagem().equals(FabTipoRotaMensagem.ENCAMINHAMENTO)) {
+                    String codigoUltimaSala = trilhaAtual.getRotaAtual().getComoRotaEncaminhamentoMatrix().getSala().getCodigoChat();
+                    trilhaAtual.atualizarUltimaSalaConversaDeSessao(codigoUltimaSala);
+                }
+            }
+            try {
+
+                AcaoGatilhoTrilha acaoGatilho = trilhaAtual.getAcaoDeGatilhoInicioTrilha(pContexto);
+                if (acaoGatilho != null && acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_ROTA)) {
+                    if (!acaoGatilho.getNovaRota().equals(pRota)) {
+                        if (servicoNavegacao.isRotaExiste(pRota)) {
+                            return getTrilha(pContexto, trilhaAtual, acaoGatilho.getNovaRota());
+                        }
+                    }
+                } else {
+                    if (acaoGatilho != null) {
+                        processarAcaoGatilho(acaoGatilho);
+                    }
+                }
+
+            } catch (Throwable t) {
+                SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo ação após iniciar a trilha", t);
+            }
 
         }
+
         return trilhaAtual;
 
     }
@@ -329,7 +360,7 @@ public class GestaoDeServicosNavegacao {
                     }
 
                 case MENSAGEM_CONTATO_WHATSAPP:
-                    if (pAcaoGatilho.getMensagemParaContato() != null && !pAcaoGatilho.getMensagemParaContato().isEmpty()) {
+                    if (pAcaoGatilho.getMensagemParaContato() != null && pAcaoGatilho.getMensagemParaContato().getCorpo() != null && !pAcaoGatilho.getMensagemParaContato().getCorpo().isEmpty()) {
                         try {
                             AplicacaoWsChat.SERVICO_WHATSAPP.enviarMensagemTexto(entrada, contato.getWaid(), pAcaoGatilho.getMensagemParaContato());
                         } catch (ErroConexaoServicoChat ex) {

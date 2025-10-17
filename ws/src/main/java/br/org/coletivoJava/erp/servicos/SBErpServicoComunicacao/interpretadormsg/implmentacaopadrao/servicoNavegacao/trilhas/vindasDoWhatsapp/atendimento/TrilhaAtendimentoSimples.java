@@ -40,7 +40,7 @@ public class TrilhaAtendimentoSimples extends TrilhaNavegacaoAbs {
     }
 
     @Override
-    public AcaoGatilhoTrilha getAcaoDeGatilhoLoadDadosSessao(ContextoContato pContexto) {
+    public AcaoGatilhoTrilha getAcaoDeGatilhoInicioTrilha(ContextoContato pContexto) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

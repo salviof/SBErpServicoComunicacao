@@ -1,10 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
+import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 
 /**
@@ -14,7 +11,7 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoCo
 public class AcaoGatilhoTrilha {
 
     private FabAcaoGatilhosTrilha tipoAcao;
-    private String mensagemParaContato;
+    private MensagemSimplesEnvioWhatsapp mensagemParaContato;
     private String novaRota;
     private String mensagemParaAtendimento;
     private final ContextoContato contexto;
@@ -27,11 +24,16 @@ public class AcaoGatilhoTrilha {
 
     }
 
-    public String getMensagemParaContato() {
+    public MensagemSimplesEnvioWhatsapp getMensagemParaContato() {
         return mensagemParaContato;
     }
 
     public AcaoGatilhoTrilha setMensagemParaContato(String mensagemParaContato) {
+        this.mensagemParaContato = new MensagemSimplesEnvioWhatsapp().setCorpo(mensagemParaContato);
+        return this;
+    }
+
+    public AcaoGatilhoTrilha setMensagemParaContato(MensagemSimplesEnvioWhatsapp mensagemParaContato) {
         this.mensagemParaContato = mensagemParaContato;
         return this;
     }

@@ -3,6 +3,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRota;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
@@ -25,7 +26,7 @@ public interface ItfTrilhaNavegacao {
      * @param pContato
      * @return Nova Trilha
      */
-    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario;
+    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario, ErroComEncaminhamentoRota;
 
     public AcaoGatilhoTrilha getAcaoDeGatilhoPorMensagemWtzp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
@@ -33,13 +34,15 @@ public interface ItfTrilhaNavegacao {
 
     public AcaoGatilhoTrilha getAcaoDeGatilhoPorEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario;
 
-    public AcaoGatilhoTrilha getAcaoDeGatilhoLoadDadosSessao(ContextoContato pContexto);
-
-    public void atualizarContextoSessao();
+    public AcaoGatilhoTrilha getAcaoDeGatilhoInicioTrilha(ContextoContato pContexto);
 
     public void registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO tipoInteracao);
 
     public void acaoTimeoutAguardandoRespostaAtendimento();
+
+    public void atualizarContextoSessao();
+
+    public void atualizarUltimaSalaConversaDeSessao(String pSala);
 
     public void acaoTimeoutAguardandoInteracaoContato();
 

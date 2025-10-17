@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
@@ -32,6 +28,7 @@ public class SessaoDeContato {
     }
 
     public ContextoContato getContexto() {
+
         return contexto;
     }
 
