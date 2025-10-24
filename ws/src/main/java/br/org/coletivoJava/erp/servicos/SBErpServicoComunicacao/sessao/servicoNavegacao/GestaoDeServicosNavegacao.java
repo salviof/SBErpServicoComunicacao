@@ -9,7 +9,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRota;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRotaRaiz;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.FabTipoGatilho.GATILHO_COMANDO_ATENDIMENTO;
@@ -29,16 +29,12 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import jakarta.json.JsonObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 
 /**
@@ -161,13 +157,10 @@ public class GestaoDeServicosNavegacao {
 
             try {
                 trilhaAtual.iniciarTrilha();
-            } catch (ErroComEncaminhamentoRota ex) {
-                if (ex.getRota() != null) {
-                    if (servicoNavegacao.isRotaExiste(ex.getRota())) {
-                        if (!trilhaAtual.getCaminhoTrilha().equals(ex.getRota())) {
-                            getTrilha(pContexto, trilhaAtual, ex.getRota());
-                        }
-                    }
+            } catch (ErroComEncaminhamentoRotaRaiz ex) {
+                String trilharaiz = trilhaAtual.getSessao().getServicoNavegacao().getCaminhoTrilhaRaiz();
+                if (trilhaAtual.getCaminhoTrilha() != null && !trilhaAtual.getCaminhoTrilha().equals(trilharaiz)) {
+                    return getTrilha(pContexto, trilhaAtual, trilharaiz);
                 }
             }
             if (trilhaAtual.getRotaAtual() != null) {

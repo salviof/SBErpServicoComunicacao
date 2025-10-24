@@ -8,17 +8,17 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
  *
  * @author salvio
  */
-public class ErroComEncaminhamentoRota extends Exception {
+public class ErroComEncaminhamentoRotaRaiz extends Exception {
 
-    private String rota;
+    private String mensagemUsuario;
 
-    public ErroComEncaminhamentoRota(String pMotivo, String pRota) {
-        super(pMotivo);
-        rota = pRota;
+    public ErroComEncaminhamentoRotaRaiz(String pMensagemUSuario) {
+        super(pMensagemUSuario);
+        mensagemUsuario = pMensagemUSuario;
     }
 
-    public String getRota() {
-        return rota;
+    public String getMensagemUsuario() {
+        return mensagemUsuario;
     }
 
 }

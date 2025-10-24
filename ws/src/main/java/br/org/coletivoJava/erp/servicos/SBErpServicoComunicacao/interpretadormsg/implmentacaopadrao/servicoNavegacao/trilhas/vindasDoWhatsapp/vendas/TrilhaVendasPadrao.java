@@ -33,8 +33,8 @@ public class TrilhaVendasPadrao extends TrilhaNavegacaoAbs {
         try {
 
             AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(getEntrada(), getContextoDeSessao().getContato());
-            ItfChatSalaBean sala = gerarSala(getEntrada(), FabTipoSalaMatrix.WTZAP_VENDAS,
-                    getContextoDeSessao().getContato(), usuarioAtendimento);
+            ItfChatSalaBean sala = gerarSala(FabTipoSalaMatrix.WTZAP_VENDAS,
+                    usuarioAtendimento);
             RotaEncaminhamentoSala rota = new RotaEncaminhamentoSala(getContextoDeSessao().getContato(), sala,
                     Lists.newArrayList(),
                     AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getAtendente(usuarioAtendimento),

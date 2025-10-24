@@ -3,7 +3,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRota;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComEncaminhamentoRotaRaiz;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.AcaoGatilhoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
@@ -26,7 +26,7 @@ public interface ItfTrilhaNavegacao {
      * @param pContato
      * @return Nova Trilha
      */
-    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario, ErroComEncaminhamentoRota;
+    public void iniciarTrilha() throws ErroConexaoServicoChat, ErroComDevolucaoMensagemUsuario, ErroComEncaminhamentoRotaRaiz;
 
     public AcaoGatilhoTrilha getAcaoDeGatilhoPorMensagemWtzp(MensagemWhatsapp p) throws ErroComDevolucaoMensagemUsuario;
 
@@ -38,7 +38,7 @@ public interface ItfTrilhaNavegacao {
 
     public void registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO tipoInteracao);
 
-    public void acaoTimeoutAguardandoRespostaAtendimento();
+    public AcaoGatilhoTrilha acaoTimeoutAguardandoRespostaAtendimento();
 
     public void atualizarContextoSessao();
 

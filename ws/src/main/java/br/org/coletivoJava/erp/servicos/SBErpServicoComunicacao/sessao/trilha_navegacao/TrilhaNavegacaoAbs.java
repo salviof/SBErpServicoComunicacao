@@ -8,10 +8,12 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem.ENCAMINHAMENTO;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem.MENU_OPCOES;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem.RESPOSTA_WEBSERVICE;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem.RETORNO_LINK;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.InfoRotaComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
@@ -22,16 +24,14 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
+import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
-import jakarta.json.Json;
 import jakarta.json.JsonObject;
-import jakarta.json.JsonObjectBuilder;
-import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
@@ -59,6 +59,44 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private boolean agenteUltimaInteracaoContato;
     private Monitor monitor;
     private boolean umaTrilhaRaiz;
+    private String emailAtendimentoResponsavelPadrao;
+
+    public TrilhaNavegacaoAbs(SessaoDeContato pSessaoDeContato, ItfTrilhaNavegacao pTrilhaOrigem, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) {
+        entrada = pEntrada;
+        if (pTrilhaOrigem != null) {
+            trilhaOrigem = pTrilhaOrigem.getCaminhoTrilha();
+        } else {
+            trilhaOrigem = null;
+        }
+        InfoRotaComunicacao infoRota = this.getClass().getAnnotation(InfoRotaComunicacao.class);
+        emailAtendimentoResponsavelPadrao = infoRota.emailAtendimentoResponsavelPadrao();
+        caminhoTrilha = pCaminhoTrilha;
+        sessaoDoContato = pSessaoDeContato;
+        if (caminhoTrilha == null) {
+            umaTrilhaRaiz = true;
+        } else {
+            try {
+                umaTrilhaRaiz = caminhoTrilha.equals(AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz());
+            } catch (ErroComDevolucaoMensagemUsuario ex) {
+                umaTrilhaRaiz = false;
+            }
+        }
+        if (pCaminhoTrilha == null) {
+            this.getClass().getSimpleName();
+        }
+
+        if (pCaminhoTrilha == null) {
+            try {
+                caminhoTrilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
+            } catch (ErroComDevolucaoMensagemUsuario ex) {
+
+            }
+        }
+    }
+
+    public String getEmailAtendimentoResponsavelPadrao() {
+        return emailAtendimentoResponsavelPadrao;
+    }
 
     public void setSegundosTimeoutAguardandoContato(long segundosTimeoutAguardandoContato) {
         this.segundosTimeoutAguardandoContato = segundosTimeoutAguardandoContato;
@@ -108,37 +146,6 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
                 return;
             }
 
-        }
-    }
-
-    public TrilhaNavegacaoAbs(SessaoDeContato pSessaoDeContato, ItfTrilhaNavegacao pTrilhaOrigem, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) {
-        entrada = pEntrada;
-        if (pTrilhaOrigem != null) {
-            trilhaOrigem = pTrilhaOrigem.getCaminhoTrilha();
-        } else {
-            trilhaOrigem = null;
-        }
-        caminhoTrilha = pCaminhoTrilha;
-        sessaoDoContato = pSessaoDeContato;
-        if (caminhoTrilha == null) {
-            umaTrilhaRaiz = true;
-        } else {
-            try {
-                umaTrilhaRaiz = caminhoTrilha.equals(AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz());
-            } catch (ErroComDevolucaoMensagemUsuario ex) {
-                umaTrilhaRaiz = false;
-            }
-        }
-        if (pCaminhoTrilha == null) {
-            this.getClass().getSimpleName();
-        }
-
-        if (pCaminhoTrilha == null) {
-            try {
-                caminhoTrilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz();
-            } catch (ErroComDevolucaoMensagemUsuario ex) {
-
-            }
         }
     }
 
@@ -267,9 +274,26 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     }
 
-    protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+    protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemContato(String pMensagem) {
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem));
+    }
 
-        return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, pTipoSala, pContato, pUsuarioAtendimento, false);
+    protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemAtendimento(String pMensagemAtendimento) {
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_ATENDIMENTO, this, getContextoDeSessao()).setMensagemParaAtendimento(pMensagemAtendimento);
+    }
+
+    protected AcaoGatilhoTrilha gerarAcaoGatilhoNovaRota(String pRota) {
+
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_ROTA, this, getContextoDeSessao()).setNovaRota(pRota);
+    }
+
+    protected AcaoGatilhoTrilha gerarAcaoGatilhoLogout() {
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.ENCERRAR_SESSAO, this, getContextoDeSessao());
+    }
+
+    protected ItfChatSalaBean gerarSala(FabTipoSalaMatrix pTipoSala, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+
+        return UtilAplicacaoWsChatMatrixSalas.gerarSala(getEntrada(), pTipoSala, getContextoDeSessao().getContato(), pUsuarioAtendimento, false);
 
     }
 
@@ -365,34 +389,24 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     }
 
     @Override
-    public void acaoTimeoutAguardandoRespostaAtendimento() {
-        if (rotaAtual != null) {
-            switch (rotaAtual.getTipoRota().getTipoRotaMensagem()) {
+    public AcaoGatilhoTrilha acaoTimeoutAguardandoRespostaAtendimento() {
 
-                case MENU_OPCOES:
-                case RESPOSTA_WEBSERVICE:
-                case RETORNO_LINK:
-                    break;
-                case ENCAMINHAMENTO: {
-                    try {
-                        if (rotaAtual.getComoRotaEncaminhamentoMatrix().getSala() != null) {
-                            AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(rotaAtual.getComoRotaEncaminhamentoMatrix().getSala(), getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome());
-                        } else {
-                            AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(rotaAtual.getComoRotaEncaminhamentoMatrix().getAtendentePrincipal().getMatrixID(),
-                                    getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome()
-                            );
-                        }
-                    } catch (ErroConexaoServicoChat ex) {
-
-                    }
+        try {
+            if (rotaAtual != null && rotaAtual.getTipoRota().getTipoRotaMensagem().equals(FabTipoRotaMensagem.ENCAMINHAMENTO)) {
+                if (rotaAtual.getComoRotaEncaminhamentoMatrix().getSala() != null) {
+                    AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(rotaAtual.getComoRotaEncaminhamentoMatrix().getSala(), getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome());
+                } else {
+                    AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(rotaAtual.getComoRotaEncaminhamentoMatrix().getAtendentePrincipal().getMatrixID(),
+                            getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome()
+                    );
                 }
-                break;
-
-                default:
-                    throw new AssertionError();
             }
+        } catch (ErroConexaoServicoChat ex) {
 
         }
+        AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_ROTA, this, getContextoDeSessao());
+
+        return null;
     }
 
     public enum TIPO_INTERACAO {

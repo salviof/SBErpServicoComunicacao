@@ -3,6 +3,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoN
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.InfoRotaComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import java.util.ArrayList;
@@ -46,8 +47,8 @@ public abstract class ServicoNavegacaoAbs implements ItfServicoNavegacao {
     @Override
     public void validarServicoNavegacao() throws ErroFalhaEncaminhando {
         for (Class<? extends ItfTrilhaNavegacao> trilha : trilhasDiponiveis) {
-            Path anCaminhoRota = trilha.getAnnotation(Path.class);
-            String caminhoRota = anCaminhoRota.value();
+            InfoRotaComunicacao anCaminhoRota = trilha.getAnnotation(InfoRotaComunicacao.class);
+            String caminhoRota = anCaminhoRota.caminhoRota();
             rotaClasse.put(caminhoRota, trilha);
         }
         if (trilhaRaiz == null) {
