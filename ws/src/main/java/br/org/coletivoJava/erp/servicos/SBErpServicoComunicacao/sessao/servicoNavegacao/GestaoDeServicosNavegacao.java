@@ -21,7 +21,6 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_na
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.ENCERRAR_SESSAO;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.MENSAGEM_ATENDIMENTO;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP;
-import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.NOVA_ROTA;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
@@ -36,6 +35,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
+import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.NOVA_TRILHA;
 
 /**
  *
@@ -172,10 +172,10 @@ public class GestaoDeServicosNavegacao {
             try {
 
                 AcaoGatilhoTrilha acaoGatilho = trilhaAtual.getAcaoDeGatilhoInicioTrilha(pContexto);
-                if (acaoGatilho != null && acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_ROTA)) {
-                    if (!acaoGatilho.getNovaRota().equals(pRota)) {
+                if (acaoGatilho != null && acaoGatilho.getTipoAcao().equals(FabAcaoGatilhosTrilha.NOVA_TRILHA)) {
+                    if (!acaoGatilho.getNovaTrilha().equals(pRota)) {
                         if (servicoNavegacao.isRotaExiste(pRota)) {
-                            return getTrilha(pContexto, trilhaAtual, acaoGatilho.getNovaRota());
+                            return getTrilha(pContexto, trilhaAtual, acaoGatilho.getNovaTrilha());
                         }
                     }
                 } else {
@@ -331,16 +331,16 @@ public class GestaoDeServicosNavegacao {
                 case ENCERRAR_SESSAO:
                     return novaTrilha;
 
-                case NOVA_ROTA:
+                case NOVA_TRILHA:
 
-                    if (pAcaoGatilho.getNovaRota() == null
-                            || pAcaoGatilho.getNovaRota().equals(pAcaoGatilho.getTrilha().getCaminhoTrilha())) {
+                    if (pAcaoGatilho.getNovaTrilha() == null
+                            || pAcaoGatilho.getNovaTrilha().equals(pAcaoGatilho.getTrilha().getCaminhoTrilha())) {
                         ULTIMAS_TRILHAS.get(entrada).put(pAcaoGatilho.getContexto().getContato(), novaTrilha);
                         return novaTrilha;
                     } else {
-                        if (servicoNavegacao.isRotaExiste(pAcaoGatilho.getNovaRota())) {
+                        if (servicoNavegacao.isRotaExiste(pAcaoGatilho.getNovaTrilha())) {
                             try {
-                                novaTrilha = getTrilha(pAcaoGatilho.getContexto(), pAcaoGatilho.getTrilha(), pAcaoGatilho.getNovaRota());
+                                novaTrilha = getTrilha(pAcaoGatilho.getContexto(), pAcaoGatilho.getTrilha(), pAcaoGatilho.getNovaTrilha());
                                 ULTIMAS_TRILHAS.get(entrada).put(pAcaoGatilho.getContexto().getContato(), novaTrilha);
                                 return novaTrilha;
                             } catch (ErroRegraDeNegocio | ErroConexaoServicoChat ex) {

@@ -13,6 +13,7 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import br.org.coletivoJava.integracoes.restIntmatrixchat.UtilsbApiMatrixChat;
 import br.org.coletivoJava.integracoes.restIntmatrixchat.implementacao.UtilMatrixApiServer;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
+import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsapp;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.implementacao.UtilSBApiWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -68,6 +69,16 @@ public class ServicoWhatsapp {
                 throw new ErroComDevolucaoMensagemUsuario("tipo de arquivoi não reconhecido" + pEvento.getContent().toString(4), "O tipo de arquivo content.msgtype [" + tipoEvento + "] não é reconhecido ");
         }
 
+    }
+
+    public String enviarMenu(EntradaNumeroWhatsapp pEntrada, String ContatoWtzapId, MenuWhatsapp pMenu) throws ErroConexaoServicoChat {
+
+        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(pEntrada, ContatoWtzapId, pMenu).getResposta();
+        if (resposta.isSucesso()) {
+            JsonValue valor = resposta.getRespostaComoObjetoJson().getJsonArray("messages").stream().findFirst().get();
+            return valor.asJsonObject().getString("id");
+        }
+        return null;
     }
 
     public String enviarMensagem(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, String pMensagem) throws ErroConexaoServicoChat {

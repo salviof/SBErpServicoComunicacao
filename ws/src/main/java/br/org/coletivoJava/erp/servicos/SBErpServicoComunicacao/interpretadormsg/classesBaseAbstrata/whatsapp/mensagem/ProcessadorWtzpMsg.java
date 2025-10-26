@@ -19,6 +19,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.SessaoDeContato;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
@@ -127,12 +128,15 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
     }
 
     protected String enviarMenu(EntradaNumeroWhatsapp pEntrada, MenuWhatsapp pMenu, ItfChatSalaBean pSalaRelatorio, ItfUsuarioChat pContato) throws ErroConexaoServicoChat {
-        ItfRespostaWebServiceSimples resposta = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(pEntrada, pMenu).getResposta();
-        if (resposta.isSucesso()) {
 
+        String recibo;
+        try {
+            recibo = AplicacaoWsChat.SERVICO_WHATSAPP.enviarMenu(pEntrada, AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(pContato).getWaid(), pMenu);
+            return recibo;
+        } catch (ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+            return null;
         }
-        String recibo = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSalaRelatorio, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(), null, "Um menú [" + pMenu.getMensagem().getCorpo() + "] foi enviado para " + pContato.getNome());
-        return recibo;
+
     }
 
     protected void despachar(RotaLinkAcesso pRotaMenu) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat {

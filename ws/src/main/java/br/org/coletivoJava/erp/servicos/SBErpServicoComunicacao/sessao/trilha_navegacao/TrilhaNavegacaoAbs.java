@@ -25,6 +25,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
+import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsapp;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -250,6 +251,11 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return caminhoTrilha;
     }
 
+    protected MenuWhatsapp gerarMenuWhatsapp(String descricao) {
+        MenuWhatsapp menu = new M
+
+    }
+
     protected ItfChatSalaBean gerarSalaVinculadaEntidade(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, ItfBeanSimples pEntidade, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
         ItfUsuarioChat usuarioContatoMatrix;
@@ -284,7 +290,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoNovaRota(String pRota) {
 
-        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_ROTA, this, getContextoDeSessao()).setNovaRota(pRota);
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_TRILHA, this, getContextoDeSessao()).setNovaRota(pRota);
     }
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoLogout() {
@@ -315,7 +321,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
             if (AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada)
                     .getPalavrasParaCaminhoTrilhaRaiz().stream()
                     .filter(comandoRaiz -> comandoRaiz.equals(palavra)).findFirst().isPresent()) {
-                AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_ROTA, this, sessaoDoContato.getContexto());
+                AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_TRILHA, this, sessaoDoContato.getContexto());
                 acao.setNovaRota(AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(entrada).getCaminhoTrilhaRaiz());
                 return acao;
             }
@@ -404,7 +410,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         } catch (ErroConexaoServicoChat ex) {
 
         }
-        AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_ROTA, this, getContextoDeSessao());
+        AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_TRILHA, this, getContextoDeSessao());
 
         return null;
     }

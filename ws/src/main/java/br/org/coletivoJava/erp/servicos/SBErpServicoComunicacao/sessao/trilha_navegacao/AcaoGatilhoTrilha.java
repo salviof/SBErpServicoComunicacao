@@ -1,6 +1,8 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaEncaminhamentoSala;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 
@@ -12,7 +14,8 @@ public class AcaoGatilhoTrilha {
 
     private FabAcaoGatilhosTrilha tipoAcao;
     private MensagemSimplesEnvioWhatsapp mensagemParaContato;
-    private String novaRota;
+    private String novaTrilha;
+    //  private RotaMensagemContato novaTrilha;
     private String mensagemParaAtendimento;
     private final ContextoContato contexto;
     private final ItfTrilhaNavegacao trilha;
@@ -38,12 +41,12 @@ public class AcaoGatilhoTrilha {
         return this;
     }
 
-    public String getNovaRota() {
-        return novaRota;
+    public String getNovaTrilha() {
+        return novaTrilha;
     }
 
     public AcaoGatilhoTrilha setNovaRota(String novaRota) {
-        this.novaRota = novaRota;
+        this.novaTrilha = novaRota;
         return this;
     }
 

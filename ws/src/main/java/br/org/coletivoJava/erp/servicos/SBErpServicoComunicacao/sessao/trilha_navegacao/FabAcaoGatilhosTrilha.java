@@ -14,7 +14,7 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoCo
 public enum FabAcaoGatilhosTrilha {
 
     ENCERRAR_SESSAO,
-    NOVA_ROTA,
+    NOVA_TRILHA,
     MENSAGEM_CONTATO_WHATSAPP,
     MENSAGEM_ATENDIMENTO;
 
@@ -23,7 +23,7 @@ public enum FabAcaoGatilhosTrilha {
         switch (this) {
             case ENCERRAR_SESSAO:
                 break;
-            case NOVA_ROTA:
+            case NOVA_TRILHA:
                 acao.setNovaRota(parametros[0]);
                 break;
             case MENSAGEM_CONTATO_WHATSAPP:
