@@ -74,6 +74,10 @@ public class RepositorioComunicacaoChat {
         UtilSBPersistencia.mergeRegistro(pContexto);
     }
 
+    public int getQuantidadadeSessoesAbertas() {
+        return ULTIMOS_CONTATOS.size();
+    }
+
     public synchronized ContextoContato getContextoContato(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
         EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
         try {

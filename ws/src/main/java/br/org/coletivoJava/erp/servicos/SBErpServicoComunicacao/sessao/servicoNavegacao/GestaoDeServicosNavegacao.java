@@ -36,6 +36,8 @@ import java.util.HashMap;
 import java.util.Map;
 import org.coletivojava.fw.api.tratamentoErros.FabErro;
 import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.FabAcaoGatilhosTrilha.NOVA_TRILHA;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -101,12 +103,12 @@ public class GestaoDeServicosNavegacao {
         return true;
     }
 
-    private ItfTrilhaNavegacao instanciarTrilha(Class classeRegraDeNegocioTrilha, SessaoDeContato pContexto, ItfTrilhaNavegacao trilhaPai, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) throws ErroComDevolucaoMensagemUsuario {
+    private ItfTrilhaNavegacao instanciarTrilha(Class classeRegraDeNegocioTrilha, SessaoDeContato pSessao, ItfTrilhaNavegacao trilhaPai, EntradaNumeroWhatsapp pEntrada, String pCaminhoTrilha) throws ErroComDevolucaoMensagemUsuario {
         ItfTrilhaNavegacao novaTrilha = null;
 
         try {
             Constructor construtor = (Constructor) classeRegraDeNegocioTrilha.getConstructor(SessaoDeContato.class, ItfTrilhaNavegacao.class, EntradaNumeroWhatsapp.class, String.class);
-            novaTrilha = (ItfTrilhaNavegacao) construtor.newInstance(pContexto, trilhaPai, pEntrada, pCaminhoTrilha);
+            novaTrilha = (ItfTrilhaNavegacao) construtor.newInstance(pSessao, trilhaPai, pEntrada, pCaminhoTrilha);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException | SecurityException ex) {
             throw new ErroComDevolucaoMensagemUsuario("Verifique o constructor da  trilha," + classeRegraDeNegocioTrilha.getCanonicalName() + " "
                     + "que deve conter: ContextoContato, TrilhaPai, EntradaNumeroWhatsapp, e string com caminho da trilha de navegação"
@@ -204,6 +206,27 @@ public class GestaoDeServicosNavegacao {
         ItfTrilhaNavegacao trilha = executarGatilhosDefinirTrilha(pEntrada, pContato, new TipoGatilho(pComandoAtendimento));
         trilha.registrarInteracao(TrilhaNavegacaoAbs.TIPO_INTERACAO.ATENDIMENTO);
         return trilha;
+    }
+
+    public ItfTrilhaNavegacao getTrilhaAtualDoContato(ContextoContato pContexto) {
+
+        EntradaNumeroWhatsapp entrada;
+        try {
+            entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
+            if (!ULTIMAS_TRILHAS.containsKey(entrada)) {
+                return null;
+            }
+            Map<Contato, ItfTrilhaNavegacao> trilhaAtivas = ULTIMAS_TRILHAS.get(entrada);
+            if (!trilhaAtivas.containsKey(pContexto.getContato())) {
+                return null;
+            }
+            ItfTrilhaNavegacao trilha = trilhaAtivas.get(pContexto.getContato());
+
+            return trilha;
+        } catch (ErroRegraDeNegocio ex) {
+            return null;
+        }
+
     }
 
     public ItfTrilhaNavegacao getTrilhaByMensagemWhatasapp(EntradaNumeroWhatsapp pEntrada, Contato pContato, MensagemWhatsapp pMensagem) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {

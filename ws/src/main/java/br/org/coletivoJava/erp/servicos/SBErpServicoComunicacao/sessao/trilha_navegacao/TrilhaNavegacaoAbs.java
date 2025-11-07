@@ -2,6 +2,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_n
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.UtilAplicacaoWsChatMatrixSalas;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.FabConfigServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
@@ -25,7 +26,6 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
-import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsapp;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
@@ -54,7 +54,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     private SessaoDeContato sessaoDoContato;
     private Date ultimaInteracaoContato;
     private Date ultimaInteracaoAtendimento;
-    private long segundosTimeoutAguardandoContato = 90000;
+    private long segundosTimeoutAguardandoContato;
     private long segundosTimeoutAguardandoAtendimento = 900;
     //segundosTimeoutAguardandoAtendimento:600000
     private boolean agenteUltimaInteracaoContato;
@@ -69,6 +69,9 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         } else {
             trilhaOrigem = null;
         }
+
+        segundosTimeoutAguardandoContato = Integer.valueOf(FabConfigServicoComunicacao.SEGUNDOS_PADRAO_AGUARDANDO_CONTATO.getValorParametroSistema());
+        segundosTimeoutAguardandoAtendimento = Integer.valueOf(FabConfigServicoComunicacao.SEGUNDOS_PADRAO_AGUARDANDO_ATENDIMENTO.getValorParametroSistema());
         InfoRotaComunicacao infoRota = this.getClass().getAnnotation(InfoRotaComunicacao.class);
         emailAtendimentoResponsavelPadrao = infoRota.emailAtendimentoResponsavelPadrao();
         caminhoTrilha = pCaminhoTrilha;
@@ -173,7 +176,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
             while (monitorAtivo) {
                 try {
-                    sleep(120000);
+                    sleep(Long.valueOf(FabConfigServicoComunicacao.SEGUNDOS_PADRAO_AGUARDANDO_ATENDIMENTO.getValorParametroSistema()) * 1000);
                 } catch (InterruptedException ex) {
                     monitorAtivo = false;
                 }
@@ -189,7 +192,11 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
                         if (tempoPassouInteracaoContato >= tempoLimite) {
                             acoesAguardandoAtendimento++;
-                            acaoTimeoutAguardandoRespostaAtendimento();
+                            AcaoGatilhoTrilha acao = acaoTimeoutAguardandoRespostaAtendimento();
+
+
+
+                        /// Executar trillha
                             // registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
                         }
                     } else {
@@ -251,11 +258,6 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return caminhoTrilha;
     }
 
-    protected MenuWhatsapp gerarMenuWhatsapp(String descricao) {
-        MenuWhatsapp menu = new M
-
-    }
-
     protected ItfChatSalaBean gerarSalaVinculadaEntidade(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, ItfBeanSimples pEntidade, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
         ItfUsuarioChat usuarioContatoMatrix;
@@ -281,7 +283,10 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     }
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemContato(String pMensagem) {
-        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem));
+        if (getCaminhoTrilha() == null || getCaminhoTrilha().equals("menu")) {
+            return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCorpo("Auxiliadora"));
+        }
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCorpo("Auxiliadora").setRodape("Quer recomeçar? É só digitar: menu"));
     }
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemAtendimento(String pMensagemAtendimento) {
@@ -412,7 +417,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         }
         AcaoGatilhoTrilha acao = new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.NOVA_TRILHA, this, getContextoDeSessao());
 
-        return null;
+        return acao;
     }
 
     public enum TIPO_INTERACAO {

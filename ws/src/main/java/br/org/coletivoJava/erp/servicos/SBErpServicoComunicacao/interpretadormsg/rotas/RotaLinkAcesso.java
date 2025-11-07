@@ -25,24 +25,27 @@ public class RotaLinkAcesso extends RotaMensagemContato {
         return nomeAcao;
     }
 
-    public void setNomeAcao(String nomeAcao) {
+    public RotaLinkAcesso setNomeAcao(String nomeAcao) {
         this.nomeAcao = nomeAcao;
+        return this;
     }
 
     public String getLinkAcao() {
         return linkAcao;
     }
 
-    public void setLinkAcao(String linkAcao) {
+    public RotaLinkAcesso setLinkAcao(String linkAcao) {
         this.linkAcao = linkAcao;
+        return this;
     }
 
     public String getDescricaoLink() {
         return descricaoLink;
     }
 
-    public void setDescricaoLink(String descricaoLink) {
+    public RotaLinkAcesso setDescricaoLink(String descricaoLink) {
         this.descricaoLink = descricaoLink;
+        return this;
     }
 
 }

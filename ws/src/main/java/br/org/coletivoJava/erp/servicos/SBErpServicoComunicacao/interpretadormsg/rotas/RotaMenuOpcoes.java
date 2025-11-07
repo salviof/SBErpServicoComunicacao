@@ -20,8 +20,9 @@ public class RotaMenuOpcoes extends RotaMensagemContato {
         return menuWhatsapp;
     }
 
-    public void setMenuWhatsapp(MenuWhatsapp menuWhatsapp) {
+    public RotaMenuOpcoes setMenuWhatsapp(MenuWhatsapp menuWhatsapp) {
         this.menuWhatsapp = menuWhatsapp;
+        return this;
     }
 
 }

@@ -48,6 +48,9 @@ public abstract class ServicoNavegacaoAbs implements ItfServicoNavegacao {
     public void validarServicoNavegacao() throws ErroFalhaEncaminhando {
         for (Class<? extends ItfTrilhaNavegacao> trilha : trilhasDiponiveis) {
             InfoRotaComunicacao anCaminhoRota = trilha.getAnnotation(InfoRotaComunicacao.class);
+            if (anCaminhoRota == null) {
+                throw new ErroFalhaEncaminhando("Trilha" + trilha.getCanonicalName() + " não foi anotada com " + InfoRotaComunicacao.class.getSimpleName());
+            }
             String caminhoRota = anCaminhoRota.caminhoRota();
             rotaClasse.put(caminhoRota, trilha);
         }
