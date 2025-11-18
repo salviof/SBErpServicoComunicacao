@@ -1,7 +1,11 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
+import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
+import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
 import com.super_bits.modulos.SBAcessosModel.model.GrupoUsuarioSB;
 import com.super_bits.modulos.SBAcessosModel.model.UsuarioSB;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
@@ -132,14 +136,35 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
 
     @Override
     public FabTipoAgenteOrganizacao getTipoAgente(ComoUsuario pUsuario) {
-        if (pUsuario.getEmail()) {
-
+        if (pUsuario.getEmail() != null && pUsuario.getEmail().contains(FabConfigApiMatrixChat.DOMINIO_FEDERADO.getValorParametroSistema())) {
+            return FabTipoAgenteOrganizacao.ATENDIMENTO;
         }
+        if (pUsuario.getTelefone() != null && !pUsuario.getTelefone().isEmpty()) {
+            return FabTipoAgenteOrganizacao.CLIENTE;
+        }
+        return FabTipoAgenteOrganizacao.ATENDIMENTO;
     }
 
     @Override
     public ComoContatoHumano getContatoDoUsuario(ComoUsuario pUsuairo) throws ErroDadosDeContatoUsuarioNaoEncontrado {
-        return AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(pUsuario);
+        if (pUsuairo instanceof ComoUsuarioChat) {
+            throw new ErroDadosDeContatoUsuarioNaoEncontrado("O tipo de contato não é compativel " + ComoUsuarioChat.class.getSimpleName());
+        }
+        switch (getTipoAgente(pUsuairo).getTipoCanal()) {
+            case INTERNO:
+                return (ComoContatoHumano) AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getAtendente((ComoUsuarioChat) pUsuairo);
+
+            case REDES_SOCIAIS: {
+                try {
+                    return (ComoContatoHumano) AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato((ComoUsuarioChat) pUsuairo);
+                } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
+                    throw new ErroDadosDeContatoUsuarioNaoEncontrado(ex.getMessage());
+                }
+            }
+
+            default:
+                throw new AssertionError();
+        }
     }
 
 }

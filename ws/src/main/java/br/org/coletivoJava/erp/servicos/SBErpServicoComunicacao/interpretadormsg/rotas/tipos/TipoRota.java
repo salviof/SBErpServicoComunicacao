@@ -4,13 +4,13 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos;
 
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.ItemSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.EntidadeSimples;
 
 /**
  *
  * @author salvio
  */
-public class TipoRota extends ItemSimples {
+public class TipoRota extends EntidadeSimples {
 
     private Long id;
     private FabTipoRotaMensagem tipoRotaMensagem;
