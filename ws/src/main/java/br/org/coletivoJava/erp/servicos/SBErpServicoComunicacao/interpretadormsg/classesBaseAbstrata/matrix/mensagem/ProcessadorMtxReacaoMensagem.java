@@ -12,8 +12,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -30,10 +30,10 @@ public class ProcessadorMtxReacaoMensagem implements
 
     private final ItfEventoMatix evento;
     private final MensagemTrOrigemWhatsapp mensagemTransito;
-    private final ItfChatSalaBean sala;
+    private final ComoChatSalaBean sala;
     private final Contato contato;
 
-    public ProcessadorMtxReacaoMensagem(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemWhatsapp pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxReacaoMensagem(ItfEventoMatix pEvento, ComoChatSalaBean pSala, MensagemTrOrigemWhatsapp pMensagem, Contato pContato, ComoUsuarioChat pAtendente) {
         evento = pEvento;
         mensagemTransito = pMensagem;
         sala = pSala;

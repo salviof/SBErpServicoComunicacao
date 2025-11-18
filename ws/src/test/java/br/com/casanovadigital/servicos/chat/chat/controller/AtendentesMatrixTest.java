@@ -21,7 +21,7 @@ public class AtendentesMatrixTest {
     public void testSomeMethod() {
         SBCore.configurar(new ConfigCoreJunitPadraoDevAcaoPermissao(), SBCore.ESTADO_APP.DESENVOLVIMENTO);
         //  MapAtendentesMatrixCAsanovadigital atendente = new MapAtendentesMatrixCAsanovadigital();
-        //ItfUsuarioChat usuario = MapAtendentesMatrixCAsanovadigital.getUserAtendimentoByEmail(MapAtendentesMatrixCAsanovadigital.CODIGO_ENTRADA_TELEVENDAS_CASANOVA_BH9755, "salvio@casanovadigital.com.br");
+        //ComoUsuarioChat usuario = MapAtendentesMatrixCAsanovadigital.getUserAtendimentoByEmail(MapAtendentesMatrixCAsanovadigital.CODIGO_ENTRADA_TELEVENDAS_CASANOVA_BH9755, "salvio@casanovadigital.com.br");
         //  Assert.assertNotNull("Esperado um usuario", usuario);
         // System.out.println(usuario.getNome());
 

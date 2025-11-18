@@ -20,7 +20,7 @@ import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.er
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import jakarta.json.JsonObjectBuilder;
 import javax.ws.rs.Path;
 import spark.Request;
@@ -33,7 +33,7 @@ import spark.Response;
 @Path("/solicitacaoAuth2Recept/code/SISTEMA")
 public class RecepcaoCodigoSolicitacao extends RotaSparkPadrao {
 
-    private static ItfUsuario usuarioPadraoAgencia = null;
+    private static ComoUsuario usuarioPadraoAgencia = null;
 
     public RecepcaoCodigoSolicitacao() {
         super();
@@ -44,7 +44,7 @@ public class RecepcaoCodigoSolicitacao extends RotaSparkPadrao {
         System.out.println("Recebendo token");
         if (usuarioPadraoAgencia == null) {
             try {
-                usuarioPadraoAgencia = (ItfUsuario) AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByEmail(FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema());
+                usuarioPadraoAgencia = (ComoUsuario) AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByEmail(FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema());
             } catch (ErroConexaoServicoChat ex) {
                 throw new ErroParamentosInvalidos("Usuário de atendimento padrão: " + FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema() + " ainda não foi encontrado");
             }

@@ -20,9 +20,9 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.Se
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.MensagemSimplesEnvioWhatsapp;
@@ -31,7 +31,7 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
 import jakarta.json.JsonObject;
 import java.util.Date;
 import java.util.List;
@@ -258,23 +258,23 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return caminhoTrilha;
     }
 
-    protected ItfChatSalaBean gerarSalaVinculadaEntidade(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, ItfBeanSimples pEntidade, Contato pContato, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+    protected ComoChatSalaBean gerarSalaVinculadaEntidade(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, ComoEntidadeSimples pEntidade, Contato pContato, ComoUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
-        ItfUsuarioChat usuarioContatoMatrix;
+        ComoUsuarioChat usuarioContatoMatrix;
         try {
             usuarioContatoMatrix = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pContato.getMatrixID());
-            ItfChatSalaBean salaIdeal = pTipoSala
+            ComoChatSalaBean salaIdeal = pTipoSala
                     .getSalaMatrix(pEntidade, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(), Lists.newArrayList(pUsuarioAtendimento), Lists.newArrayList(usuarioContatoMatrix));
 
             String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContatoMatrix, pTipoSala.getSlug());
-            ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
+            ComoChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
 
             if (!AplicacaoWsChat.SERVICO_MATRIX.isSalaEscutaDefinida()) {
                 AplicacaoWsChat.SERVICO_MATRIX.registrarClasseDeEscutaSalas(ListenerSalaMatrix.class
                 );
             }
             AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
-            return (ItfChatSalaBean) salaRelacionada;
+            return (ComoChatSalaBean) salaRelacionada;
 
         } catch (ErroPreparandoObjeto ex) {
             throw new ErroConexaoServicoChat("Falha defininido sala de atendimento matrix" + ex.getMessage());
@@ -284,9 +284,9 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemContato(String pMensagem) {
         if (getCaminhoTrilha() == null || getCaminhoTrilha().equals("menu")) {
-            return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCorpo("Auxiliadora"));
+            return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCabecalho("Auxiliadora"));
         }
-        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCorpo("Auxiliadora").setRodape("Quer recomeçar? É só digitar: menu"));
+        return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.MENSAGEM_CONTATO_WHATSAPP, this, getContextoDeSessao()).setMensagemParaContato(new MensagemSimplesEnvioWhatsapp().setCorpo(pMensagem).setCabecalho("Auxiliadora").setRodape("Quer recomeçar? É só digitar: menu"));
     }
 
     protected AcaoGatilhoTrilha gerarAcaoGatilhoMensagemAtendimento(String pMensagemAtendimento) {
@@ -302,13 +302,13 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         return new AcaoGatilhoTrilha(FabAcaoGatilhosTrilha.ENCERRAR_SESSAO, this, getContextoDeSessao());
     }
 
-    protected ItfChatSalaBean gerarSala(FabTipoSalaMatrix pTipoSala, ItfUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
+    protected ComoChatSalaBean gerarSala(FabTipoSalaMatrix pTipoSala, ComoUsuarioChat pUsuarioAtendimento) throws ErroConexaoServicoChat {
 
         return UtilAplicacaoWsChatMatrixSalas.gerarSala(getEntrada(), pTipoSala, getContextoDeSessao().getContato(), pUsuarioAtendimento, false);
 
     }
 
-    protected ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento, boolean pRemoverOutrosUsuarios) throws ErroConexaoServicoChat {
+    protected ComoChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ComoUsuarioChat pUsuarioAtendimento, boolean pRemoverOutrosUsuarios) throws ErroConexaoServicoChat {
 
         return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, pTipoSala, pContato, pUsuarioAtendimento, pRemoverOutrosUsuarios);
 

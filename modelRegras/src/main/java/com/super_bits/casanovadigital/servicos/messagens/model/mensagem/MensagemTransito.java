@@ -35,7 +35,7 @@ import javax.persistence.TemporalType;
 @DiscriminatorColumn(name = "tipoMensagem")
 @EntityListeners(ListenerEntidadePadrao.class)
 @InfoObjetoSB(tags = "Mensagem em Transito", plural = "Mensagens em transito")
-public class MensagemTransito extends EntidadeSimples {
+public class MensagemTransito extends EntidadeSimplesORM {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

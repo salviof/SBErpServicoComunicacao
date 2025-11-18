@@ -17,7 +17,7 @@ import javax.persistence.Id;
  */
 @Entity
 @InfoObjetoSB(tags = "Entrada", plural = "Entradas")
-public class CanalOminieChannel extends EntidadeSimples {
+public class CanalOminieChannel extends EntidadeSimplesORM {
 
     @Id
     private Long id;

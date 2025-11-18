@@ -8,8 +8,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
@@ -33,15 +33,15 @@ public class TesteEspacos {
         FabTipoSalaMatrix tipoSala = FabTipoSalaMatrix.WTZAP_VENDAS;
 
         try {
-            ItfUsuarioChat wagner = erpChatService.getUsuarioByEmail("wagner@casanovadigital.com.br");
+            ComoUsuarioChat wagner = erpChatService.getUsuarioByEmail("wagner@casanovadigital.com.br");
             System.out.println(wagner.getCodigoUsuario());
-            ItfChatSalaBean espaco = erpChatService.getSalaByAlias(tipoSala.getApelidoNomeUnicoSpace());
+            ComoChatSalaBean espaco = erpChatService.getSalaByAlias(tipoSala.getApelidoNomeUnicoSpace());
             System.out.println(espaco.getCodigoChat());
             System.out.println("!sysqUVrbhFXRcPuBcH:casanovadigital.com.br");
-            ItfChatSalaBean salaFilha = erpChatService.getSalaByAlias("#553184178550wv:casanovadigital.com.br");
+            ComoChatSalaBean salaFilha = erpChatService.getSalaByAlias("#553184178550wv:casanovadigital.com.br");
             System.out.println(salaFilha.getCodigoChat());
 
-            ItfUsuarioChat auxiliadora = erpChatService.getUsuarioByEmail("auxiliadora@casanovadigital.com.br");
+            ComoUsuarioChat auxiliadora = erpChatService.getUsuarioByEmail("auxiliadora@casanovadigital.com.br");
             System.out.println(auxiliadora.getCodigoUsuario());
 
             System.out.println(FabApiRestIntMatrixChatSalas.SALA_ADICIONAR_USUARIO.getAcao(espaco.getCodigoChat(), auxiliadora.getCodigoUsuario()).getResposta().getRespostaTexto());

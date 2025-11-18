@@ -25,7 +25,7 @@ import javax.persistence.TemporalType;
  */
 @Entity
 @InfoObjetoSB(tags = "Contexto de sessão do contato", plural = "Contextos de sessão")
-public class ContextoContato extends EntidadeSimples {
+public class ContextoContato extends EntidadeSimplesORM {
 
     @Id
     @InfoCampo(tipo = FabTipoAtributoObjeto.ID)

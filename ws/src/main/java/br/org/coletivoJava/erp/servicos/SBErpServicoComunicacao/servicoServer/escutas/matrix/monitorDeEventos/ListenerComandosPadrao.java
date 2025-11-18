@@ -12,9 +12,9 @@ import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.model.ErroComandoAtendimentoInvalido;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfListenerEventoComandoAtendimento;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 
@@ -131,7 +131,7 @@ public class ListenerComandosPadrao implements ItfListenerEventoComandoAtendimen
 
                 TIPO_COMANDO comando = TIPO_COMANDO.getTipo(pComando.getComando());
 
-                ItfChatSalaBean sala;
+                ComoChatSalaBean sala;
 
                 sala = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(pComando.getEvento().getRoom_id());
 
@@ -163,14 +163,14 @@ public class ListenerComandosPadrao implements ItfListenerEventoComandoAtendimen
                     return;
                 }
 
-                List<ItfUsuarioChat> contatos = new ArrayList<>();
-                for (ItfUsuarioChat usr : sala.getUsuarios()) {
+                List<ComoUsuarioChat> contatos = new ArrayList<>();
+                for (ComoUsuarioChat usr : sala.getUsuarios()) {
                     if (AplicacaoWsChat.SERVICO_MATRIX.isUmUsuarioContato(usr)) {
                         contatos.add(usr);
                     }
                 }
                 if (pComando.getNovaRota() != null) {
-                    for (ItfUsuarioChat pUsuario : contatos) {
+                    for (ComoUsuarioChat pUsuario : contatos) {
                         Contato ct;
                         switch (comando) {
                             case NOVA_ROTA:

@@ -13,9 +13,9 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
@@ -29,10 +29,10 @@ public class ProcessadorMtxMensagem implements
 
     private final ItfEventoMatix evento;
     private final MensagemTrOrigemMatrix mensagemTransito;
-    private final ItfChatSalaBean sala;
+    private final ComoChatSalaBean sala;
     private final Contato contato;
 
-    public ProcessadorMtxMensagem(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxMensagem(ItfEventoMatix pEvento, ComoChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ComoUsuarioChat pAtendente) {
         evento = pEvento;
         mensagemTransito = pMensagem;
         sala = pSala;
@@ -43,7 +43,7 @@ public class ProcessadorMtxMensagem implements
     public void processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento, ErroConexaoServicoChat {
 
         String codReciboWhatsapp = null;
-        ItfUsuarioChat usuarioAtendimento;
+        ComoUsuarioChat usuarioAtendimento;
 
         usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(evento.getSender());
 

@@ -25,8 +25,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.sessao.Se
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao.TrilhaNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -48,7 +48,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
 
     protected MensagemWhatsapp mensagem;
     private RotaMensagemContato dadosRotaMensagemProcessada;
-    private ItfUsuarioChat usuarioMAtrixContato;
+    private ComoUsuarioChat usuarioMAtrixContato;
     private Contato contato;
     private MensagemTrOrigemWhatsapp mensagemEmTransito;
 
@@ -127,7 +127,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
 
     }
 
-    protected String enviarMenu(EntradaNumeroWhatsapp pEntrada, MenuWhatsapp pMenu, ItfChatSalaBean pSalaRelatorio, ItfUsuarioChat pContato) throws ErroConexaoServicoChat {
+    protected String enviarMenu(EntradaNumeroWhatsapp pEntrada, MenuWhatsapp pMenu, ComoChatSalaBean pSalaRelatorio, ComoUsuarioChat pContato) throws ErroConexaoServicoChat {
 
         String recibo;
         try {
@@ -162,7 +162,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
                     .getSessaoDoContato(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(getMensagemWhatsapp().getEntrada(), contato));
 
             if (sessao.getContexto().getSalaUltimaConversa() != null) {
-                ItfChatSalaBean sala = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(sessao.getContexto().getSalaUltimaConversa());
+                ComoChatSalaBean sala = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(sessao.getContexto().getSalaUltimaConversa());
                 encaminharMensagemParaMatrix(mensagem, sala, usuarioMAtrixContato);
             }
 

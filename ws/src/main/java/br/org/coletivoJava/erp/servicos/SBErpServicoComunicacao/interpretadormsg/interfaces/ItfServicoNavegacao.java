@@ -7,7 +7,7 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadorms
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import jakarta.json.JsonObject;
 import java.util.List;
@@ -36,6 +36,6 @@ public interface ItfServicoNavegacao {
 
     public void validarServicoNavegacao() throws ErroFalhaEncaminhando;
 
-    public ItfChatSalaBean gerarSalaAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroConexaoServicoChat;
+    public ComoChatSalaBean gerarSalaAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroConexaoServicoChat;
 
 }

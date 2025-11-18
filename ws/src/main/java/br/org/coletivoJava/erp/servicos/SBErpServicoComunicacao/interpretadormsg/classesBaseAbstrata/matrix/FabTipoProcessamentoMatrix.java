@@ -9,8 +9,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.matrix.mensagem.ProcessadorMtxMensagem;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.matrix.mensagem.ProcessadorMtxReacaoMensagem;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
@@ -26,7 +26,7 @@ import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
  */
 public class FabTipoProcessamentoMatrix {
 
-    public static ItfProcessadorPacoteMatrixWhatsap getProcessadorMatrix(FabTipoPacoteDeAcaoMatrix pTipo, ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTransito pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public static ItfProcessadorPacoteMatrixWhatsap getProcessadorMatrix(FabTipoPacoteDeAcaoMatrix pTipo, ItfEventoMatix pEvento, ComoChatSalaBean pSala, MensagemTransito pMensagem, Contato pContato, ComoUsuarioChat pAtendente) {
         switch (pTipo) {
             case MENSAGEM:
                 return new ProcessadorMtxMensagem(pEvento, pSala, (MensagemTrOrigemMatrix) pMensagem, pContato, pAtendente);

@@ -14,8 +14,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
@@ -58,7 +58,7 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
                 throw new ErroComDevolucaoMensagemUsuario("Falha de regra de negocio ao receber mensagem",
                         "A mensagem não foi entregue: " + ex.getMessage());
             }
-            ItfUsuarioChat usuarioChatContato;
+            ComoUsuarioChat usuarioChatContato;
             try {
                 if (contato != null) {
                     usuarioChatContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(contato.getMatrixID());
@@ -111,12 +111,12 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
                     break;
                 case MENSAGEM_EXCLUIDA:
                     //notificar o atendente na sala de atendimento que a mensagem foi excluida
-                    ItfChatSalaBean salaexclusao = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(mensagemRelacionada.getMensagem().getSalaCodigoMatrix());
+                    ComoChatSalaBean salaexclusao = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(mensagemRelacionada.getMensagem().getSalaCodigoMatrix());
                     AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(salaexclusao, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(),
                             codigoEventoMatrix, "Uma mensagem foi excluida:" + eventoWhatsapp.getDescricaoErro());
                     break;
                 case DESCONHECIDO:
-                    ItfChatSalaBean salaDesconhecido = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(mensagemRelacionada.getMensagem().getSalaCodigoMatrix());
+                    ComoChatSalaBean salaDesconhecido = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(mensagemRelacionada.getMensagem().getSalaCodigoMatrix());
                     AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(salaDesconhecido, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(),
                             codigoEventoMatrix, "Evento desconhecido recebido:" + eventoWhatsapp.getDescricaoErro());
 

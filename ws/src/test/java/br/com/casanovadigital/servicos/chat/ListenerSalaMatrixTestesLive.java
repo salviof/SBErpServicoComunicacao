@@ -6,7 +6,7 @@ package br.com.casanovadigital.servicos.chat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.ErroMtxParalizacaoDeProcessamento;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 
 /**
@@ -15,7 +15,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
  */
 public class ListenerSalaMatrixTestesLive extends ListenerSalaMatrix {
 
-    public ListenerSalaMatrixTestesLive(ItfChatSalaBean pSala) {
+    public ListenerSalaMatrixTestesLive(ComoChatSalaBean pSala) {
         super(pSala);
     }
 

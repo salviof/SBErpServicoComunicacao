@@ -1,7 +1,7 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.FabTipoRotaMensagem;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -14,11 +14,11 @@ import java.util.List;
 public class RotaEncaminhamentoSala extends RotaMensagemContato {
 
     private List<Contato> contatosParticipantes;
-    private ItfChatSalaBean sala;
+    private ComoChatSalaBean sala;
     private List<Atendente> atendentes;
     private Atendente atendentePrincipal;
 
-    public RotaEncaminhamentoSala(Contato pContato, ItfChatSalaBean pSala, List<Contato> pContatosParticipantes, Atendente pAtendente, List<Atendente> pAtendentes) {
+    public RotaEncaminhamentoSala(Contato pContato, ComoChatSalaBean pSala, List<Contato> pContatosParticipantes, Atendente pAtendente, List<Atendente> pAtendentes) {
         super(FabTipoRotaMensagem.ENCAMINHAMENTO, pContato);
         this.contatosParticipantes = pContatosParticipantes;
         this.sala = pSala;
@@ -26,7 +26,7 @@ public class RotaEncaminhamentoSala extends RotaMensagemContato {
         this.atendentes = pAtendentes;
     }
 
-    public RotaEncaminhamentoSala(Contato pContato, ItfChatSalaBean pSala, Atendente pAtendente) {
+    public RotaEncaminhamentoSala(Contato pContato, ComoChatSalaBean pSala, Atendente pAtendente) {
         this(pContato, pSala, Lists.newArrayList(), pAtendente, Lists.newArrayList());
     }
 
@@ -38,11 +38,11 @@ public class RotaEncaminhamentoSala extends RotaMensagemContato {
         this.contatosParticipantes = contatosParticipantes;
     }
 
-    public ItfChatSalaBean getSala() {
+    public ComoChatSalaBean getSala() {
         return sala;
     }
 
-    public void setSala(ItfChatSalaBean sala) {
+    public void setSala(ComoChatSalaBean sala) {
         this.sala = sala;
     }
 

@@ -6,14 +6,14 @@ import com.super_bits.modulos.SBAcessosModel.model.GrupoUsuarioSB;
 import com.super_bits.modulos.SBAcessosModel.model.UsuarioSB;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.ConfigPermissaoSBCoreAbstrato;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ItfAcaoDoSistema;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ItfPermissao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenAcessoDinamico;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenRecuperacaoEmail;
-import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabricaAcoes;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfBeanSimplesSomenteLeitura;
+import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabricaAcoes;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimplesSomenteLeitura;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfGrupoUsuario;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
 import com.super_bits.modulosSB.SBCore.modulos.view.menu.ItfMenusDeSessao;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,7 +42,7 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
         return new ArrayList<>();
     }
 
-    private ItfUsuario buildUsuario(ItfSistemaERP pSistema) {
+    private ComoUsuario buildUsuario(ItfSistemaERP pSistema) {
         if (pSistema.getEmailusuarioAdmin() == null) {
             return null;
         }
@@ -58,18 +58,18 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
     }
 
     @Override
-    public ItfUsuario getUsuarioByEmail(String pEmail) {
+    public ComoUsuario getUsuarioByEmail(String pEmail) {
         return super.getUsuarioByEmail(pEmail); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 
     @Override
-    public List<ItfUsuario> configuraUsuarios() {
-        List<ItfUsuario> usuarios = new ArrayList<>();
+    public List<ComoUsuario> configuraUsuarios() {
+        List<ComoUsuario> usuarios = new ArrayList<>();
         List<ItfSistemaERP> sistemas;
         try {
             sistemas = AplicacaoWsChat.getCentralLogicaProcesasmento().getSistemas();
             for (ItfSistemaERP sistema : sistemas) {
-                ItfUsuario usuario = buildUsuario(sistema);
+                ComoUsuario usuario = buildUsuario(sistema);
                 if (usuario != null) {
                     usuarios.add(usuario);
                 }
@@ -92,32 +92,32 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
     }
 
     @Override
-    public boolean isAcaoPermitidaUsuarioLogado(ItfAcaoDoSistema acao) {
+    public boolean isAcaoPermitidaUsuarioLogado(ComoAcaoDoSistema acao) {
         return true;
     }
 
     @Override
-    public boolean isAcaoPermitidaUsuario(ItfUsuario pUsuario, ItfAcaoDoSistema acao) {
+    public boolean isAcaoPermitidaUsuario(ComoUsuario pUsuario, ComoAcaoDoSistema acao) {
         return true;
     }
 
     @Override
-    public boolean isPermitidoUsuario(ItfUsuario pUsuario, ItfPermissao pPermissao) {
+    public boolean isPermitidoUsuario(ComoUsuario pUsuario, ItfPermissao pPermissao) {
         return true;
     }
 
     @Override
-    public ItfTokenRecuperacaoEmail gerarTokenRecuperacaoDeSenha(ItfUsuario pUsuario, int pMinutosValidade) {
+    public ItfTokenRecuperacaoEmail gerarTokenRecuperacaoDeSenha(ComoUsuario pUsuario, int pMinutosValidade) {
         return null;
     }
 
     @Override
-    public ItfTokenAcessoDinamico gerarTokenDinamico(ItfFabricaAcoes pAcao, ItfBeanSimplesSomenteLeitura pItem, String pEmail) {
+    public ItfTokenAcessoDinamico gerarTokenDinamico(ComoFabricaAcoes pAcao, ComoEntidadeSimplesSomenteLeitura pItem, String pEmail) {
         return null;
     }
 
     @Override
-    public boolean isTokenDinamicoExiste(ItfFabricaAcoes pAcao, ItfBeanSimplesSomenteLeitura pItem, String pEmail) {
+    public boolean isTokenDinamicoExiste(ComoFabricaAcoes pAcao, ComoEntidadeSimplesSomenteLeitura pItem, String pEmail) {
         return false;
     }
 

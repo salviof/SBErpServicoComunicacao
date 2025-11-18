@@ -5,7 +5,7 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfNotificacaoUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.notificacoes.ItfRetornoDeChamadaDeNotificacao;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
@@ -21,7 +21,7 @@ public class ListenerNotificacaoMatrixAuxiliadora implements ItfRetornoDeChamada
     @Override
     public void onEventReceived(ItfNotificacaoUsuarioChat pNotificacao) {
 
-        ItfChatSalaBean sala;
+        ComoChatSalaBean sala;
         try {
 
             System.out.println("Processando Listener notificação Auxiliadora, ouvindo " + pNotificacao.getCodigoSalaOrigem());

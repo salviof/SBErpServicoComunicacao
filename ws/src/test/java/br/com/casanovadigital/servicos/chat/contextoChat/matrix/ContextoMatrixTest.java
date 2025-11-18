@@ -13,7 +13,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
@@ -44,7 +44,7 @@ public class ContextoMatrixTest {
             ContatoWhatsapp contatoMilene = pacote.getMensagens().get(0).getContatoOrigem();
             String slugMilene = UtilSBCoreStringFiltros.removeCaracteresEspeciais(contatoMilene.getNome());
             System.out.println(slugMilene);
-            ItfUsuarioChat usuarioChat;
+            ComoUsuarioChat usuarioChat;
             usuarioChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(contatoMilene.getNome(), contatoMilene.getWa_id());
             System.out.println(usuarioChat.getApelido());
         } catch (ErroProcessandoJson ex) {

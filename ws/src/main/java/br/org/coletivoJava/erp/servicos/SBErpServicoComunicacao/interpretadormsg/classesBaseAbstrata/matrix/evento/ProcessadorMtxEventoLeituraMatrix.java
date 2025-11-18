@@ -10,8 +10,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
@@ -24,11 +24,11 @@ import de.jojii.matrixclientserver.Bot.Events.RoomEvent;
 public class ProcessadorMtxEventoLeituraMatrix implements
         ItfProcessadorPacoteMatrixWhatsap {
 
-    private ItfUsuarioChat atendente;
+    private ComoUsuarioChat atendente;
     private ItfEventoMatix evento;
-    private ItfChatSalaBean sala;
+    private ComoChatSalaBean sala;
 
-    public ProcessadorMtxEventoLeituraMatrix(ItfEventoMatix pEvento, ItfChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ItfUsuarioChat pAtendente) {
+    public ProcessadorMtxEventoLeituraMatrix(ItfEventoMatix pEvento, ComoChatSalaBean pSala, MensagemTrOrigemMatrix pMensagem, Contato pContato, ComoUsuarioChat pAtendente) {
         atendente = pAtendente;
         sala = pSala;
         evento = pEvento;

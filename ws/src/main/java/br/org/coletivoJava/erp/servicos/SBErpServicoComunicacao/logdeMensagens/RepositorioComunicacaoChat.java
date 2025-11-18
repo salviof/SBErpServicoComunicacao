@@ -4,7 +4,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
@@ -27,7 +27,7 @@ import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemwh
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.ContatoWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO;
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO_CHAMADO;
@@ -56,7 +56,7 @@ public class RepositorioComunicacaoChat {
 
     private static List<Contato> ULTIMOS_CONTATOS = Collections.synchronizedList(new ArrayList<>());
 
-    public synchronized Atendente getAtendente(ItfUsuarioChat pUSuarioAtendimento) {
+    public synchronized Atendente getAtendente(ComoUsuarioChat pUSuarioAtendimento) {
 
         Atendente atendenteRegistrado = (Atendente) UtilSBPersistencia.getRegistroByJPQL("from " + Atendente.class.getSimpleName() + " where email = '" + pUSuarioAtendimento.getEmail() + "'", Atendente.class);
         if (atendenteRegistrado == null) {
@@ -151,7 +151,7 @@ public class RepositorioComunicacaoChat {
         LEITURA, ATUALIZACAO
     }
 
-    public synchronized Contato getContato(ItfUsuarioChat pUsuario) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat, ErroCriandoContato {
+    public synchronized Contato getContato(ComoUsuarioChat pUsuario) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat, ErroCriandoContato {
         if (UtilSBCoreStringValidador.isNuloOuEmbranco(pUsuario.getTelefone())) {
             throw new ErroRegraDeNEgocioChat("Telefone do usuário não foi definido");
         }
@@ -227,7 +227,7 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ItfUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
                 contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
@@ -241,7 +241,7 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ItfUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
                 contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
@@ -272,7 +272,7 @@ public class RepositorioComunicacaoChat {
         return novoContato;
     }
 
-    public ItfUsuarioChat getUsuarioWhatsappPricipalLeadBySala(ItfChatSalaBean pSala) {
+    public ComoUsuarioChat getUsuarioWhatsappPricipalLeadBySala(ComoChatSalaBean pSala) {
         try {
             if (pSala == null) {
                 return null;
@@ -310,7 +310,7 @@ public class RepositorioComunicacaoChat {
                     throw new AssertionError();
             }
 
-            ItfUsuarioChat usr;
+            ComoUsuarioChat usr;
             try {
                 if (!UtilSBCoreStringValidador.isNuloOuEmbranco(telefone)) {
                     usr = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByTelefone(telefone);
@@ -323,7 +323,7 @@ public class RepositorioComunicacaoChat {
             } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat | ErroCriandoContato ex) {
                 SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha obtendo usuario de whatsapp do lead", ex);
             }
-            for (ItfUsuarioChat usuario : pSala.getUsuarios()) {
+            for (ComoUsuarioChat usuario : pSala.getUsuarios()) {
 
                 if (usuario.getTelefone() != null) {
                     if (usuario.getTelefone().length() >= 8) {

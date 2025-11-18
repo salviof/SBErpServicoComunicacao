@@ -20,7 +20,7 @@ import br.org.coletivoJava.fw.api.erp.chat.ERPChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroMtxParalizacaoDeProcessamento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
 import br.org.coletivoJava.fw.erp.implementacao.chat.ChatMatrixOrgimpl;
 import br.org.coletivoJava.fw.erp.implementacao.chat.json_bind_matrix_org.pacotematrix.PacoteMatrixParsing;
@@ -184,7 +184,7 @@ public class AplicacaoWsChat {
         JSONObject syncData = new JSONObject(pPacoteMatrix);
         List<ItfEventoMatix> eventosDeSala = PacoteMatrixParsing.parseEventoSalas(syncData, AplicacaoWsChat.SERVICO_MATRIX).getEventos();
         for (ItfEventoMatix evento : eventosDeSala) {
-            ItfChatSalaBean sala;
+            ComoChatSalaBean sala;
 
             sala = AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(evento.getRoom_id());
 

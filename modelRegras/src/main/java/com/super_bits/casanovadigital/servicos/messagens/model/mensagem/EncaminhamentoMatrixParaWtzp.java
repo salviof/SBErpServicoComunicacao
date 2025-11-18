@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
  */
 @Entity
 @InfoObjetoSB(tags = "Encaminhamento matrix", plural = "Encaminhamentos do matrix para Whatsapp")
-public class EncaminhamentoMatrixParaWtzp extends EntidadeSimples {
+public class EncaminhamentoMatrixParaWtzp extends EntidadeSimplesORM {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

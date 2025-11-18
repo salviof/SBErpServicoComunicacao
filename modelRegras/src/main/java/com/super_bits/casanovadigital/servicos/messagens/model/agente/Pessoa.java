@@ -4,12 +4,12 @@
  */
 package com.super_bits.casanovadigital.servicos.messagens.model.agente;
 
-import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeNormal;
+import com.super_bits.modulosSB.Persistencia.registro.persistidos.EntidadeORMNormal;
 import com.super_bits.modulosSB.Persistencia.registro.persistidos.ListenerEntidadePadrao;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.contato.ItfBeanContatoSimples;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.contato.ComoEntidadeContatoSimples;
 import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Column;
@@ -33,7 +33,7 @@ import javax.persistence.TemporalType;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipoPessoa")
 @EntityListeners(ListenerEntidadePadrao.class)
-public class Pessoa extends EntidadeNormal implements ItfBeanContatoSimples, Serializable {
+public class Pessoa extends EntidadeORMNormal implements ComoEntidadeContatoSimples, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

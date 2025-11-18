@@ -14,8 +14,8 @@ import static br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpret
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.restIntwhatsapp.implementacao.UtilSBApiWhatsapp;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import java.io.InputStream;
@@ -31,7 +31,7 @@ public abstract class ProcessadorSocketWhatsapp {
 
     }
 
-    protected String encaminharMensagemTextoAdministraParaMatrix(String texto, ItfChatSalaBean pSala, ItfUsuarioChat pAtendimento) throws ErroConexaoServicoChat {
+    protected String encaminharMensagemTextoAdministraParaMatrix(String texto, ComoChatSalaBean pSala, ComoUsuarioChat pAtendimento) throws ErroConexaoServicoChat {
         if (pSala != null) {
             return AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, AplicacaoWsChat.SERVICO_MATRIX.getUsuarioAdmin(), String.valueOf(texto.hashCode()), texto);
         } else {
@@ -39,7 +39,7 @@ public abstract class ProcessadorSocketWhatsapp {
         }
     }
 
-    protected String encaminharMensagemParaMatrix(MensagemWhatsapp msg, ItfChatSalaBean pSala, ItfUsuarioChat pContato) throws ErroConexaoServicoChat {
+    protected String encaminharMensagemParaMatrix(MensagemWhatsapp msg, ComoChatSalaBean pSala, ComoUsuarioChat pContato) throws ErroConexaoServicoChat {
 
         String conteudomsg = msg.getMensagem();
         String codigoeventoMatrix = null;
@@ -59,7 +59,7 @@ public abstract class ProcessadorSocketWhatsapp {
         try {
             switch (msg.getTipoMensagem()) {
                 case TEXTO_SIMPLES:
-                    ItfUsuarioChat usuario = pContato;
+                    ComoUsuarioChat usuario = pContato;
                     codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(pSala, usuario, msg.getId(), conteudomsg);
                     if (codigoeventoMatrix == null) {
                         throw new ErroConexaoServicoChat("Falha encaminhando mensagem para " + pSala.getApelido());
@@ -67,7 +67,7 @@ public abstract class ProcessadorSocketWhatsapp {
                     System.out.println("CodEvento envioMensagem: " + msg.getId() + "[" + msg.getMensagem() + "] foi enviada na sala" + pSala.getApelido() + "  " + pSala.getNome());
                     System.out.println(codigoeventoMatrix);
                     System.out.println("Membros");
-                    for (ItfUsuarioChat pUsuario : pSala.getUsuarios()) {
+                    for (ComoUsuarioChat pUsuario : pSala.getUsuarios()) {
                         System.out.println(pUsuario.getNome() + "->" + pUsuario.getCodigoUsuario());
                     }
                     break;

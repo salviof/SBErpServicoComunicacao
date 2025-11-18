@@ -6,7 +6,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
@@ -32,7 +32,7 @@ public class B_Dado_o_usuario_Atendimento_esta_conectado_no_Matrix {
         Contato contato;
         try {
             contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(msg.getContatoOrigem());
-            ItfUsuarioChat usuarioAtendimento = AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(msg.getEntrada(), contato);
+            ComoUsuarioChat usuarioAtendimento = AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(msg.getEntrada(), contato);
             Assert.assertNotNull(usuarioAtendimento);
         } catch (ErroConexaoServicoChat | ErroRegraDeNEgocioChat ex) {
             Logger.getLogger(B_Dado_o_usuario_Atendimento_esta_conectado_no_Matrix.class.getName()).log(Level.SEVERE, null, ex);

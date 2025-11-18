@@ -7,7 +7,7 @@ package br.com.casanovadigital.servicos.chat.config;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
 import java.util.ArrayList;
 import java.util.List;
@@ -46,7 +46,7 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
     public static final String CODIGO_ENTRADA_EXEMPLO_ATENDIMENTO = "SEMREGISTRO";
 
     @Override
-    public ItfUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
+    public ComoUsuarioChat getUsuarioAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
         String caminhoArquivo = SBCore.getConfigModulo(FabConfigServicoComunicacao.class).getPropriedade(FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO);
         String email = FabConfigServicoComunicacao.USUARIO_ATENDIMENTO_PADRAO.getValorParametroSistema();
         if (!new Random().nextBoolean()) {

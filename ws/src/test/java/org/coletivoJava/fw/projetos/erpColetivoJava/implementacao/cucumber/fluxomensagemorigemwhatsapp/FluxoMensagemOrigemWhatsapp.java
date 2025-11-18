@@ -4,7 +4,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.ConfigCoreServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.PacoteMemensagemRecebidoWhatsapp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import com.super_bits.casanovadigital.servicos.messagens.model.configModel.ConfigPercistenciaServicoComunicacao;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.SBPersistencia;
@@ -60,7 +60,7 @@ public class FluxoMensagemOrigemWhatsapp extends TesteIntegracaoFuncionalidadeCu
         //  System.out.println(salaRegistrada.getNome());
         //  System.out.println(salaRegistrada.getApelido());
 
-        ItfChatSalaBean salaCasanovaTEstes;
+        ComoChatSalaBean salaCasanovaTEstes;
         try {
 
             salaCasanovaTEstes = AplicacaoWsChat.SERVICO_MATRIX.getSalaByNome(nomeSala);

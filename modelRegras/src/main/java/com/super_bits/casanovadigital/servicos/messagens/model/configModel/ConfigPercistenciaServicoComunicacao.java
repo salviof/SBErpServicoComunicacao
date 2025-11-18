@@ -7,7 +7,7 @@ package com.super_bits.casanovadigital.servicos.messagens.model.configModel;
 
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.ItfConfigSBPersistencia;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
-import com.super_bits.modulosSB.SBCore.modulos.fabrica.ItfFabrica;
+import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 
 /**
  *
@@ -46,7 +46,7 @@ public class ConfigPercistenciaServicoComunicacao implements ItfConfigSBPersiste
     }
 
     @Override
-    public Class<? extends ItfFabrica>[] fabricasRegistrosIniciais() {
+    public Class<? extends ComoFabrica>[] fabricasRegistrosIniciais() {
         return new Class[]{ //    FabAtividadeCRMAutoexecucao.class
         };
     }

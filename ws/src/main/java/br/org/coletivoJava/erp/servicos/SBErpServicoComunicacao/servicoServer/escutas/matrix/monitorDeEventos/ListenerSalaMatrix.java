@@ -15,8 +15,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroMtxParalizacaoDeProcessamento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.sessaoMatrix.listeners.EscutaSalaMatrixAbst;
 import br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix;
 import static br.org.coletivoJava.fw.api.erp.chat.model.FabTipoPacoteDeAcaoMatrix.ATUALIZACAO_MEMBROS;
@@ -46,14 +46,14 @@ import org.json.JSONArray;
  */
 public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
 
-    public ListenerSalaMatrix(ItfChatSalaBean pSala) {
+    public ListenerSalaMatrix(ComoChatSalaBean pSala) {
         super(pSala);
     }
 
     private List<Contato> contatos = null;
     private EntityManager em;
     private MensagemTransito mensagemReferencia;
-    private ItfUsuarioChat usuarioAtendimento;
+    private ComoUsuarioChat usuarioAtendimento;
     private String codigoAtendimento;
 
     @Override
@@ -340,7 +340,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                     .forEach(contatos::add);
         }
         if (contatos.isEmpty()) {
-            ItfUsuarioChat contatoPrincipal = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getUsuarioWhatsappPricipalLeadBySala(getSala());
+            ComoUsuarioChat contatoPrincipal = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getUsuarioWhatsappPricipalLeadBySala(getSala());
             if (contatoPrincipal != null) {
                 try {
                     contatos.add(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(contatoPrincipal));
@@ -353,7 +353,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public ItfChatSalaBean atualizarDtoSala() {
+    public ComoChatSalaBean atualizarDtoSala() {
         try {
             return AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(getSala().getCodigoChat());
         } catch (ErroConexaoServicoChat ex) {
@@ -373,7 +373,7 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     }
 
     @Override
-    public ItfChatSalaBean getSala() {
+    public ComoChatSalaBean getSala() {
         return super.getSala(); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/OverriddenMethodBody
     }
 

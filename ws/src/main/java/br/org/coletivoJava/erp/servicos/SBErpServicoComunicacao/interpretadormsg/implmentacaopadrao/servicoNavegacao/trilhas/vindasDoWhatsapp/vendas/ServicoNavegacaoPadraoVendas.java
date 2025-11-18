@@ -8,7 +8,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.servicoNavegacao.ServicoNavegacaoAbs;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
@@ -55,7 +55,7 @@ public class ServicoNavegacaoPadraoVendas extends ServicoNavegacaoAbs implements
     }
 
     @Override
-    public ItfChatSalaBean gerarSalaAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroConexaoServicoChat {
+    public ComoChatSalaBean gerarSalaAtendimentoPadrao(EntradaNumeroWhatsapp pEntrada, Contato pContato) throws ErroConexaoServicoChat {
 
         return UtilAplicacaoWsChatMatrixSalas.gerarSala(pEntrada, FabTipoSalaMatrix.MATRIX_CHAT_ATENDIMENTO, pContato, AplicacaoWsChat.getCentralLogicaProcesasmento().getUsuarioAtendimentoPadrao(pEntrada, pContato), false);
 

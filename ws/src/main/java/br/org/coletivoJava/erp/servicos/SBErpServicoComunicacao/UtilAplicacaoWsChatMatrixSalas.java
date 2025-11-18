@@ -7,8 +7,8 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.matrix.monitorDeEventos.ListenerSalaMatrix;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfChatSalaBean;
-import br.org.coletivoJava.fw.api.erp.chat.model.ItfUsuarioChat;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
+import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.fw.erp.implementacao.chat.NormalizarMembrosThread;
 import br.org.coletivoJava.fw.erp.implementacao.chat.UtilMatrixERP;
 import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix;
@@ -26,7 +26,7 @@ import org.coletivojava.fw.api.tratamentoErros.ErroPreparandoObjeto;
  */
 public class UtilAplicacaoWsChatMatrixSalas {
 
-    public static ItfChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ItfUsuarioChat pUsuarioAtendimento,
+    public static ComoChatSalaBean gerarSala(EntradaNumeroWhatsapp pEntrada, FabTipoSalaMatrix pTipoSala, Contato pContato, ComoUsuarioChat pUsuarioAtendimento,
             boolean pRemoverOutrosUsuarios
     ) throws ErroConexaoServicoChat {
 
@@ -40,16 +40,16 @@ public class UtilAplicacaoWsChatMatrixSalas {
                 throw new ErroConexaoServicoChat("tipo de sala não é compatível com estes parametros");
         }
 
-        ItfUsuarioChat usuarioContato;
+        ComoUsuarioChat usuarioContato;
         try {
             usuarioContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pContato.getMatrixID());
 
-            ItfChatSalaBean salaIdeal = pTipoSala
+            ComoChatSalaBean salaIdeal = pTipoSala
                     .getSalaMatrixPadrao(pUsuarioAtendimento,
                             usuarioContato);
 
             String apelido = UtilMatrixERP.gerarAliasSalaIDCanonicoUsuarioWhatsapp(usuarioContato, pTipoSala.getSlug());
-            ItfChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
+            ComoChatSalaBean salaRelacionada = AplicacaoWsChat.SERVICO_MATRIX.getSalaCriandoSeNaoExistir(salaIdeal, apelido);
             NormalizarMembrosThread normalizarMembros = new NormalizarMembrosThread(AplicacaoWsChat.SERVICO_MATRIX, salaRelacionada.getCodigoChat(), salaIdeal.getUsuarios(), salaRelacionada.getUsuarios(), pRemoverOutrosUsuarios);
             normalizarMembros.start();
             AplicacaoWsChat.SERVICO_MATRIX.salaTornarMembroAdmin(salaIdeal, pUsuarioAtendimento.getCodigoUsuario());
@@ -59,7 +59,7 @@ public class UtilAplicacaoWsChatMatrixSalas {
             }
 
             AplicacaoWsChat.SERVICO_MATRIX.salaAbrirSessao(salaRelacionada);
-            return (ItfChatSalaBean) salaRelacionada;
+            return (ComoChatSalaBean) salaRelacionada;
 
         } catch (ErroPreparandoObjeto ex) {
             throw new ErroConexaoServicoChat("Falha defininido sala de atendimento matrix" + ex.getMessage());
