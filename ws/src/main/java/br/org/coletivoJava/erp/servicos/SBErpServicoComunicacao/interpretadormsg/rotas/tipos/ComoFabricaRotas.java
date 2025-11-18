@@ -4,7 +4,6 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos;
 
-import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.RotaMensagemContato;
 import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 
 /**

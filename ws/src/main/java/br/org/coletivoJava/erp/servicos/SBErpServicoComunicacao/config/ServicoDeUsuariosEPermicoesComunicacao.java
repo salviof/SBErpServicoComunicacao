@@ -7,19 +7,23 @@ import com.super_bits.modulos.SBAcessosModel.model.UsuarioSB;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.ConfigPermissaoSBCoreAbstrato;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ErroDadosDeContatoUsuarioNaoEncontrado;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ItfPermissao;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenAcessoDinamico;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenRecuperacaoEmail;
+import com.super_bits.modulosSB.SBCore.modulos.erp.FabTipoAgenteOrganizacao;
 import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabricaAcoes;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimplesSomenteLeitura;
-import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ItfGrupoUsuario;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoGrupoUsuario;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoUsuario;
-import com.super_bits.modulosSB.SBCore.modulos.view.menu.ItfMenusDeSessao;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.coletivojava.fw.api.objetoNativo.view.menu.MenuSBFW;
 import org.coletivojava.fw.api.objetoNativo.view.menu.MenusDaSessao;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.contato.ComoContatoHumano;
+import com.super_bits.modulosSB.SBCore.modulos.view.menu.ComoMenusDeSessao;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -82,7 +86,7 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
     }
 
     @Override
-    public ItfMenusDeSessao definirMenu(ItfGrupoUsuario pGrupo) {
+    public ComoMenusDeSessao definirMenu(ComoGrupoUsuario pGrupo) {
         return new MenusDaSessao(new MenuSBFW());
     }
 
@@ -124,6 +128,18 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
     @Override
     public void persitirMergePermissoes() {
 
+    }
+
+    @Override
+    public FabTipoAgenteOrganizacao getTipoAgente(ComoUsuario pUsuario) {
+        if (pUsuario.getEmail()) {
+
+        }
+    }
+
+    @Override
+    public ComoContatoHumano getContatoDoUsuario(ComoUsuario pUsuairo) throws ErroDadosDeContatoUsuarioNaoEncontrado {
+        return AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(pUsuario);
     }
 
 }

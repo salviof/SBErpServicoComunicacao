@@ -9,6 +9,7 @@ import com.super_bits.modulosSB.Persistencia.registro.persistidos.ListenerEntida
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.contato.ComoContatoSimples;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.contato.ComoEntidadeContatoSimples;
 import java.io.Serializable;
 import java.util.Date;
@@ -33,7 +34,7 @@ import javax.persistence.TemporalType;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipoPessoa")
 @EntityListeners(ListenerEntidadePadrao.class)
-public class Pessoa extends EntidadeORMNormal implements ComoEntidadeContatoSimples, Serializable {
+public class Pessoa extends EntidadeORMNormal implements ComoContatoSimples, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
