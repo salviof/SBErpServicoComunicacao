@@ -230,7 +230,7 @@ public class RepositorioComunicacaoChat {
                 ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
-                contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato.setTelefone(UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
                 if (contato == null) {
                     throw new ErroConexaoServicoChat("Falha persistindo contato no banco de dados");
@@ -241,10 +241,10 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
-                contato.setTelefone(UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                contato.setTelefone(UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
 
                 return registraUltimoContato(contato);
