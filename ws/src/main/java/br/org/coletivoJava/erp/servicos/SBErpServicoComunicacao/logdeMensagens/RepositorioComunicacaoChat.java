@@ -8,7 +8,6 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Atendente;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
-import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.Persistencia.dao.consultaDinamica.ConsultaDinamicaDeEntidade;
@@ -227,7 +226,7 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarCeluarInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
                 contato.setTelefone(UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
