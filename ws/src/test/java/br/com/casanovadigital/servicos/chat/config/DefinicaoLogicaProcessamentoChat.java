@@ -23,8 +23,8 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import br.org.coletivoJava.integracoes.whatsapp.config.FabConfigApiWhatsapp;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreNumeros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCNumeros;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import jakarta.json.Json;
@@ -137,11 +137,11 @@ public class DefinicaoLogicaProcessamentoChat implements ItfCentralLogicasProces
         System.out.println(SBCore.getConfigModulo(FabConfigApiWhatsapp.class).getRepositorioDeArquivosExternos().getCaminhoArquivosRepositorio());
         if (SBCore.getConfigModulo(FabConfigApiWhatsapp.class).getRepositorioDeArquivosExternos().getJsonObjeto("entradas.json").isEmpty()) {
             try {
-                JsonObjectBuilder exemplo = UtilSBCoreJson.getJsonBuilderBySequenciaChaveValor("nomeAplicacao", SBCore.getNomeProjeto());
+                JsonObjectBuilder exemplo = UtilCRCJson.getJsonBuilderBySequenciaChaveValor("nomeAplicacao", SBCore.getNomeProjeto());
                 JsonArrayBuilder entradasJson = Json.createArrayBuilder();
-                entradasJson.add(UtilSBCoreJson.getJsonObjectBySequenciaChaveValor("codigo", FabConfigApiWhatsapp.CODIGO_USUARIO.getValorParametroSistema(), "nome", "Vendas Casanova", "telefonewa_id", "553121159755", "telefoneDivulgacao", "(31) 2115-9755"));
+                entradasJson.add(UtilCRCJson.getJsonObjectBySequenciaChaveValor("codigo", FabConfigApiWhatsapp.CODIGO_USUARIO.getValorParametroSistema(), "nome", "Vendas Casanova", "telefonewa_id", "553121159755", "telefoneDivulgacao", "(31) 2115-9755"));
                 exemplo.add("entradas", entradasJson.build());
-                SBCore.getConfigModulo(FabConfigApiWhatsapp.class).getRepositorioDeArquivosExternos().putConteudoRecursoExterno("entradas.json", UtilSBCoreJson.getTextoByJsonObjeect(exemplo.build()));
+                SBCore.getConfigModulo(FabConfigApiWhatsapp.class).getRepositorioDeArquivosExternos().putConteudoRecursoExterno("entradas.json", UtilCRCJson.getTextoByJsonObjeect(exemplo.build()));
             } catch (ErroProcessandoJson ex) {
                 throw new UnsupportedOperationException("Falha criando entradas");
             }

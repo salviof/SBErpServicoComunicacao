@@ -8,7 +8,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
 import com.super_bits.modulos.SBAcessosModel.model.GrupoUsuarioSB;
 import com.super_bits.modulos.SBAcessosModel.model.UsuarioSB;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringBuscaTrecho;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.ConfigPermissaoSBCoreAbstrato;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ErroDadosDeContatoUsuarioNaoEncontrado;
@@ -56,9 +56,9 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
         }
         UsuarioSB usuarioAdmin = new UsuarioSB();
         usuarioAdmin.setEmail(pSistema.getEmailusuarioAdmin());
-        usuarioAdmin.setNome(UtilSBCoreStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
-        usuarioAdmin.setApelido(UtilSBCoreStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
-        // usuarioAdmin.setNomeLongo(UtilSBCoreStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
+        usuarioAdmin.setNome(UtilCRCStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
+        usuarioAdmin.setApelido(UtilCRCStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
+        // usuarioAdmin.setNomeLongo(UtilCRCStringBuscaTrecho.getStringAteEncontrarIsto(pSistema.getEmailusuarioAdmin(), "@"));
         usuarioAdmin.setGrupo(grupoUsuarioPadrao);
         usuarioAdmin.setId((long) pSistema.getEmailusuarioAdmin().hashCode());
         return usuarioAdmin;

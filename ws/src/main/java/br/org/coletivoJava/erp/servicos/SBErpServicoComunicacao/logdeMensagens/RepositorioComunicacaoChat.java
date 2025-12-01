@@ -11,10 +11,10 @@ import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.Encaminh
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.Persistencia.dao.consultaDinamica.ConsultaDinamicaDeEntidade;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreListasObjeto;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringTelefone;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringValidador;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCDataHora;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCListasObjeto;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringTelefone;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringValidador;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -38,7 +38,7 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import jakarta.json.JsonArray;
 import java.util.logging.Level;
@@ -151,13 +151,13 @@ public class RepositorioComunicacaoChat {
     }
 
     public synchronized Contato getContato(ComoUsuarioChat pUsuario) throws ErroConexaoServicoChat, ErroRegraDeNEgocioChat, ErroCriandoContato {
-        if (UtilSBCoreStringValidador.isNuloOuEmbranco(pUsuario.getTelefone())) {
+        if (UtilCRCStringValidador.isNuloOuEmbranco(pUsuario.getTelefone())) {
             throw new ErroRegraDeNEgocioChat("Telefone do usuário não foi definido");
         }
-        String telefonewtzp = UtilSBCoreStringTelefone.gerarCeluarWhatasapp(pUsuario.getTelefone());
+        String telefonewtzp = UtilCRCStringTelefone.gerarCeluarWhatasapp(pUsuario.getTelefone());
         Contato contato = getContato(telefonewtzp);
         if (contato == null) {
-            return getContato(new ContatoWhatsapp(UtilSBCoreStringTelefone.gerarCeluarWhatasapp(pUsuario.getTelefone()), pUsuario.getNome()));
+            return getContato(new ContatoWhatsapp(UtilCRCStringTelefone.gerarCeluarWhatasapp(pUsuario.getTelefone()), pUsuario.getNome()));
         } else {
             return contato;
         }
@@ -226,10 +226,10 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
-                contato.setTelefone(UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
+                contato.setTelefone(UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
                 if (contato == null) {
                     throw new ErroConexaoServicoChat("Falha persistindo contato no banco de dados");
@@ -240,10 +240,10 @@ public class RepositorioComunicacaoChat {
                 contato.setNome(pContato.getNome());
                 contato.setWaid(pContato.getWa_id());
 
-                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
+                ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
-                contato.setTelefone(UtilSBCoreStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
+                contato.setTelefone(UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
 
                 return registraUltimoContato(contato);
@@ -258,7 +258,7 @@ public class RepositorioComunicacaoChat {
     private synchronized static Contato registraUltimoContato(Contato novoContato) {
 
         if (novoContato.getDataHoraUltimaInteracao() != null) {
-            if (UtilSBCoreDataHora.intervaloTempoHoras(novoContato.getDataHoraUltimaInteracao(), new Date()) > 1) {
+            if (UtilCRCDataHora.intervaloTempoHoras(novoContato.getDataHoraUltimaInteracao(), new Date()) > 1) {
                 novoContato.setDataHoraUltimaInteracao(new Date());
                 novoContato = UtilSBPersistencia.mergeRegistro(novoContato);
             } else {
@@ -267,7 +267,7 @@ public class RepositorioComunicacaoChat {
 
         }
 
-        UtilSBCoreListasObjeto.listaLimitadaDeObjetos(ULTIMOS_CONTATOS, novoContato, 20);
+        UtilCRCListasObjeto.listaLimitadaDeObjetos(ULTIMOS_CONTATOS, novoContato, 20);
         return novoContato;
     }
 
@@ -290,10 +290,10 @@ public class RepositorioComunicacaoChat {
             switch (tipoSala) {
 
                 case WTZAP_ATENDIMENTO:
-                    telefone = UtilSBCoreStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
+                    telefone = UtilCRCStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
                     break;
                 case WTZAP_VENDAS:
-                    telefone = UtilSBCoreStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
+                    telefone = UtilCRCStringFiltros.filtrarApenasNumeros(apelidoOficial.get());
                     break;
                 case WTZAP_ATENDIMENTO_GRUPO_CLIENTE:
                     break;
@@ -311,7 +311,7 @@ public class RepositorioComunicacaoChat {
 
             ComoUsuarioChat usr;
             try {
-                if (!UtilSBCoreStringValidador.isNuloOuEmbranco(telefone)) {
+                if (!UtilCRCStringValidador.isNuloOuEmbranco(telefone)) {
                     usr = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByTelefone(telefone);
                     if (usr != null) {
                         getContato(usr);

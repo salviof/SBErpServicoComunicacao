@@ -116,7 +116,7 @@ public abstract class ProcessadorSocketWhatsapp {
             }
         } catch (ErroConexaoServicoChat t) {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Falha enviando mensagem", t);
-            //UtilSBCoreEmail.enviarPorServidorPadraoV2("salviof@gmail.com", msg.getContatoOrigem().getNome() + msg.getContatoOrigem().getWa_id() + " "
+            //UtilCRCEmail.enviarPorServidorPadraoV2("salviof@gmail.com", msg.getContatoOrigem().getNome() + msg.getContatoOrigem().getWa_id() + " "
             //       + msg.getEntrada() + msg.getNome() + " -- " + msg.getMensagem(), "Falha encaminhando mensagem whatsapp para matrix");
             throw t;
 

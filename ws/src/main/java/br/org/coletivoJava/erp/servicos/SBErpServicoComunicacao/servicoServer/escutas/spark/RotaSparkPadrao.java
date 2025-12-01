@@ -4,7 +4,7 @@ import br.org.coletivoJava.fw.ws.restFull.ErroAcessoNegado;
 import br.org.coletivoJava.fw.ws.restFull.ErroConexaoSistemaTerceiro;
 import br.org.coletivoJava.fw.ws.restFull.ErroParamentosInvalidos;
 import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJsonRest;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import jakarta.json.JsonObject;
 import jakarta.json.JsonValue;
@@ -35,30 +35,30 @@ public abstract class RotaSparkPadrao implements ItfRecepcaoPacoteServidor {
             validarPermissao();
 
             String repostaTexto = executarRegraDeNegocio(pRequest, pResposta);
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseSucesso(repostaTexto, JsonValue.EMPTY_JSON_OBJECT).build(), 200);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseSucesso(repostaTexto, JsonValue.EMPTY_JSON_OBJECT).build(), 200);
             return repostaHttpResumo.getCorpoTexto();
         } catch (ErroParamentosInvalidos ex) {
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Paramentros inválidos: " + ex.getMessage()).build(), 400);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Paramentros inválidos: " + ex.getMessage()).build(), 400);
             return repostaHttpResumo.getCorpoTexto();
         } catch (ErroAcessoNegado ex) {
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Acesso negado: " + ex.getMessage()).build(), 403);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Acesso negado: " + ex.getMessage()).build(), 403);
             return repostaHttpResumo.getCorpoTexto();
         } catch (ErroRegraDeNegocio ex) {
             pResposta.status(500);
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Falha: " + ex.getMessage()).build(), 500);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Falha: " + ex.getMessage()).build(), 500);
             return repostaHttpResumo.getCorpoTexto();
         } catch (ErroRecursoNaoEncontrado ex) {
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Recurso não encontrado " + ex.getMessage()).build(), 404);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Recurso não encontrado " + ex.getMessage()).build(), 404);
 
             return repostaHttpResumo.getCorpoTexto();
         } catch (ErroConexaoSistemaTerceiro ex) {
             pResposta.status(503);
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Falha conectando com serviço de terceiros " + ex.getMessage()).build(), 503);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Falha conectando com serviço de terceiros " + ex.getMessage()).build(), 503);
             return repostaHttpResumo.getCorpoTexto();
 
         } catch (Throwable ex) {
             pResposta.status(500);
-            defineResposta(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha("Erro interno:" + ex.getMessage()).build(), 500);
+            defineResposta(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha("Erro interno:" + ex.getMessage()).build(), 500);
             return repostaHttpResumo.getCorpoTexto();
         }
     }

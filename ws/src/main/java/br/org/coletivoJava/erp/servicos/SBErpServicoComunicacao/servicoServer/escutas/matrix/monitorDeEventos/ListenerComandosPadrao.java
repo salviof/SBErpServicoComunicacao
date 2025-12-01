@@ -16,7 +16,7 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfListenerEventoComandoAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -140,21 +140,21 @@ public class ListenerComandosPadrao implements ItfListenerEventoComandoAtendimen
                     StringBuilder help = new StringBuilder();
                     for (TIPO_COMANDO cmd : TIPO_COMANDO.values()) {
 
-                        help.append(UtilSBCoreStringFiltros.getRpad(cmd.getComando(), 20, " "));
-                        //   help.append(UtilSBCoreStringFiltros.getRpad(cmd.getComando(), 5, " "));
+                        help.append(UtilCRCStringFiltros.getRpad(cmd.getComando(), 20, " "));
+                        //   help.append(UtilCRCStringFiltros.getRpad(cmd.getComando(), 5, " "));
                         if (!cmd.getParametros().isEmpty()) {
                             help.append("Parametros:");
                             int i = 1;
                             for (String pr : cmd.getParametros()) {
 
                                 help.append(i);
-                                help.append(UtilSBCoreStringFiltros.getRpad(pr, 20, " "));
+                                help.append(UtilCRCStringFiltros.getRpad(pr, 20, " "));
                                 i++;
                             }
                             help.append("\n");
                         }
 
-                        String descricao = UtilSBCoreStringFiltros.quebrarStringEmLinhas(cmd.getDescricao(), 40);
+                        String descricao = UtilCRCStringFiltros.quebrarStringEmLinhas(cmd.getDescricao(), 40);
                         help.append("\n");
                         help.append(descricao);
                         help.append("\n\n");

@@ -23,7 +23,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.RotaPadraoWtzp;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import javax.ws.rs.Path;
@@ -71,7 +71,7 @@ public class ApiWhatsappRecepMensagem extends RotaPadraoWtzp {
                 if (logTransidoDeMensagem == null) {
                     logTransidoDeMensagem = new MensagemTrOrigemWhatsapp();
                 }
-                logTransidoDeMensagem.setCorpoJsonRecebido(UtilSBCoreJson.getTextoByJsonObjeect(pPacote.getDadosJson()));
+                logTransidoDeMensagem.setCorpoJsonRecebido(UtilCRCJson.getTextoByJsonObjeect(pPacote.getDadosJson()));
                 logTransidoDeMensagem.setRegistrado(true);
                 logTransidoDeMensagem.setEncaminhado(false);
                 logTransidoDeMensagem.setCodigoRegistroMensagemWhatsapp(msgWtsap.getId());

@@ -13,8 +13,8 @@ import br.org.coletivoJava.fw.ws.restFull.ErroRecursoNaoEncontrado;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.RotaSparkPadrao;
 import com.google.common.collect.Lists;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJsonRest;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJsonRest;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.erro.ErroRecebendoCodigoDeAcesso;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
@@ -60,10 +60,10 @@ public class RecepcaoCodigoSolicitacao extends RotaSparkPadrao {
         SBCore.getServicoSessao().getSessaoAtual().setUsuario(usuarioPadraoAgencia);
         try {
             UtilSBApiRestClient.servletReceberCodigoConcessao(pRequest.raw(), pResposta.raw(), SBCore.getServicoSessao().getSessaoAtual());
-            JsonObjectBuilder respostaJson = UtilSBCoreJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
-            return UtilSBCoreJson.getTextoByJsonObjeect(respostaJson.build());
+            JsonObjectBuilder respostaJson = UtilCRCJsonRest.getRespostaJsonBuilderBase(true, ItfResposta.Resultado.SUCESSO, Lists.newArrayList(FabMensagens.AVISO.getMsgUsuario("Chave de Aceso armazenada com sucesso, você está conectado com a aplicação.")));
+            return UtilCRCJson.getTextoByJsonObjeect(respostaJson.build());
         } catch (ErroRecebendoCodigoDeAcesso ex) {
-            return UtilSBCoreJson.getTextoByJsonObjeect(UtilSBCoreJsonRest.getRespostaJsonBuilderBaseFalha(ex.getMessage()).build());
+            return UtilCRCJson.getTextoByJsonObjeect(UtilCRCJsonRest.getRespostaJsonBuilderBaseFalha(ex.getMessage()).build());
         }
     }
 

@@ -15,7 +15,7 @@ import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.ErroRegraDeNEgocioChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -42,7 +42,7 @@ public class ContextoMatrixTest {
         try {
             pacote = new PacoteMemensagemRecebidoWhatsapp(pacoteMilene);
             ContatoWhatsapp contatoMilene = pacote.getMensagens().get(0).getContatoOrigem();
-            String slugMilene = UtilSBCoreStringFiltros.removeCaracteresEspeciais(contatoMilene.getNome());
+            String slugMilene = UtilCRCStringFiltros.removeCaracteresEspeciais(contatoMilene.getNome());
             System.out.println(slugMilene);
             ComoUsuarioChat usuarioChat;
             usuarioChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(contatoMilene.getNome(), contatoMilene.getWa_id());

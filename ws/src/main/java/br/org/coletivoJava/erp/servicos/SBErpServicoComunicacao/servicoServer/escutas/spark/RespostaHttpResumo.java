@@ -4,7 +4,7 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark;
 
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import jakarta.json.JsonObject;
 
 /**
@@ -20,7 +20,7 @@ public class RespostaHttpResumo {
     public RespostaHttpResumo(JsonObject pCorpo, int status) {
 
         this.corpo = pCorpo;
-        this.corpoTexto = UtilSBCoreJson.getTextoByJsonObjeect(pCorpo);
+        this.corpoTexto = UtilCRCJson.getTextoByJsonObjeect(pCorpo);
         this.status = status;
     }
 

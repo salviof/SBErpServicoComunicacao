@@ -29,8 +29,8 @@ import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.mensagem.Mensag
 import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCDataHora;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.registro.Interfaces.basico.ComoEntidadeSimples;
 import jakarta.json.JsonObject;
 import java.util.Date;
@@ -142,7 +142,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
 
                 JsonObject dadosDeSesaoAtualizados = servico.gerarJsonDadosDeSessao(sessaoDoContato.getContexto().getContato());
                 if (dadosDeSesaoAtualizados != null) {
-                    sessaoDoContato.getContexto().setJsonDadosDoContexto(UtilSBCoreJson.getTextoByJsonObjeect(dadosDeSesaoAtualizados));
+                    sessaoDoContato.getContexto().setJsonDadosDoContexto(UtilCRCJson.getTextoByJsonObjeect(dadosDeSesaoAtualizados));
                 }
                 sessaoDoContato.getContexto().setTrilhaAtual(caminhoTrilha);
                 AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.contextoAtualizar(sessaoDoContato.getContexto());
@@ -184,7 +184,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
                 try {
                     if (agenteUltimaInteracaoContato) {//aguardando Atendimento
                         //Aguardando interacao do Atendimento
-                        long tempoPassouInteracaoContato = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoContato, new Date());
+                        long tempoPassouInteracaoContato = UtilCRCDataHora.intervaloTempoSegundos(ultimaInteracaoContato, new Date());
                         long tempoLimite = segundosMonitorTimeoutAguardandoAtendimento;
                         if (acoesAguardandoAtendimento > 0) {
                             tempoLimite = tempoLimite + segundosMonitorTimeoutAguardandoAtendimento * acoesAguardandoAtendimento;
@@ -207,7 +207,7 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
                             tempoLimite = tempoLimite + segundosMonitorTimeoutAguardandoContato * acoesAguardandoAtendimento;
                         }
 
-                        long tempoPassouInteracaoAtendimento = UtilSBCoreDataHora.intervaloTempoSegundos(ultimaInteracaoAtendimento, new Date());
+                        long tempoPassouInteracaoAtendimento = UtilCRCDataHora.intervaloTempoSegundos(ultimaInteracaoAtendimento, new Date());
                         if (tempoPassouInteracaoAtendimento > vinteQuatroHorasEmSegudos) {
                             finalizarSesaso();
                         }

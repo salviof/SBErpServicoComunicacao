@@ -8,8 +8,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.MensagemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroComDevolucaoMensagemUsuario;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringBuscaTrecho;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringBuscaTrecho;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,7 +54,7 @@ public class UtilAplicacaoWsChat {
             return pConteudo;
         }
         //VERIFICA SE TEM PALAVRAS CHAVES QUE RETONAM AO MENO INICIAL.
-        String possivelPalavraChave = UtilSBCoreStringFiltros.filtrarApenasLetra(pConteudo.toLowerCase());
+        String possivelPalavraChave = UtilCRCStringFiltros.filtrarApenasLetra(pConteudo.toLowerCase());
         if (pConteudo != null) {
             for (String palavra : AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada).getPalavrasParaCaminhoTrilhaRaiz()) {
                 if (palavra.equals(possivelPalavraChave)) {
@@ -64,7 +64,7 @@ public class UtilAplicacaoWsChat {
             }
         }
 
-        List<String> partes = UtilSBCoreStringBuscaTrecho.getPartesEntreColchete(pConteudo);
+        List<String> partes = UtilCRCStringBuscaTrecho.getPartesEntreColchete(pConteudo);
         Optional<String> novaRotareferenciaTexto = partes.stream().filter(prota -> prota.contains("rota.") || prota.contains("consultoria.")).findFirst();
 
         if (novaRotareferenciaTexto.isPresent()) {

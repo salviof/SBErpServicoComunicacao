@@ -6,7 +6,7 @@
 package com.super_bits.casanovadigital.servicos.messagens.model.configModel;
 
 import com.super_bits.modulosSB.Persistencia.ConfigGeral.ItfConfigSBPersistencia;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreDataHora;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCDataHora;
 import com.super_bits.modulosSB.SBCore.modulos.fabrica.ComoFabrica;
 
 /**
@@ -27,12 +27,12 @@ public class ConfigPercistenciaServicoComunicacao implements ItfConfigSBPersiste
 
     @Override
     public String formatoDataBanco() {
-        return UtilSBCoreDataHora.datahoraSistemaFr.toString();
+        return UtilCRCDataHora.datahoraSistemaFr.toString();
     }
 
     @Override
     public String formatoDataUsuario() {
-        return UtilSBCoreDataHora.horaUsuarioFr.toString();
+        return UtilCRCDataHora.horaUsuarioFr.toString();
     }
 
     @Override

@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <projetoSB.nomeBanco>SBErpServicoComunicacao</projetoSB.nomeBanco>
+        <projetoSB.cliente>coletivoJava</projetoSB.cliente>
+        <projetoSB.grupoProjeto>erpColetivoJava</projetoSB.grupoProjeto>
+    </properties>
+
+    <version>0.9-SNAPSHOT</version>
+    <groupId>br.org.coletivoJava.fw.api.erp.SBErpServicoComunicacao</groupId>
+    <artifactId>SBErpServicoComunicacao</artifactId>
+    <packaging>pom</packaging>
+
+    <name>Serviço de comunicação</name>
+
+    <modules>
+        <module>./modelRegras</module>
+        <module>./ws</module>
+
+
+
+
+    </modules>
+
+
+
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.11</version>
+            <scope>test</scope>
+            <type>jar</type>
+        </dependency>
+
+    </dependencies>
+
+
+
+
+
+
+</project>

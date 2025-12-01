@@ -8,8 +8,8 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.FabTipoStatusMensagemWhtzap;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.statusMensagem.EventoMensagemWtzap;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroCriandoContato;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringSlugs;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringSlugs;
 import com.super_bits.modulosSB.SBCore.UtilGeral.json.ErroProcessandoJson;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
 import jakarta.json.JsonArray;
@@ -36,7 +36,7 @@ public class PacoteMemensagemRecebidoWhatsapp {
 
     public PacoteMemensagemRecebidoWhatsapp(String pDados) throws ErroProcessandoJson {
         System.out.println(pDados);
-        this.dados = UtilSBCoreJson.getJsonObjectByTextoComTratamento(pDados);
+        this.dados = UtilCRCJson.getJsonObjectByTextoComTratamento(pDados);
         processarJson();
 
     }
@@ -106,7 +106,7 @@ public class PacoteMemensagemRecebidoWhatsapp {
                                     EventoMensagemWtzap status = FabTipoStatusMensagemWhtzap.gerarStatusMensgem(entrada, metadataJson, jvStatus.asJsonObject());
                                     if (status == null) {
                                         System.out.println("Estatus não reconhecido para json:");
-                                        UtilSBCoreJson.getTextoByJsonObjeect(jvStatus.asJsonObject());
+                                        UtilCRCJson.getTextoByJsonObjeect(jvStatus.asJsonObject());
                                     } else {
                                         statusMensagem.add(status);
                                     }
@@ -150,7 +150,7 @@ public class PacoteMemensagemRecebidoWhatsapp {
 
                                             String caption = documento.getString("caption");
                                             if (caption.contains(".")) {
-                                                mensagem.setMediaNome(UtilSBCoreStringSlugs.gerarSlugSimples(caption));
+                                                mensagem.setMediaNome(UtilCRCStringSlugs.gerarSlugSimples(caption));
                                             } else {
                                                 mensagem.setMediaNome(documento.getString("filename"));
                                             }

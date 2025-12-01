@@ -5,7 +5,7 @@ import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.Info
 
 @InfoReferenciaEntidade(tipoObjeto = ContextoContato.class)
 public enum CPContextoContato {
-	_ID, _CONTATO, _NOMECONTEXTO, _CANAL, _CODIGOENTRADA, _TRILHAATUAL, _DATAHORAINTERACAOCONTATO, _DATAHORAINTERACAOATENDIMENTO, _DATAHORAINICIOSESSAO, _DATAHORAFINALSESSAO;
+	_ID, _CONTATO, _NOMECONTEXTO, _CANAL, _CODIGOENTRADA, _TRILHAATUAL, _DATAHORAINTERACAOCONTATO, _DATAHORAINTERACAOATENDIMENTO, _DATAHORAINICIOSESSAO, _DATAHORAFINALSESSAO, _JSONDADOSDOCONTEXTO, _SALAULTIMACONVERSA;
 
 	public static final String id = "id";
 	public static final String contato = "contato";
@@ -17,4 +17,6 @@ public enum CPContextoContato {
 	public static final String datahorainteracaoatendimento = "dataHoraInteracaoAtendimento";
 	public static final String datahorainiciosessao = "dataHoraInicioSessao";
 	public static final String datahorafinalsessao = "dataHoraFinalSessao";
+	public static final String jsondadosdocontexto = "jsonDadosDoContexto";
+	public static final String salaultimaconversa = "salaUltimaConversa";
 }

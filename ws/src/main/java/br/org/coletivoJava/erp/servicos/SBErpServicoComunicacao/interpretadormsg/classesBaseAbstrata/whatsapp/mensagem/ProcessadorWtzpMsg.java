@@ -31,7 +31,7 @@ import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsa
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreJson;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
@@ -185,7 +185,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         }
         JsonObject jsonResposata = respostaWS.getRespostaComoObjetoJson();
         if (rota.getCaminhoJsonMensagemAtendimento() != null) {
-            String respostaAtendimento = UtilSBCoreJson.getValorApartirDoCaminho(rota.getCaminhoJsonMensagemAtendimento(), jsonResposata);
+            String respostaAtendimento = UtilCRCJson.getValorApartirDoCaminho(rota.getCaminhoJsonMensagemAtendimento(), jsonResposata);
             if (rota.getCodigoSalaAtendimento() != null) {
                 encaminharMensagemTextoAdministraParaMatrix(respostaAtendimento, AplicacaoWsChat.SERVICO_MATRIX.getSalaByCodigo(respostaAtendimento), AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(rota.getCodigoAtendimento()));
             } else {
@@ -193,7 +193,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
             }
         }
         if (rota.getCaminhoJsonMensagemContato() != null) {
-            String respostaContato = UtilSBCoreJson.getValorApartirDoCaminho(rota.getCaminhoJsonMensagemContato(), jsonResposata);
+            String respostaContato = UtilCRCJson.getValorApartirDoCaminho(rota.getCaminhoJsonMensagemContato(), jsonResposata);
         }
 
     }

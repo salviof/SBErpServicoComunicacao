@@ -17,7 +17,7 @@ import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsa
 import br.org.coletivoJava.integracoes.restIntwhatsapp.implementacao.UtilSBApiWhatsapp;
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
-import com.super_bits.modulosSB.SBCore.UtilGeral.UtilSBCoreStringFiltros;
+import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import jakarta.json.JsonValue;
 
@@ -47,7 +47,7 @@ public class ServicoWhatsapp {
 
         switch (tipoSAla) {
             case MATRIX_CHAT_ATENDIMENTO_CHAMADO:
-                novamensagem.setCabecalho("Chamado #" + UtilSBCoreStringFiltros.filtrarApenasNumeros(pSala.getApelido()) + " " + usuarioAtendimento.getNome() + ":");
+                novamensagem.setCabecalho("Chamado #" + UtilCRCStringFiltros.filtrarApenasNumeros(pSala.getApelido()) + " " + usuarioAtendimento.getNome() + ":");
 
                 break;
         }
