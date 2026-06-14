@@ -8,7 +8,7 @@ import com.super_bits.modulosSB.Persistencia.ConfigGeral.ConfiguradorCoreDeProje
 import com.super_bits.modulosSB.SBCore.ConfigGeral.ItfConfiguracaoCoreCustomizavel;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.modulos.comunicacao.CentralComunicacaoApenasLogs;
-import com.super_bits.modulosSB.SBCore.modulos.comunicacao.CentralComunicacaoDesktop;
+import com.super_bits.modulosSB.SBCore.modulos.comunicacao.CentralComunicacaoDesktopTransient;
 
 /**
  *
@@ -35,7 +35,7 @@ public class ConfigCoreServicoComunicacao extends ConfiguradorCoreDeProjetoJarPe
         if (SBCore.isEmModoProducao()) {
             pConfiguracao.setCentralComunicacao(CentralComunicacaoApenasLogs.class);
         } else {
-            pConfiguracao.setCentralComunicacao(CentralComunicacaoDesktop.class);
+            pConfiguracao.setCentralComunicacao(CentralComunicacaoDesktopTransient.class);
         }
 
     }
