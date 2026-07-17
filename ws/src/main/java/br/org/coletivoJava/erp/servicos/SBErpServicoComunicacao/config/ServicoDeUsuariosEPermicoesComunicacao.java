@@ -13,6 +13,7 @@ import com.super_bits.modulosSB.SBCore.modulos.Controller.ConfigPermissaoSBCoreA
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.acoes.ComoAcaoDoSistema;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ErroDadosDeContatoUsuarioNaoEncontrado;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.ItfPermissao;
+import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ComoTokenAcessoBasico;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenAcessoDinamico;
 import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.permissoes.token.ItfTokenRecuperacaoEmail;
 import com.super_bits.modulosSB.SBCore.modulos.erp.FabTipoAgenteOrganizacao;
@@ -165,6 +166,11 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
             default:
                 throw new AssertionError();
         }
+    }
+
+    @Override
+    public ComoTokenAcessoBasico getTokenAcessoEntreSistemas(String token) {
+        return null;
     }
 
 }
