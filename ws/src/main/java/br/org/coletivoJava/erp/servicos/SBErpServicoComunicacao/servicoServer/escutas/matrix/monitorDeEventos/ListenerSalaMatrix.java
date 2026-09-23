@@ -29,7 +29,9 @@ import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTransito;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -130,19 +132,52 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
         }
     }
 
+    private static final String TAG_LOG = "[MTX-LISTENER]";
+
+    /**
+     * A instrumentação nunca pode alterar o fluxo de processamento do evento,
+     * por isso o serviço de log é chamado dentro de um try.
+     */
+    private void log(FabMensagens pTipo, String pMensagem) {
+        try {
+            CarameloCode.getServicoLogEventos().registrarLogDeEvento(pTipo, TAG_LOG + " " + pMensagem);
+        } catch (Throwable t) {
+            System.out.println(TAG_LOG + " " + pTipo + " " + pMensagem);
+        }
+    }
+
     @Override
     public void inicioProcessamento(ItfEventoMatix pEvento) throws ErroMtxParalizacaoDeProcessamento {
         em = null;
+        long inicioAberturaEm = System.currentTimeMillis();
         try {
             em = UtilSBPersistencia.getEntyManagerPadraoNovo();
 
         } catch (Throwable t) {
+            log(FabMensagens.ERRO_FATAL, "Falha abrindo EntityManager em " + (System.currentTimeMillis() - inicioAberturaEm)
+                    + "ms para o evento id=" + pEvento.getEvent_id() + " tipo=" + pEvento.getTipoEvento()
+                    + " sala=" + (getSala() == null ? "?" : getSala().getCodigoChat())
+                    + ". Erro=" + t.getClass().getName() + ": " + t.getMessage()
+                    + ". ATENÇÃO: o pedido de paralisação será ANULADO por um NullPointerException"
+                    + " em finalProcessamento (em == null) e ESTA MENSAGEM SERÁ PERDIDA silenciosamente.");
             throw new ErroMtxParalizacaoDeProcessamento("Banco de dados está fora do ar" + t.getMessage());
         }
         if (em == null) {
+            log(FabMensagens.ERRO_FATAL, "getEntyManagerPadraoNovo devolveu NULL em "
+                    + (System.currentTimeMillis() - inicioAberturaEm) + "ms para o evento id=" + pEvento.getEvent_id()
+                    + " tipo=" + pEvento.getTipoEvento()
+                    + ". ATENÇÃO: o pedido de paralisação será ANULADO por um NullPointerException"
+                    + " em finalProcessamento (em == null) e ESTA MENSAGEM SERÁ PERDIDA silenciosamente.");
             throw new ErroMtxParalizacaoDeProcessamento("Banco de dados está fora do ar");
         }
+        long inicioContatos = System.currentTimeMillis();
         getContatos();
+        log(FabMensagens.AVISO, "inicioProcessamento evento id=" + pEvento.getEvent_id()
+                + " tipo=" + pEvento.getTipoEvento()
+                + " sala=" + (getSala() == null ? "?" : getSala().getCodigoChat())
+                + " | EntityManager aberto em " + (inicioContatos - inicioAberturaEm) + "ms"
+                + " | getContatos em " + (System.currentTimeMillis() - inicioContatos) + "ms"
+                + " | contatosNaSala=" + (contatos == null ? "null" : contatos.size()));
         switch (pEvento.getTipoEvento()) {
 
             case MENSAGEM:
@@ -174,6 +209,13 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     @Override
     public void finalProcessamento(ItfEventoMatix pEvento) {
 
+        if (em == null) {
+            log(FabMensagens.ERRO_FATAL, "finalProcessamento chamado com em == NULL para o evento id="
+                    + pEvento.getEvent_id() + " tipo=" + pEvento.getTipoEvento()
+                    + ". A linha seguinte lança NullPointerException dentro do finally, substituindo o"
+                    + " ErroMtxParalizacaoDeProcessamento original. O /sync vai AVANÇAR o since e"
+                    + " ESTA MENSAGEM SERÁ PERDIDA DEFINITIVAMENTE.");
+        }
         if (em.getTransaction().isActive()) {
             UtilSBPersistencia.finzalizaTransacaoEFechaEM(em);
         } else {
@@ -217,10 +259,19 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
     @Override
     public void eventoMensagem(ItfEventoMatix pEvento) {
 
+        long inicioEventoMensagem = System.currentTimeMillis();
+        log(FabMensagens.AVISO, "eventoMensagem iniciado. eventoMatrix=" + pEvento.getEvent_id()
+                + " sala=" + getSala().getCodigoChat()
+                + " contatosDestino=" + contatos.size());
+
         if (mensagemReferencia.getId() != null && mensagemReferencia.getId() > 0) {
             if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos() != null) {
                 //Tem encamimnhamentos?
                 if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos().stream().filter(ec -> ec.isFoiEnviadoPeloWhatsapp()).findFirst().isPresent()) {
+                    log(FabMensagens.AVISO, "eventoMensagem ABORTADO por deduplicação: a mensagem já consta como"
+                            + " encaminhada pelo Whatsapp. eventoMatrix=" + pEvento.getEvent_id()
+                            + " idMensagemTransito=" + mensagemReferencia.getId()
+                            + " (reprocessamento do mesmo batch)");
                     System.out.println("mensagem já foi encamiinhada");
                     return;
                 }
@@ -228,6 +279,8 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
         }
 
         if (contatos.isEmpty()) {
+            log(FabMensagens.ERRO, "Nenhum contato válido na sala " + getSala().getCodigoChat()
+                    + "; a mensagem eventoMatrix=" + pEvento.getEvent_id() + " NÃO será entregue a ninguém.");
             try {
                 AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(getSala(), "Nenhum contato válido foi encontrado nesta sala");
             } catch (ErroConexaoServicoChat ex) {
@@ -275,6 +328,13 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
                 }
             }
         }
+        log(contatosErro.isEmpty() ? FabMensagens.AVISO : FabMensagens.ERRO,
+                "eventoMensagem concluído em " + (System.currentTimeMillis() - inicioEventoMensagem) + "ms."
+                + " eventoMatrix=" + pEvento.getEvent_id()
+                + " sala=" + getSala().getCodigoChat()
+                + " sucesso=" + contatosSucesso.size()
+                + " erro=" + contatosErro.size());
+
         if ((!contatosErro.isEmpty() && !contatosSucesso.isEmpty()) || contatosErro.size() > 1) {
             try {
                 StringBuilder str = new StringBuilder();

@@ -27,6 +27,7 @@ import java.util.List;
 import org.coletivojava.fw.api.objetoNativo.view.menu.MenuSBFW;
 import org.coletivojava.fw.api.objetoNativo.view.menu.MenusDaSessao;
 import com.super_bits.modulosSB.SBCore.modulos.erp.ItfSistemaERP;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.ItensGenericos.basico.UsuarioAnonimo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.contato.ComoContatoHumano;
 import com.super_bits.modulosSB.SBCore.modulos.view.menu.ComoMenusDeSessao;
 import java.util.logging.Level;
@@ -148,7 +149,7 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
 
     @Override
     public ComoContatoHumano getContatoDoUsuario(ComoUsuario pUsuairo) throws ErroDadosDeContatoUsuarioNaoEncontrado {
-        if (pUsuairo instanceof ComoUsuarioChat) {
+        if (!(pUsuairo instanceof ComoUsuarioChat)) {
             throw new ErroDadosDeContatoUsuarioNaoEncontrado("O tipo de contato não é compativel " + ComoUsuarioChat.class.getSimpleName());
         }
         switch (getTipoAgente(pUsuairo).getTipoCanal()) {
@@ -171,6 +172,13 @@ public class ServicoDeUsuariosEPermicoesComunicacao extends ConfigPermissaoSBCor
     @Override
     public ComoTokenAcessoBasico getTokenAcessoEntreSistemas(String token) {
         return null;
+    }
+
+    @Override
+    public ComoUsuario gerarUsuarioConvidado(String pNome, String pTelefone) {
+        UsuarioAnonimo an = new UsuarioAnonimo();
+        an.setNome(pNome + " " + pTelefone);
+        return an;
     }
 
 }

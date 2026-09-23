@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.contato.CPContato;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.encaminhamentomatrixparawtzp.CPEncaminhamentoMatrixParaWtzp;
+import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtransito.CPMensagemTransito;
 import org.coletivoJava.fw.projetos.erpColetivoJava.api.model.mensagemtrorigemwhatsapp.CPMensagemTrOrigemWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.ContatoWhatsapp;
@@ -37,7 +38,9 @@ import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoS
 import static br.org.coletivoJava.fw.erp.implementacao.chat.model.model.FabTipoSalaMatrix.WTZAP_VENDAS;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCStringFiltros;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import jakarta.json.JsonArray;
@@ -127,6 +130,65 @@ public class RepositorioComunicacaoChat {
         try {
             return (MensagemTrOrigemWhatsapp) new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class, em)
                     .addcondicaoCampoIgualA(CPMensagemTrOrigemWhatsapp.codigoregistromensagemwhatsapp, pCodigoMensagemMatrix).getPrimeiroRegistro();
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+        }
+    }
+
+    /**
+     * Mensagens do WhatsApp que estão na fila de entrega: ainda não tratadas e
+     * com o prazo em aberto, em ordem de chegada. O banco é a fonte da verdade
+     * da fila, por isso ela sobrevive a restart do serviço.
+     *
+     * Sobre as condições de data: não existe coluna dedicada de "está na fila",
+     * então quem identifica a mensagem enfileirada é o <b>prazo curto</b>. Todo
+     * registro nasce com daHoraExpirar de 5 dias (padrão do modelo) e só quem
+     * passa pela fila tem esse prazo encurtado para minutos. Sem esse limite
+     * superior, entrariam na fila tanto os registros anteriores a esta versão
+     * (que ficavam com encaminhado = false para sempre) quanto as mensagens que
+     * falharam e serão reentregues pelo próprio WhatsApp. A condição de criação
+     * recente fecha o caso de borda do registro antigo que completa 5 dias
+     * agora e cairia dentro da janela de prazo.
+     *
+     * @param pPrazoMaximoDaFila agora + prazo de entrega da fila
+     * @param pCriacaoMaisAntigaAceita limite de idade do registro
+     */
+    public List<MensagemTrOrigemWhatsapp> getMensagensPendentesDeEntrega(Date pPrazoMaximoDaFila,
+            Date pCriacaoMaisAntigaAceita) {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            return new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class, em)
+                    .addCondicaoNegativo(CPMensagemTransito.encaminhado)
+                    .addCondicaoDataHoraMaiorOuIgualA(CPMensagemTransito.dahoraexpirar, new Date())
+                    .addCondicaoDataHoraMenorOuIgualA(CPMensagemTransito.dahoraexpirar, pPrazoMaximoDaFila)
+                    .addCondicaoDataHoraMaiorOuIgualA(CPMensagemTransito.datahoracriacao, pCriacaoMaisAntigaAceita)
+                    .setOrdemCampoPersonalizado(CPMensagemTransito.datahoracriacao)
+                    .gerarResultados();
+        } finally {
+            UtilSBPersistencia.fecharEM(em);
+        }
+    }
+
+    /**
+     * Mensagens da fila que estouraram o prazo de entrega, incluindo as que
+     * venceram enquanto o serviço estava fora do ar. Depois de avisar o
+     * contato, elas têm de ser encerradas para não voltarem no ciclo seguinte.
+     *
+     * O limite de idade evita dois problemas: puxar registros anteriores a esta
+     * versão e avisar o contato sobre uma mensagem velha, que a essa altura só
+     * confundiria.
+     *
+     * @param pCriacaoMaisAntigaAceita limite de idade do registro
+     */
+    public List<MensagemTrOrigemWhatsapp> getMensagensPendentesComPrazoVencido(Date pCriacaoMaisAntigaAceita) {
+        EntityManager em = UtilSBPersistencia.getEMPadraoNovo();
+        try {
+            return new ConsultaDinamicaDeEntidade(MensagemTrOrigemWhatsapp.class, em)
+                    .addCondicaoNegativo(CPMensagemTransito.encaminhado)
+                    .addCondicaoDataHoraMenorOuIgualA(CPMensagemTransito.dahoraexpirar, new Date())
+                    .addCondicaoDataHoraMaiorOuIgualA(CPMensagemTransito.datahoracriacao, pCriacaoMaisAntigaAceita)
+                    .setOrdemCampoPersonalizado(CPMensagemTransito.datahoracriacao)
+                    .gerarResultados();
         } finally {
             UtilSBPersistencia.fecharEM(em);
         }
@@ -227,7 +289,7 @@ public class RepositorioComunicacaoChat {
                 contato.setWaid(pContato.getWa_id());
 
                 ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
-                contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
+                contato.setMatrixID(exigirUsuarioDoContato(usuarioContatoChat, pContato).getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
                 contato.setTelefone(UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
@@ -241,7 +303,7 @@ public class RepositorioComunicacaoChat {
                 contato.setWaid(pContato.getWa_id());
 
                 ComoUsuarioChat usuarioContatoChat = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(pContato.getNome(), UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
-                contato.setMatrixID(usuarioContatoChat.getCodigoUsuario());
+                contato.setMatrixID(exigirUsuarioDoContato(usuarioContatoChat, pContato).getCodigoUsuario());
                 contato.setDataHoraUltimaInteracao(new Date());
                 contato.setTelefone(UtilCRCStringTelefone.gerarNumeroTelefoneInternacional(pContato.getWa_id()));
                 contato = UtilSBPersistencia.mergeRegistro(contato, em);
@@ -251,6 +313,37 @@ public class RepositorioComunicacaoChat {
         } finally {
             UtilSBPersistencia.fecharEM(em);
         }
+    }
+
+    /**
+     * O usuário Matrix do contato é obrigatório: sem ele não existe remetente
+     * para levar a mensagem até a sala do atendimento.
+     *
+     * O gerarUsuarioContato pode devolver nulo quando o Synapse recusa a
+     * criação ou a atualização. Antes o nulo seguia adiante e estourava
+     * NullPointerException na linha seguinte - exceção não declarada, que
+     * escapava de todo o tratamento de erro e terminava em 500 sem nenhuma
+     * mensagem para o contato. Lançar ErroRegraDeNEgocioChat faz o
+     * ProcessadorWtzpMsg convertê-la em ErroComDevolucaoMensagemUsuario, e aí o
+     * contato é avisado de que a mensagem não foi entregue.
+     */
+    private ComoUsuarioChat exigirUsuarioDoContato(ComoUsuarioChat pUsuarioContatoChat, ContatoWhatsapp pContato)
+            throws ErroRegraDeNEgocioChat {
+        if (pUsuarioContatoChat == null || pUsuarioContatoChat.getCodigoUsuario() == null) {
+            // O detalhe técnico fica no log: a mensagem desta exceção é
+            // concatenada no texto que o contato recebe pelo WhatsApp.
+            try {
+                CarameloCode.getServicoLogEventos().registrarLogDeEvento(FabMensagens.ERRO,
+                        "[REPO-CONTATO] O serviço de chat não devolveu usuário válido para o contato "
+                        + pContato.getNome() + " (" + pContato.getWa_id() + ")."
+                        + " Ver as linhas [MTX-USUARIO] e [MTX-TOKEN] para a resposta do Synapse."
+                        + " A mensagem não foi entregue e o contato será avisado.");
+            } catch (Throwable t) {
+                System.out.println("[REPO-CONTATO] Sem usuário de chat para " + pContato.getWa_id());
+            }
+            throw new ErroRegraDeNEgocioChat("não foi possível registrar seu atendimento no momento");
+        }
+        return pUsuarioContatoChat;
     }
 
     //ATENÇÃO NUNCA CHAMAR ESSE METODO FORA DO registrarDadosDoContato, POIS PODE COMPROMETER A INCOMPATIBLIDIDADE DE CHAMADAS ASSINCRONAS DO ArrayList

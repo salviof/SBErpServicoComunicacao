@@ -31,11 +31,12 @@ import br.org.coletivoJava.integracoes.restIntwhatsapp.api.model.menu.MenuWhatsa
 import br.org.coletivoJava.integracoes.whatsapp.FabApiRestIntWhatsappMensagem;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemWhatsapp;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.UtilGeral.UtilCRCJson;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.ChamadaHttpSimples;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.implementacao.UtilSBApiRestClient;
-import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import jakarta.json.JsonObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,6 +53,35 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
     private Contato contato;
     private MensagemTrOrigemWhatsapp mensagemEmTransito;
 
+    private static final String TAG_LOG = "[WTZP-MSG]";
+
+    /**
+     * A instrumentação nunca pode interromper o processamento da mensagem, por
+     * isso o serviço de log é chamado dentro de um try.
+     */
+    private void log(FabMensagens pTipo, String pMensagem) {
+        try {
+            CarameloCode.getServicoLogEventos().registrarLogDeEvento(pTipo, TAG_LOG + " " + pMensagem);
+        } catch (Throwable t) {
+            System.out.println(TAG_LOG + " " + pTipo + " " + pMensagem);
+        }
+    }
+
+    /**
+     * Marca a mensagem como tratada no registro de trânsito: a rota foi
+     * despachada sem erro, então o ciclo dela terminou.
+     *
+     * A rota de recepção persiste essa marca e usa ela para descartar
+     * reentregas do mesmo pacote pela Meta, que de outra forma repetiriam o
+     * efeito da rota - o menu para o contato, a chamada do webservice, o
+     * encaminhamento para a sala.
+     */
+    private void marcarMensagemComoTratada() {
+        if (mensagemEmTransito != null) {
+            mensagemEmTransito.setEncaminhado(true);
+        }
+    }
+
     @Override
     public void processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento, ErroConexaoServicoChat {
         try {
@@ -61,9 +91,29 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
                 throw new ErroComDevolucaoMensagemUsuario("Usuário de atendimento, entrou em contato para obter atendimento", "Seu número está cadastrado como número de atendimento, entre em contato ");
             }
         } catch (ErroRegraDeNEgocioChat erroRegraDeNegocio) {
-            throw new ErroComDevolucaoMensagemUsuario("Falha obtendo usuario contato", "Erro obtendo usuário representante do contato: " + erroRegraDeNegocio.getMessage());
+
+            // REMOVE
+            // A mensagem da regra de negócio é escrita para o contato ler (por
+            // exemplo, telefone em uso por um usuário de atendimento), por isso
+            // vai no texto de devolução; o detalhe técnico fica no log.
+            throw new ErroComDevolucaoMensagemUsuario("Falha obtendo usuario contato: " + erroRegraDeNegocio.getMessage(),
+                    "Sua mensagem não foi entregue: " + erroRegraDeNegocio.getMessage()
+                    + ". Tente novamente em alguns minutos ou ligue para este mesmo número.");
         } catch (ErroConexaoServicoChat tServicoIndisponivel) {
             throw new ErroFalhaEncaminhando("Falha obtendo usuário correspentente ao contato no sistema Matrix, serviço indisponivel" + tServicoIndisponivel.getMessage());
+        } catch (RuntimeException falhaNaoPrevista) {
+            // Sem contato ou sem usuário de chat nada mais acontece, e uma
+            // exceção não declarada aqui escapava de todo o tratamento de erro:
+            // virava 500 e o contato não recebia nem o aviso de falha. Reenviar
+            // não resolve esse tipo de falha, então a resposta vai para ele.
+            log(FabMensagens.ERRO, "Falha não prevista obtendo o contato "
+                    + (mensagem.getContatoOrigem() == null ? "?" : mensagem.getContatoOrigem().getWa_id())
+                    + " da mensagem " + mensagem.getId() + ". erro="
+                    + falhaNaoPrevista.getClass().getName() + ": " + falhaNaoPrevista.getMessage());
+            throw new ErroComDevolucaoMensagemUsuario("Falha não prevista obtendo o contato: "
+                    + falhaNaoPrevista.getClass().getName() + ": " + falhaNaoPrevista.getMessage(),
+                    "Não conseguimos registrar seu atendimento agora, e sua mensagem não foi entregue."
+                    + " Nossa equipe já foi avisada. Tente novamente em alguns minutos ou ligue para este mesmo número.");
         }
         System.out.println("DEFININDO TRILHA");
         ItfTrilhaNavegacao trilha = null;
@@ -149,6 +199,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         if (!resposta.isSucesso()) {
             throw new ErroConexaoServicoChat("Falha enviando link para o usuário");
         }
+        marcarMensagemComoTratada();
 
     }
 
@@ -156,8 +207,16 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
 
         ItfRespostaWebServiceSimples retornoEnvioMenu = FabApiRestIntWhatsappMensagem.MENSAGEM_MENU_ATE_10_OPCOES_ENVIAR.getAcao(getMensagemWhatsapp().getEntrada().getCodigo(), contato.getWaid(),
                 pRotaMenu.getComoRotaMenuOpcoes().getMenuWhatsapp()).getResposta();
-        try {
 
+        if (!retornoEnvioMenu.isSucesso()) {
+            throw new ErroConexaoServicoChat("Falha enviando Menu");
+        }
+        marcarMensagemComoTratada();
+
+        // Espelhar a mensagem na sala da última conversa é acessório: se a sala ainda
+        // está sendo criada, ou o envio falha, isso não pode derrubar a requisição do
+        // webhook. Sem o 200 a Meta reentrega o pacote e o contato recebe outro menu.
+        try {
             SessaoDeContato sessao = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO
                     .getSessaoDoContato(AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(getMensagemWhatsapp().getEntrada(), contato));
 
@@ -166,12 +225,11 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
                 encaminharMensagemParaMatrix(mensagem, sala, usuarioMAtrixContato);
             }
 
-        } catch (ErroRegraDeNegocio | ErroComDevolucaoMensagemUsuario ex) {
-
-        }
-
-        if (!retornoEnvioMenu.isSucesso()) {
-            throw new ErroConexaoServicoChat("Falha enviando Menu");
+        } catch (Throwable t) {
+            log(FabMensagens.ERRO, "Menu entregue ao contato " + contato.getWaid()
+                    + ", mas falhou espelhar a mensagem " + mensagem.getId()
+                    + " na sala da última conversa. A requisição segue como sucesso para a Meta não reentregar o pacote."
+                    + " erro=" + t.getClass().getSimpleName() + ": " + t.getMessage());
         }
     }
 
@@ -195,6 +253,7 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
         if (rota.getCaminhoJsonMensagemContato() != null) {
             String respostaContato = UtilCRCJson.getValorApartirDoCaminho(rota.getCaminhoJsonMensagemContato(), jsonResposata);
         }
+        marcarMensagemComoTratada();
 
     }
 
@@ -204,6 +263,19 @@ public class ProcessadorWtzpMsg extends ProcessadorSocketWhatsapp implements Itf
                 pRotaEncaminhamento.getSala(),
                 usuarioMAtrixContato);
         mensagemEmTransito.setCodigoEncaminhamentoMatrix(reciboEncaminhamentoMatrix);
+        if (reciboEncaminhamentoMatrix == null) {
+            // Sem recibo e sem exceção: alguns tipos de mensagem (interativa,
+            // reação, eventos) devolvem null em silêncio no
+            // encaminharMensagemParaMatrix quando o envio não acontece. Reenviar
+            // não resolve, então a mensagem é encerrada - mas o log tem de
+            // gritar, porque nada chegou na sala do atendimento.
+            log(FabMensagens.ERRO, "Encaminhamento para a sala " + pRotaEncaminhamento.getSala().getApelido()
+                    + " não devolveu recibo para a mensagem " + mensagem.getId()
+                    + " tipo=" + mensagem.getTipoMensagem() + " do contato " + contato.getWaid()
+                    + ". NADA chegou no atendimento. Causa provável: o usuário Matrix do contato"
+                    + " não tem token válido (salaEnviarMesagem devolve null nesse caso).");
+        }
+        marcarMensagemComoTratada();
 
     }
 

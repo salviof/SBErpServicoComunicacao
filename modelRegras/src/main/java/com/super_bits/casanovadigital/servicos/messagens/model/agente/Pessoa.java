@@ -9,6 +9,8 @@ import com.super_bits.modulosSB.Persistencia.registro.persistidos.ListenerEntida
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoCampo;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.anotacoes.InfoObjetoSB;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.InfoCampos.campo.FabTipoAtributoObjeto;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.basico.cep.ComoLocal;
+import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.contato.ComoContatoHumano;
 import com.super_bits.modulosSB.SBCore.modulos.objetos.entidade.contato.ComoContatoSimples;
 import java.io.Serializable;
 import java.util.Date;
@@ -33,7 +35,7 @@ import javax.persistence.TemporalType;
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "tipoPessoa")
 @EntityListeners(ListenerEntidadePadrao.class)
-public class Pessoa extends EntidadeORMNormal implements ComoContatoSimples, Serializable {
+public class Pessoa extends EntidadeORMNormal implements ComoContatoSimples, ComoContatoHumano, Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -144,6 +146,26 @@ public class Pessoa extends EntidadeORMNormal implements ComoContatoSimples, Ser
 
     public Atendente getComoAtendente() {
         return (Atendente) this;
+    }
+
+    @Override
+    public String getApelido() {
+        return getNome();
+    }
+
+    @Override
+    public String getCelular() {
+        return getTelefonePrincipal();
+    }
+
+    @Override
+    public ComoLocal getLocalizacao() {
+        return null;
+    }
+
+    @Override
+    public void setLocalizacao(ComoLocal pLocal) {
+
     }
 
 }

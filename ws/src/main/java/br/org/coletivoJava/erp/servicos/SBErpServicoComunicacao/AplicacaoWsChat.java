@@ -4,6 +4,7 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao;
 
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.entregaPendente.DrenoDeEntregasPendentes;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfCentralLogicasProcessamentoMsg;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
@@ -87,6 +88,9 @@ public class AplicacaoWsChat {
             //      AplicacaoWsChat.SERVICO_MATRIX.registrarClasseEscutaNotificacoes(ListenerNotificacaoMatrixAuxiliadora.class);
             ServicoRecepcaoEventoSpark.iniciarServico();
             getCentralLogicaProcesasmento().inicializacaoServicosTerceiros();
+            // Retoma as entregas que ficaram na fila (inclusive as de antes de um
+            // restart). O método nunca lança: falha aqui não pode impedir o start.
+            DrenoDeEntregasPendentes.iniciar();
             aplicacaoIniciad = true;
         } catch (Throwable t) {
             System.out.println("FALHA CONECTANDO COM SERVIÇO DE CHAT, TENTANDO NOVAMENTE EM 10 SEGUNDOS");

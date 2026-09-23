@@ -6,8 +6,10 @@ package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.e
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.oauth.RecepcaoCodigoSolicitacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.whataspp.ApiWhatsappRecepMensagem;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.servicoServer.escutas.spark.whataspp.simulacao.SimuladorRecepcaoMensagemWhatsapp;
 import br.org.coletivoJava.integracoes.matrixChat.config.FabConfigApiMatrixChat;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.SBCore;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.arquivosConfiguracao.ConfigModulo;
 import javax.persistence.EntityManager;
@@ -33,6 +35,9 @@ public class ServicoRecepcaoEventoSpark {
             System.out.println(config.getPropriedade(FabConfigApiMatrixChat.SEGREDO).substring(0, 7));
             System.out.println(config.getPropriedade(FabConfigApiMatrixChat.USUARIO_ADMIN));
             System.out.println(config.getPropriedade(FabConfigApiMatrixChat.SENHA_USUARIO_ADMIN).substring(0, 4));
+        }
+        if (!SBCore.isEmModoProducao()) {
+            instanciarSimuladorEnvioMensagemWhatsapp();
         }
 
         path("/api/v1/whatsapp/", () -> {
@@ -65,6 +70,17 @@ public class ServicoRecepcaoEventoSpark {
         }
         );
 
+    }
+
+    /**
+     * Publica o formulário de testes que simula a recepção de uma mensagem de
+     * whatsapp, disponível apenas fora do modo produção.
+     */
+    public static void instanciarSimuladorEnvioMensagemWhatsapp() {
+        if (CarameloCode.isEmModoProducao()) {
+            return;
+        }
+        SimuladorRecepcaoMensagemWhatsapp.registrarRotas();
     }
 
 }
