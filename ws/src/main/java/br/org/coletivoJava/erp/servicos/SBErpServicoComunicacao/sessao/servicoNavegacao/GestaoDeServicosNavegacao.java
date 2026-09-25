@@ -90,6 +90,23 @@ public class GestaoDeServicosNavegacao {
         }
     }
 
+    /**
+     * A sessão está ativa enquanto o contexto guarda a trilha atual ou há trilha
+     * em memória para o contato; {@link AplicacaoWsChat#encerrrarSessao} limpa
+     * os dois.
+     *
+     * @param pEntrada entrada de whatsapp da sessão
+     * @param pContato contato
+     * @return true se existir sessão aberta para o contato nesta entrada
+     */
+    public boolean isSessaoAtiva(EntradaNumeroWhatsapp pEntrada, Contato pContato) {
+        if (ULTIMAS_TRILHAS.containsKey(pEntrada) && ULTIMAS_TRILHAS.get(pEntrada).get(pContato) != null) {
+            return true;
+        }
+        ContextoContato contexto = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContextoContato(pEntrada, pContato);
+        return contexto != null && contexto.getTrilhaAtual() != null && !contexto.getTrilhaAtual().isEmpty();
+    }
+
     public boolean removerRota(ContextoContato pContexto) throws ErroComDevolucaoMensagemUsuario, ErroRegraDeNegocio {
         EntradaNumeroWhatsapp entrada = AplicacaoWsChat.getEntradaByCodigoEntrada(pContexto.getCodigoEntrada());
         if (!ULTIMAS_TRILHAS.containsKey(entrada)) {
@@ -267,6 +284,8 @@ public class GestaoDeServicosNavegacao {
         if (rotaExplicita != null) {
             if (servicoNavegacao.isRotaExiste(rotaExplicita)) {
                 caminhoTrilha = rotaExplicita;
+            } else {
+                throw new ErroComDevolucaoMensagemUsuario("Rota [" + rotaExplicita + "] não encontrada", "Rota [" + rotaExplicita + "] não encontrada");
             }
         }
 
@@ -329,6 +348,10 @@ public class GestaoDeServicosNavegacao {
             SBCore.RelatarErro(FabErro.SOLICITAR_REPARO, "Houve um erro não esperado processando o gatilho na trilha" + trilhaAtual.getClass().getSimpleName(), t);
         }
 
+        if (acaoGatilho != null && ENCERRAR_SESSAO.equals(acaoGatilho.getTipoAcao())) {
+            // sessão finalizada em processarAcaoGatilho: a trilha não deve voltar ao cache
+            return trilhaAtual;
+        }
         ULTIMAS_TRILHAS.get(pEntrada).put(pContato, trilhaAtual);
 
         return trilhaAtual;
@@ -352,6 +375,12 @@ public class GestaoDeServicosNavegacao {
         } else {
             switch (pAcaoGatilho.getTipoAcao()) {
                 case ENCERRAR_SESSAO:
+                    if (pAcaoGatilho.getTrilha() != null) {
+                        pAcaoGatilho.getTrilha().finalizarSesaso();
+                    }
+                    if (ULTIMAS_TRILHAS.containsKey(entrada)) {
+                        ULTIMAS_TRILHAS.get(entrada).remove(contato);
+                    }
                     return novaTrilha;
 
                 case NOVA_TRILHA:

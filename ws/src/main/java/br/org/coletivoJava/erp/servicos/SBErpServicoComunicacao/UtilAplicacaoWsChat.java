@@ -19,6 +19,34 @@ import java.util.Optional;
  */
 public class UtilAplicacaoWsChat {
 
+    /**
+     * Verifica se o texto inteiro (ignorando caixa e espaços extras) é uma das
+     * palavras de logoff do serviço de navegação da entrada.
+     *
+     * @param pEntrada entrada de whatsapp que define o serviço de navegação
+     * @param pTexto texto digitado
+     * @return true se o texto for um comando de logoff
+     */
+    public static boolean isPalavraLogoff(EntradaNumeroWhatsapp pEntrada, String pTexto) {
+        if (pTexto == null) {
+            return false;
+        }
+        final String textoNormalizado = pTexto.trim().replaceAll("\\s+", " ").toLowerCase();
+        if (textoNormalizado.isEmpty()) {
+            return false;
+        }
+        try {
+            List<String> palavrasLogoff = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getServicoNavegacao(pEntrada).getPalavrasParaLogoff();
+            if (palavrasLogoff == null) {
+                return false;
+            }
+            return palavrasLogoff.stream()
+                    .anyMatch(palavra -> palavra != null && palavra.trim().toLowerCase().equals(textoNormalizado));
+        } catch (ErroComDevolucaoMensagemUsuario ex) {
+            return false;
+        }
+    }
+
     public static String getTextoRotaExplicitaPorMensagemWtzp(EntradaNumeroWhatsapp pEntrada, MensagemWhatsapp pMensagem) {
         String novaRotaAuto = null;
         try {
@@ -62,6 +90,7 @@ public class UtilAplicacaoWsChat {
                     break;
                 }
             }
+
         }
 
         List<String> partes = UtilCRCStringBuscaTrecho.getPartesEntreColchete(pConteudo);

@@ -1,6 +1,7 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_navegacao;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.UtilAplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.UtilAplicacaoWsChatMatrixSalas;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.config.FabConfigServicoComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfServicoNavegacao;
@@ -345,7 +346,11 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
     @Override
     public final AcaoGatilhoTrilha getAcaoDeGatilhoPorEventoMatrix(ItfEventoMatix pEvento) throws ErroComDevolucaoMensagemUsuario {
         registrarInteracao(TIPO_INTERACAO.ATENDIMENTO);
-        return getAcaoTrilhaPorMensgemAtendimento(pEvento.getContent().getString("body"), null);
+        String textoAtendimento = pEvento.getContent().has("body") ? pEvento.getContent().getString("body") : null;
+        if (UtilAplicacaoWsChat.isPalavraLogoff(entrada, textoAtendimento)) {
+            return gerarAcaoGatilhoLogout();
+        }
+        return getAcaoTrilhaPorMensgemAtendimento(textoAtendimento, null);
     }
 
     public RotaMensagemContato getRotaAtual() {
@@ -399,16 +404,21 @@ public abstract class TrilhaNavegacaoAbs implements ItfTrilhaNavegacao {
         finalizarSesaso();
     }
 
+    private static final String INSTRUCAO_LOGOFF_ATENDIMENTO = "Para não ser mais notificado digite: encerrar e a sessão com seu cliente será encerrada.";
+
     @Override
     public AcaoGatilhoTrilha acaoTimeoutAguardandoRespostaAtendimento() {
 
         try {
             if (rotaAtual != null && rotaAtual.getTipoRota().getTipoRotaMensagem().equals(FabTipoRotaMensagem.ENCAMINHAMENTO)) {
-                if (rotaAtual.getComoRotaEncaminhamentoMatrix().getSala() != null) {
-                    AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(rotaAtual.getComoRotaEncaminhamentoMatrix().getSala(), getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome());
+                ComoChatSalaBean salaEncaminhamento = rotaAtual.getComoRotaEncaminhamentoMatrix().getSala();
+                if (salaEncaminhamento != null) {
+                    AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(salaEncaminhamento, getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + salaEncaminhamento.getNome()
+                            + "\n" + INSTRUCAO_LOGOFF_ATENDIMENTO);
                 } else {
                     AplicacaoWsChat.SERVICO_MATRIX.enviarDirect(rotaAtual.getComoRotaEncaminhamentoMatrix().getAtendentePrincipal().getMatrixID(),
-                            getContextoDeSessao().getContato().getNome() + " aguarda sua resposta em " + rotaAtual.getComoRotaEncaminhamentoMatrix().getSala().getNome()
+                            getContextoDeSessao().getContato().getNome() + " aguarda sua resposta."
+                            + "\n" + INSTRUCAO_LOGOFF_ATENDIMENTO
                     );
                 }
             }

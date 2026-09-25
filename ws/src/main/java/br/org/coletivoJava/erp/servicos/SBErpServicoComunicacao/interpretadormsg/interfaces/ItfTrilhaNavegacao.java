@@ -10,7 +10,6 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.sessao.trilha_na
 import br.org.coletivoJava.fw.api.erp.chat.model.ComandoDeAtendimento;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
-import br.org.coletivoJava.fw.erp.implementacao.chat.model.model.eventos.EventoSalaMatrix;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.ContextoContato;
 
 /**

@@ -5,6 +5,7 @@
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.matrix.mensagem;
 
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.UtilAplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfTrilhaNavegacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
@@ -12,6 +13,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoSalaAtendimento;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaGerandoUsuarioAtendimento;
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroIniciandoTrilha;
 import br.org.coletivoJava.fw.api.erp.chat.ErroConexaoServicoChat;
 import br.org.coletivoJava.fw.api.erp.chat.model.ComoChatSalaBean;
 import br.org.coletivoJava.fw.api.erp.chat.model.ItfEventoMatix;
@@ -22,6 +24,7 @@ import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.Mensagem
 import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
 import com.super_bits.modulosSB.SBCore.modulos.TratamentoDeErros.ErroRegraDeNegocio;
+import java.util.ArrayList;
 
 /**
  * @author salvio
@@ -42,6 +45,56 @@ public class ProcessadorMtxMensagem implements
     }
 
     private static final String TAG_LOG = "[MTX->WTZP]";
+
+    /**
+     * Recibo gravado no encaminhamento quando a mensagem do atendente era um
+     * comando de logoff: não houve envio ao Whatsapp, mas o ciclo do evento
+     * está encerrado e o reprocessamento do batch deve ignorá-lo.
+     */
+    public static final String RECIBO_COMANDO_LOGOFF = "LOGOFF";
+
+    /**
+     * O comando de logoff não é encaminhado ao contato: a trilha finaliza a
+     * sessão (que já avisa contato e sala) e o evento recebe o recibo
+     * {@link #RECIBO_COMANDO_LOGOFF} para não ser executado de novo.
+     */
+    private void processarComandoLogoff(EntradaNumeroWhatsapp pEntrada) throws ErroComDevolucaoMensagemUsuario, ErroIniciandoTrilha {
+        long inicioLogoff = System.currentTimeMillis();
+        boolean sessaoEstavaAtiva = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.isSessaoAtiva(pEntrada, contato);
+        if (sessaoEstavaAtiva) {
+            AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByEventoExistente(pEntrada, contato, evento);
+        } else {
+            // Sem sessão aberta, a trilha seria recriada só para ser encerrada, e o contato
+            // receberia um aviso de encerramento sem sentido: apenas avisa o atendente.
+            try {
+                if (AplicacaoWsChat.SERVICO_MATRIX.salaEnviarMesagem(sala, "A sessão com " + contato.getNome() + " já estava encerrada.") == null) {
+                    log(FabMensagens.ERRO, "Falha avisando a sala " + sala.getApelido() + " de que a sessão já estava encerrada."
+                            + " eventoMatrix=" + evento.getEvent_id());
+                }
+            } catch (ErroConexaoServicoChat ex) {
+                log(FabMensagens.ERRO, "Falha avisando a sala " + sala.getApelido() + " de que a sessão já estava encerrada: "
+                        + ex.getMessage() + " eventoMatrix=" + evento.getEvent_id());
+            }
+        }
+
+        EncaminhamentoMatrixParaWtzp encaminhamento = new EncaminhamentoMatrixParaWtzp();
+        encaminhamento.setMensagem(mensagemTransito);
+        encaminhamento.setContato(contato);
+        encaminhamento.setReciboRegistrooWtzp(RECIBO_COMANDO_LOGOFF);
+        mensagemTransito.setCodigoReciboMensagemMatrix(evento.getEvent_id());
+        if (mensagemTransito.getEncaminhamentos() == null) {
+            mensagemTransito.setEncaminhamentos(new ArrayList<>());
+        }
+        mensagemTransito.getEncaminhamentos().add(encaminhamento);
+
+        log(FabMensagens.AVISO, "Comando de logoff do atendimento: "
+                + (sessaoEstavaAtiva ? "sessão finalizada" : "sessão JÁ ESTAVA ENCERRADA, apenas o atendente foi avisado")
+                + " em " + (System.currentTimeMillis() - inicioLogoff) + "ms, mensagem não encaminhada ao Whatsapp."
+                + " eventoMatrix=" + evento.getEvent_id()
+                + " sala=" + sala.getApelido()
+                + " waid=" + contato.getWaid()
+                + " entrada=" + pEntrada.getCodigo());
+    }
 
     /**
      * A instrumentação nunca pode interromper a entrega da mensagem, por isso o
@@ -75,6 +128,12 @@ public class ProcessadorMtxMensagem implements
                 System.out.println("ENTRADA::: " + entrada);
             } catch (ErroRegraDeNegocio ex) {
                 throw new ErroComDevolucaoMensagemUsuario("Falha identificando telefone de origem para sala " + sala, "Impossível determinar o telefone de origem da sala" + sala.getCodigoChat());
+            }
+
+            String textoAtendimento = evento.getContent().has("body") ? evento.getContent().getString("body") : null;
+            if (UtilAplicacaoWsChat.isPalavraLogoff(entrada, textoAtendimento)) {
+                processarComandoLogoff(entrada);
+                return;
             }
 
             long inicioEnvioWhatsapp = System.currentTimeMillis();

@@ -267,7 +267,10 @@ public class ListenerSalaMatrix extends EscutaSalaMatrixAbst {
         if (mensagemReferencia.getId() != null && mensagemReferencia.getId() > 0) {
             if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos() != null) {
                 //Tem encamimnhamentos?
-                if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos().stream().filter(ec -> ec.isFoiEnviadoPeloWhatsapp()).findFirst().isPresent()) {
+                if (mensagemReferencia.getComoMensagemEmTransitoOrigemMtx().getEncaminhamentos().stream()
+                        .filter(ec -> ec.isFoiEnviadoPeloWhatsapp()
+                        || ProcessadorMtxMensagem.RECIBO_COMANDO_LOGOFF.equals(ec.getReciboRegistrooWtzp()))
+                        .findFirst().isPresent()) {
                     log(FabMensagens.AVISO, "eventoMensagem ABORTADO por deduplicação: a mensagem já consta como"
                             + " encaminhada pelo Whatsapp. eventoMatrix=" + pEvento.getEvent_id()
                             + " idMensagemTransito=" + mensagemReferencia.getId()

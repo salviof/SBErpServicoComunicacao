@@ -171,10 +171,14 @@ public class PacoteMemensagemRecebidoWhatsapp {
                                             mensagens.add(mensagem);
                                             break;
                                         case IMAGEM:
-                                            JsonObject imagem = joMensagem.getJsonObject("image");
+                                            boolean figurinha = "sticker".equals(typeMensagem);
+                                            JsonObject imagem = joMensagem.getJsonObject(figurinha ? "sticker" : "image");
                                             String tipoArquivo = imagem.getString("mime_type");
                                             mensagem.setCodigoMedia(imagem.getString("id"));
-                                            if (imagem.containsKey("caption")) {
+                                            if (figurinha) {
+                                                // Figurinha não tem legenda.
+                                                mensagem.setMensagem("Figurinha");
+                                            } else if (imagem.containsKey("caption")) {
                                                 String textoMensagem = imagem.getString("caption");
                                                 if (textoMensagem != null && !textoMensagem.isEmpty()) {
                                                     mensagem.setMensagem(textoMensagem);

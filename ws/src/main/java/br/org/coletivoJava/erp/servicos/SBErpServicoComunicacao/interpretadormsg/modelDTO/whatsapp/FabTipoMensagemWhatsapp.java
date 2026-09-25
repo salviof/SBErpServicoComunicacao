@@ -33,6 +33,8 @@ public enum FabTipoMensagemWhatsapp {
             case "video":
                 return VIDEO;
             case "image":
+            // Figurinha (image/webp) segue o mesmo caminho da imagem até o Matrix.
+            case "sticker":
                 return IMAGEM;
             case "reaction":
                 return REACAO;

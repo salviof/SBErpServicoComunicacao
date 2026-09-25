@@ -36,10 +36,10 @@ public class ServicoWhatsapp {
 
         System.out.println("TIPO DE CONTENT: " + pEvento.getContent());
         ComoUsuarioChat usuarioAtendimento = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(pEvento.getSender());
-        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         if (usuarioAtendimento == null) {
             throw new ErroConexaoServicoChat("Usuário de atendimento " + pEvento.getSender() + " não foi encontrado");
         }
+        novamensagem.setCabecalho(usuarioAtendimento.getNome() + ":");
         //
 //         byte[] arquivo = UtilMatrixApiServer.getMediaBytesByID(idMedia);
 

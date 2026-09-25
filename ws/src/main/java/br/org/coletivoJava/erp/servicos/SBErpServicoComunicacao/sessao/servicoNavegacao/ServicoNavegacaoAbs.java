@@ -5,6 +5,7 @@ import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.modelDTO.whatsapp.EntradaNumeroWhatsapp;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.rotas.tipos.InfoRotaComunicacao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.tratamentoErro.ErroFalhaEncaminhando;
+import com.google.common.collect.Lists;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -97,7 +98,14 @@ public abstract class ServicoNavegacaoAbs implements ItfServicoNavegacao {
         List<String> palavras = new ArrayList<>();
         palavras.add("menu");
         palavras.add("voltar");
+        //     palavras.add("fechar");
+        //     palavras.add("sair");
         return palavras;
+    }
+
+    @Override
+    public List<String> getPalavrasParaLogoff() {
+        return Lists.newArrayList("encerrar", "fechar", "encerrar sessão");
     }
 
 }
