@@ -130,7 +130,7 @@ public class ServicoWhatsapp {
     }
 
     public String enviarAudio(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {
-        String tipoArquivo = "audio/ogg";
+        String tipoArquivo = getTipoArquivoAudio(pArquivo);
         JsonValue valor = null;
         try {
             String codigoMetaArquivo = UtilSBApiWhatsapp.mediaUpload(pArquivo, pNomeArquivo, tipoArquivo);
@@ -145,6 +145,35 @@ public class ServicoWhatsapp {
             return null;
         }
         return valor.asJsonObject().getString("id");
+    }
+
+    /**
+     * A Meta confere o conteúdo com o tipo declarado (erro 131053). O Element no
+     * iPhone grava a nota de voz em m4a (audio/mp4), no Android e na web em ogg.
+     */
+    private static String getTipoArquivoAudio(byte[] pArquivo) {
+        if (pArquivo != null && pArquivo.length >= 12) {
+            if (pArquivo[0] == 'O' && pArquivo[1] == 'g' && pArquivo[2] == 'g' && pArquivo[3] == 'S') {
+                return "audio/ogg";
+            }
+            if (pArquivo[4] == 'f' && pArquivo[5] == 't' && pArquivo[6] == 'y' && pArquivo[7] == 'p') {
+                return "audio/mp4";
+            }
+            if (pArquivo[0] == '#' && pArquivo[1] == '!' && pArquivo[2] == 'A' && pArquivo[3] == 'M' && pArquivo[4] == 'R') {
+                return "audio/amr";
+            }
+            if (pArquivo[0] == 'I' && pArquivo[1] == 'D' && pArquivo[2] == '3') {
+                return "audio/mpeg";
+            }
+            if ((pArquivo[0] & 0xFF) == 0xFF && (pArquivo[1] & 0xF6) == 0xF0) {
+                // ADTS: sincronismo 0xFFF com layer 00
+                return "audio/aac";
+            }
+            if ((pArquivo[0] & 0xFF) == 0xFF && (pArquivo[1] & 0xE0) == 0xE0) {
+                return "audio/mpeg";
+            }
+        }
+        return "audio/ogg";
     }
 
     public String enviarPdf(EntradaNumeroWhatsapp pEntrada, String pContatoWtzpID, byte[] pArquivo, String pNomeArquivo) throws ErroConexaoServicoChat {

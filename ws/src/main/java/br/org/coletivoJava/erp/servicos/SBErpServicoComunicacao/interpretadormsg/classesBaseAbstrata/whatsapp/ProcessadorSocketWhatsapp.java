@@ -81,7 +81,10 @@ public abstract class ProcessadorSocketWhatsapp {
                     break;
 
                 case AUDIO:
-                    codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarAudio(pSala, pContato, msg.getId(), msg.getMensagem(), arquivo);
+                    // O nome define o Content-Type do upload e o mimetype do evento;
+                    // sem extensão o áudio sobe como text/html e não toca no iPhone.
+                    codigoeventoMatrix = AplicacaoWsChat.SERVICO_MATRIX.salaEnviarAudio(pSala, pContato, msg.getId(),
+                            getNomeArquivoAudio(msg), arquivo);
                     break;
 
                 case VIDEO:
@@ -126,6 +129,24 @@ public abstract class ProcessadorSocketWhatsapp {
 
         return null;
 
+    }
+
+    private static String getNomeArquivoAudio(MensagemWhatsapp msg) {
+        String mime = msg.getMediaMimeType() == null ? "" : msg.getMediaMimeType().toLowerCase();
+        String extensao;
+        if (mime.contains("mp4") || mime.contains("m4a")) {
+            extensao = "m4a";
+        } else if (mime.contains("mpeg") || mime.contains("mp3")) {
+            extensao = "mp3";
+        } else if (mime.contains("aac")) {
+            extensao = "aac";
+        } else if (mime.contains("amr")) {
+            extensao = "amr";
+        } else {
+            // Nota de voz do WhatsApp: audio/ogg; codecs=opus
+            extensao = "ogg";
+        }
+        return "audio_whatsapp." + extensao;
     }
 
     public InputStream getMediaFromMessage(MensagemWhatsapp msg) {
