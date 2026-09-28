@@ -19,10 +19,14 @@ import br.org.coletivoJava.fw.api.erp.chat.model.ComoUsuarioChat;
 import br.org.coletivoJava.integracoes.matrixChat.FabApiRestIntMatrixChatSalas;
 import com.super_bits.casanovadigital.servicos.messagens.model.agente.Contato;
 import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.EncaminhamentoMatrixParaWtzp;
-import com.super_bits.casanovadigital.servicos.messagens.model.mensagem.MensagemTrOrigemMatrix;
 import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
+import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
-import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta;
+import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *
@@ -30,56 +34,141 @@ import com.super_bits.modulosSB.SBCore.modulos.Controller.Interfaces.ItfResposta
  */
 public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAbstrato {
 
+    private static final String TAG_LOG = "[WTZP-STATUS]";
+
+    /**
+     * A Meta aceita o envio fora da janela de 24h e só avisa a falha depois,
+     * pelo webhook de status - muitas vezes antes de o encaminhamento com o
+     * recibo ser gravado (a gravação acontece após a definição da trilha, que
+     * pode levar segundos). Sem registro, a falha espera em segundo plano até
+     * ele aparecer, para o webhook responder 200 sem demora.
+     */
+    private static final int SEGUNDOS_MAXIMO_AGUARDANDO_REGISTRO = 90;
+    private static final int SEGUNDOS_ENTRE_TENTATIVAS = 3;
+
+    private static final ExecutorService EXECUTOR_FALHAS_SEM_REGISTRO = Executors.newFixedThreadPool(2, new ThreadFactory() {
+
+        private final AtomicInteger sequencia = new AtomicInteger();
+
+        @Override
+        public Thread newThread(Runnable pTarefa) {
+            Thread thread = new Thread(pTarefa, "falha-entrega-wtzp-" + sequencia.incrementAndGet());
+            thread.setDaemon(true);
+            return thread;
+        }
+    });
+
     public ProcessadorEventoWhatsappPadrao(EventoMensagemWtzap pEvento) {
         super(pEvento);
 
     }
     private EncaminhamentoMatrixParaWtzp mensagemRelacionada;
 
+    /**
+     * A instrumentação nunca pode interromper o processamento do status, por
+     * isso o serviço de log é chamado dentro de um try.
+     */
+    private static void log(FabMensagens pTipo, String pMensagem) {
+        try {
+            CarameloCode.getServicoLogEventos().registrarLogDeEvento(pTipo, TAG_LOG + " " + pMensagem);
+        } catch (Throwable t) {
+            System.out.println(TAG_LOG + " " + pTipo + " " + pMensagem);
+        }
+    }
+
     @Override
     public EncaminhamentoMatrixParaWtzp getMensagemRelacionada() {
         return mensagemRelacionada;
     }
 
+    private static EncaminhamentoMatrixParaWtzp buscarEncaminhamento(String pCodigoMensagemWhatsapp) {
+        return AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT
+                .getMensagemEnviadaPorMatrixByRegistroWhatsapp(pCodigoMensagemWhatsapp);
+    }
+
+    /**
+     * Avisa na sala de atendimento que a mensagem não chegou ao contato.
+     *
+     * @return true se o Matrix aceitou o aviso
+     */
+    private static boolean notificarFalhaNaSala(EncaminhamentoMatrixParaWtzp pEncaminhamento, EventoMensagemWtzap pEvento) {
+        String codigoSala = null;
+        try {
+            codigoSala = pEncaminhamento.getMensagem().getSalaCodigoMatrix();
+            String nomeContato = pEncaminhamento.getContato() == null ? "o contato" : pEncaminhamento.getContato().getNome();
+            String aviso = "⚠️ A mensagem NÃO foi entregue para " + nomeContato + ". " + pEvento.getDescricaoErro();
+            ItfRespostaWebServiceSimples resp = FabApiRestIntMatrixChatSalas.SALA_ENVIAR_MENSAGEM_TEXTO_SIMPLES
+                    .getAcao(codigoSala, pEncaminhamento.getId().toString() + "fail", aviso).getResposta();
+            boolean sucesso = resp != null && resp.isSucesso();
+            log(sucesso ? FabMensagens.AVISO : FabMensagens.ERRO, "Aviso de falha de entrega "
+                    + (sucesso ? "enviado" : "RECUSADO pelo Matrix")
+                    + ". sala=" + codigoSala
+                    + " recibo=" + pEvento.getCodigoMensagem()
+                    + " codigoErro=" + pEvento.getCodigoErro()
+                    + (sucesso ? "" : " resposta=" + (resp == null ? "null" : resp.getCodigoResposta() + " " + resp.getRespostaTexto())));
+            return sucesso;
+        } catch (Throwable t) {
+            log(FabMensagens.ERRO, "Falha avisando a sala " + codigoSala + " sobre a falha de entrega do recibo "
+                    + pEvento.getCodigoMensagem() + ": " + t.getClass().getSimpleName() + ": " + t.getMessage());
+            return false;
+        }
+    }
+
+    private static void aguardarRegistroENotificarFalha(EventoMensagemWtzap pEvento) {
+        final String recibo = pEvento.getCodigoMensagem();
+        log(FabMensagens.AVISO, "Falha de entrega recebida antes do registro do encaminhamento; aguardando até "
+                + SEGUNDOS_MAXIMO_AGUARDANDO_REGISTRO + "s. recibo=" + recibo
+                + " waid=" + pEvento.getWaIdContatoDestinatario()
+                + " codigoErro=" + pEvento.getCodigoErro());
+        try {
+            EXECUTOR_FALHAS_SEM_REGISTRO.submit(() -> {
+                try {
+                    long limite = System.currentTimeMillis() + SEGUNDOS_MAXIMO_AGUARDANDO_REGISTRO * 1000L;
+                    while (System.currentTimeMillis() < limite) {
+                        Thread.sleep(SEGUNDOS_ENTRE_TENTATIVAS * 1000L);
+                        EncaminhamentoMatrixParaWtzp encaminhamento = buscarEncaminhamento(recibo);
+                        if (encaminhamento != null) {
+                            notificarFalhaNaSala(encaminhamento, pEvento);
+                            return;
+                        }
+                    }
+                    log(FabMensagens.ERRO, "Falha de entrega NÃO avisada ao atendimento: nenhum encaminhamento"
+                            + " registrado com o recibo " + recibo + " após " + SEGUNDOS_MAXIMO_AGUARDANDO_REGISTRO + "s."
+                            + " waid=" + pEvento.getWaIdContatoDestinatario()
+                            + " erro=" + pEvento.getDescricaoErro());
+                } catch (Throwable t) {
+                    log(FabMensagens.ERRO, "Falha aguardando registro do recibo " + recibo + ": "
+                            + t.getClass().getSimpleName() + ": " + t.getMessage());
+                }
+            });
+        } catch (Throwable t) {
+            log(FabMensagens.ERRO, "Falha agendando aviso de falha de entrega do recibo " + recibo + ": "
+                    + t.getClass().getSimpleName() + ": " + t.getMessage());
+        }
+    }
+
     @Override
     public void processar() throws ErroFalhaEncaminhando, ErroComDevolucaoMensagemUsuario, ErroFalhaGerandoSalaAtendimento, ErroFalhaGerandoUsuarioAtendimento, ErroConexaoServicoChat {
         try {
-            final String CONTATO_WP_ID = eventoWhatsapp.getWaIdContatoDestinatario();
+            mensagemRelacionada = buscarEncaminhamento(eventoWhatsapp.getCodigoMensagem());
 
-            mensagemRelacionada = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT
-                    .getMensagemEnviadaPorMatrixByRegistroWhatsapp(eventoWhatsapp.getCodigoMensagem());
-            if (mensagemRelacionada == null) {
+            if (eventoWhatsapp.getTipoStatus() == FALHA_ENTREGA) {
+                if (mensagemRelacionada == null) {
+                    aguardarRegistroENotificarFalha(eventoWhatsapp);
+                } else {
+                    notificarFalhaNaSala(mensagemRelacionada, eventoWhatsapp);
+                }
                 return;
             }
-            Contato contato;
-            try {
-                contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(CONTATO_WP_ID);
-            } catch (ErroRegraDeNEgocioChat ex) {
-                throw new ErroComDevolucaoMensagemUsuario("Falha de regra de negocio ao receber mensagem",
-                        "A mensagem não foi entregue: " + ex.getMessage());
-            }
-            ComoUsuarioChat usuarioChatContato;
-            try {
-                if (contato != null) {
-                    usuarioChatContato = AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(contato.getMatrixID());
-                } else {
-                    usuarioChatContato = AplicacaoWsChat.SERVICO_MATRIX.gerarUsuarioContato(contato.getNome(), contato.getTelefone());
-                }
 
-            } catch (ErroRegraDeNEgocioChat ex) {
-                throw new ErroFalhaEncaminhando("Falha obtendo contato no sistema matrix");
+            if (mensagemRelacionada == null) {
+                // Status de mensagem que não saiu do Matrix (menus, avisos das trilhas).
+                return;
             }
 
             String codigoEventoMatrix = mensagemRelacionada.getMensagem().getCodigoReciboMensagemMatrix();
             switch (eventoWhatsapp.getTipoStatus()) {
 
-                case FALHA_ENTREGA:
-                    // notificar o atendente que houve falha na entrega da mensagem.
-
-                    throw new ErroComDevolucaoMensagemUsuario("Falha enviando mensagem", "O Sistema falhou ao entregar a mensagem para " + mensagemRelacionada.getContato().getNome() + "com o erro: "
-                            + eventoWhatsapp.getDescricaoErro());
-
-                //  AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilha(pEntrada, contato, pMensagem);
                 case MENSAGEM_ENTREGUE:
                     //marcar no matrix que a mensagem foi entregue
 
@@ -99,7 +188,7 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
                     break;
                 case MENSAGEM_LIDA:
                     //marcar no banco de dados que a mensagem foi lida]
-
+                    ComoUsuarioChat usuarioChatContato = getUsuarioChatContato();
                     if (AplicacaoWsChat.SERVICO_MATRIX.salaNotificarLeitura(mensagemRelacionada.getMensagem().getSalaCodigoMatrix(), usuarioChatContato, codigoEventoMatrix)) {
 
                         if (UtilSBPersistencia.mergeRegistro(mensagemRelacionada) == null) {
@@ -128,6 +217,20 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
             throw new ErroFalhaEncaminhando("Serviço Matrix indisponível");
         }
 
+    }
+
+    private ComoUsuarioChat getUsuarioChatContato() throws ErroFalhaEncaminhando, ErroConexaoServicoChat {
+        final String CONTATO_WP_ID = eventoWhatsapp.getWaIdContatoDestinatario();
+        Contato contato;
+        try {
+            contato = AplicacaoWsChat.REPOSITORIO_COMUNICACAO_CHAT.getContato(CONTATO_WP_ID);
+        } catch (ErroRegraDeNEgocioChat ex) {
+            throw new ErroFalhaEncaminhando("Falha de regra de negocio obtendo contato " + CONTATO_WP_ID + ": " + ex.getMessage());
+        }
+        if (contato == null) {
+            throw new ErroFalhaEncaminhando("Contato " + CONTATO_WP_ID + " não encontrado");
+        }
+        return AplicacaoWsChat.SERVICO_MATRIX.getUsuarioByCodigo(contato.getMatrixID());
     }
 
 }

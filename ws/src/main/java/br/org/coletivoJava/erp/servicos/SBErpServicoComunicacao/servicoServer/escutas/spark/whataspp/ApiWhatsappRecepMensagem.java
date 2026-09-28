@@ -326,17 +326,16 @@ public class ApiWhatsappRecepMensagem extends RotaPadraoWtzp {
 
         for (EventoMensagemWtzap evento : pacoteMensagemWtzp.getStatusMensagem()) {
             ItfProcessadorEventoWhatsapp processadorEvento = new ProcessadorEventoWhatsappPadrao(evento);
+            // A falha de entrega é avisada na sala pelo próprio processador. Aqui só
+            // se registra o descarte: um status com problema não pode derrubar os
+            // demais do pacote nem fazer a Meta reentregar tudo.
             try {
-
                 processadorEvento.processar();
-            } catch (ErroComDevolucaoMensagemUsuario pErro) {
-                ItfRespostaWebServiceSimples resp = FabApiRestIntMatrixChatSalas.SALA_ENVIAR_MENSAGEM_TEXTO_SIMPLES
-                        .getAcao(processadorEvento.getMensagemRelacionada().getMensagem().getSalaCodigoMatrix(),
-                                processadorEvento.getMensagemRelacionada().getId().toString() + "fail", "O Sistema falhou ao entregar a mensagem com o erro: "
-                                + evento.getDescricaoErro()).getResposta();
-            } catch (ErroFalhaEncaminhando | ErroFalhaGerandoSalaAtendimento | ErroFalhaGerandoUsuarioAtendimento | ErroConexaoServicoChat ex) {
-                UtilServicoAdministrativo.notificarAdmiministrador("Falha processando evento, o evento foi ignorado" + ex.getMessage());
-                continue;
+            } catch (Throwable t) {
+                log(FabMensagens.ERRO, "Status " + evento.getTipoStatus() + " do recibo " + evento.getCodigoMensagem()
+                        + " (waid=" + evento.getWaIdContatoDestinatario() + ") foi descartado: "
+                        + t.getClass().getSimpleName() + ": " + t.getMessage());
+                UtilServicoAdministrativo.notificarAdmiministrador("Falha processando evento, o evento foi ignorado" + t.getMessage());
             }
         }
         return "OK";
