@@ -23,6 +23,8 @@ import com.super_bits.modulosSB.Persistencia.dao.UtilSBPersistencia;
 import com.super_bits.modulosSB.SBCore.ConfigGeral.CarameloCode;
 import com.super_bits.modulosSB.SBCore.integracao.libRestClient.WS.conexaoWebServiceClient.ItfRespostaWebServiceSimples;
 import com.super_bits.modulosSB.SBCore.modulos.Mensagens.FabMensagens;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
@@ -57,6 +59,27 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
             return thread;
         }
     });
+
+    /**
+     * Recibos de mensagens do atendimento (Matrix) ainda sem garantia de
+     * registro no banco. Só por eles vale esperar: mensagem automática de trilha
+     * nunca ganha encaminhamento, e esperá-la ocuparia o executor à toa.
+     */
+    private static final Map<String, Long> RECIBOS_ENVIADOS_PELO_ATENDIMENTO = new ConcurrentHashMap<>();
+    private static final long MILIS_VALIDADE_RECIBO_ENVIADO = 10 * 60 * 1000L;
+
+    /**
+     * Chamado logo após o WhatsApp devolver o recibo de uma mensagem do
+     * atendimento, antes de o encaminhamento ser gravado.
+     */
+    public static void registrarReciboEnviadoPeloAtendimento(String pRecibo) {
+        if (pRecibo == null) {
+            return;
+        }
+        long agora = System.currentTimeMillis();
+        RECIBOS_ENVIADOS_PELO_ATENDIMENTO.values().removeIf(registro -> agora - registro > MILIS_VALIDADE_RECIBO_ENVIADO);
+        RECIBOS_ENVIADOS_PELO_ATENDIMENTO.put(pRecibo, agora);
+    }
 
     public ProcessadorEventoWhatsappPadrao(EventoMensagemWtzap pEvento) {
         super(pEvento);
@@ -128,6 +151,7 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
                         Thread.sleep(SEGUNDOS_ENTRE_TENTATIVAS * 1000L);
                         EncaminhamentoMatrixParaWtzp encaminhamento = buscarEncaminhamento(recibo);
                         if (encaminhamento != null) {
+                            RECIBOS_ENVIADOS_PELO_ATENDIMENTO.remove(recibo);
                             notificarFalhaNaSala(encaminhamento, pEvento);
                             return;
                         }
@@ -154,7 +178,14 @@ public class ProcessadorEventoWhatsappPadrao extends ProcessadorWtzpEventoBaseAb
 
             if (eventoWhatsapp.getTipoStatus() == FALHA_ENTREGA) {
                 if (mensagemRelacionada == null) {
-                    aguardarRegistroENotificarFalha(eventoWhatsapp);
+                    if (RECIBOS_ENVIADOS_PELO_ATENDIMENTO.containsKey(eventoWhatsapp.getCodigoMensagem())) {
+                        aguardarRegistroENotificarFalha(eventoWhatsapp);
+                    } else {
+                        log(FabMensagens.AVISO, "Falha de entrega de mensagem automática (sem sala de atendimento)."
+                                + " recibo=" + eventoWhatsapp.getCodigoMensagem()
+                                + " waid=" + eventoWhatsapp.getWaIdContatoDestinatario()
+                                + " erro=" + eventoWhatsapp.getDescricaoErro());
+                    }
                 } else {
                     notificarFalhaNaSala(mensagemRelacionada, eventoWhatsapp);
                 }

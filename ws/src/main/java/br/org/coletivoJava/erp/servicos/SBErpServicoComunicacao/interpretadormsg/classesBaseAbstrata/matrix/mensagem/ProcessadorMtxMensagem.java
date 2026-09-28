@@ -4,6 +4,7 @@
  */
 package br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.matrix.mensagem;
 
+import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.classesBaseAbstrata.whatsapp.evento.ProcessadorEventoWhatsappPadrao;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.AplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.UtilAplicacaoWsChat;
 import br.org.coletivoJava.erp.servicos.SBErpServicoComunicacao.interpretadormsg.interfaces.ItfProcessadorPacoteMatrixWhatsap;
@@ -147,6 +148,8 @@ public class ProcessadorMtxMensagem implements
                     + " entrada=" + entrada.getCodigo()
                     + " recibo=" + (codReciboWhatsapp == null ? "NULO (FALHOU)" : codReciboWhatsapp));
             if (codReciboWhatsapp != null) {
+                // O status "failed" pode chegar antes de o encaminhamento ser gravado.
+                ProcessadorEventoWhatsappPadrao.registrarReciboEnviadoPeloAtendimento(codReciboWhatsapp);
                 ItfTrilhaNavegacao trilha = AplicacaoWsChat.GESTAO_SERVICO_NAVEGACAO.getTrilhaByEventoExistente(entrada, contato, evento);
 
                 EncaminhamentoMatrixParaWtzp encaminhamento = new EncaminhamentoMatrixParaWtzp();
